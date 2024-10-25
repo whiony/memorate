@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { initializeApp } from 'firebase/app';
+import React, { useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
+import { collection, getDocs } from 'firebase/firestore';
+import { firestore } from '../../firebaseConfig';
+
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 interface Note {
     id: string;
@@ -10,33 +15,23 @@ interface Note {
     image?: string;
 }
 
-// Firebase configuration object
-const firebaseConfig = {
-  apiKey: 'your-api-key',
-  authDomain: 'your-auth-domain',
-  projectId: 'your-project-id',
-  storageBucket: 'your-storage-bucket',
-  messagingSenderId: 'your-messaging-sender-id',
-  appId: 'your-app-id',
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Initialize Firestore
-const firestore = getFirestore(app);
-
 const HomeScreen = () => {
-    const [notes, setNotes] = useState<Note[]>([]);
+    const [notes, setNotes] = React.useState<Note[]>([]);
+    const navigation = useNavigation<HomeScreenNavigationProp>();
 
+    // Fetch notes from Firestore
     useEffect(() => {
         const fetchNotes = async () => {
-            const querySnapshot = await getDocs(collection(firestore, 'reviews'));
-            const notesList = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            setNotes(notesList as Note[]);
+            try {
+                const querySnapshot = await getDocs(collection(firestore, 'reviews'));
+                const notesList = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                setNotes(notesList as Note[]);
+            } catch (error) {
+                console.error('Error fetching notes: ', error);
+            }
         };
 
         fetchNotes();
@@ -44,6 +39,7 @@ const HomeScreen = () => {
 
     return (
         <View style={styles.container}>
+            {/* List of notes */}
             <FlatList
                 data={notes}
                 keyExtractor={(item) => item.id}
@@ -55,12 +51,21 @@ const HomeScreen = () => {
                     </View>
                 )}
             />
+
+            {/* Add Note Button */}
+            <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => navigation.navigate('AddNote')}
+            >
+                <Text style={styles.addButtonText}>+</Text>
+            </TouchableOpacity>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         padding: 20,
     },
     note: {
@@ -70,6 +75,23 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         marginTop: 10,
+    },
+    addButton: {
+        position: 'absolute',
+        right: 20,
+        bottom: 30,
+        backgroundColor: '#f4511e',
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 8,
+    },
+    addButtonText: {
+        color: 'white',
+        fontSize: 30,
+        lineHeight: 34,
     },
 });
 

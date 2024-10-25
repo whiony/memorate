@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 import { API_KEY, AUTH_DOMAIN, PROJECT_ID, STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID } from '@env';
 
 const firebaseConfig = {
@@ -13,20 +13,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Initialize Firestore
 const firestore = getFirestore(app);
 
-// Example function to add a note to Firestore
-const addNote = async () => {
-  try {
-    await addDoc(collection(firestore, 'notes'), {
-      comment: 'This is a new note',
-      rating: 5,
-      image: 'https://example.com/image.jpg',
-    });
-    console.log('Note added!');
-  } catch (error) {
-    console.error('Error adding note:', error);
-  }
-};
+export { firestore };
