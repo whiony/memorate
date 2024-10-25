@@ -1,21 +1,76 @@
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
 
-type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+interface Note {
+    id: string;
+    comment: string;
+    rating: number;
+    image?: string;
+}
 
-import React from 'react';
-import { View, Text, Button } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+// Firebase configuration object
+const firebaseConfig = {
+  apiKey: 'your-api-key',
+  authDomain: 'your-auth-domain',
+  projectId: 'your-project-id',
+  storageBucket: 'your-storage-bucket',
+  messagingSenderId: 'your-messaging-sender-id',
+  appId: 'your-app-id',
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize Firestore
+const firestore = getFirestore(app);
 
 const HomeScreen = () => {
-    const navigation = useNavigation<HomeScreenNavigationProp>();
+    const [notes, setNotes] = useState<Note[]>([]);
+
+    useEffect(() => {
+        const fetchNotes = async () => {
+            const querySnapshot = await getDocs(collection(firestore, 'reviews'));
+            const notesList = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setNotes(notesList as Note[]);
+        };
+
+        fetchNotes();
+    }, []);
 
     return (
-        <View>
-            <Text>Product Notes</Text>
-            <Button title="Add Note" onPress={() => navigation.navigate('AddNote')} />
+        <View style={styles.container}>
+            <FlatList
+                data={notes}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                    <View style={styles.note}>
+                        <Text>{item.comment}</Text>
+                        <Text>Rating: {item.rating}</Text>
+                        {item.image && <Image source={{ uri: item.image }} style={styles.image} />}
+                    </View>
+                )}
+            />
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        padding: 20,
+    },
+    note: {
+        marginBottom: 20,
+    },
+    image: {
+        width: 100,
+        height: 100,
+        marginTop: 10,
+    },
+});
 
 export default HomeScreen;

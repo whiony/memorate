@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Image, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
+
+// Firebase configuration object
+const firebaseConfig = {
+  apiKey: 'your-api-key',
+  authDomain: 'your-auth-domain',
+  projectId: 'your-project-id',
+  storageBucket: 'your-storage-bucket',
+  messagingSenderId: 'your-messaging-sender-id',
+  appId: 'your-app-id',
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize Firestore
+const firestore = getFirestore(app);
 
 const AddNoteScreen = () => {
     const [comment, setComment] = useState('');
     const [rating, setRating] = useState('');
     const [image, setImage] = useState<string | null>(null);
-
-    const handleSave = () => {
-        // Here will be the logic for saving the note
-        console.log('Note saved:', { comment, rating, image });
-    };
 
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -23,6 +36,27 @@ const AddNoteScreen = () => {
         if (!result.canceled) {
             setImage(result.assets[0].uri);
         }
+    };
+
+    const saveNote = async () => {
+        try {
+            const newNote = {
+                comment,
+                rating,
+                image,
+                created: new Date(),
+            };
+
+            // Save the new note to Firestore
+            await addDoc(collection(firestore, 'reviews'), newNote);
+            console.log('Note saved to Firestore!');
+        } catch (error) {
+            console.error('Failed to save the note to Firestore.', error);
+        }
+    };
+
+    const handleSave = () => {
+        saveNote();
     };
 
     return (
