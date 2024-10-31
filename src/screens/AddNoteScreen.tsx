@@ -3,11 +3,13 @@ import { View, Text, TextInput, Button, Image, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { collection, addDoc } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig';
+import { useNavigation } from '@react-navigation/native';
 
 const AddNoteScreen = () => {
     const [comment, setComment] = useState('');
     const [rating, setRating] = useState('');
     const [image, setImage] = useState<string | null>(null);
+    const navigation = useNavigation();
 
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -34,6 +36,8 @@ const AddNoteScreen = () => {
             // Save the new note to Firestore
             await addDoc(collection(firestore, 'reviews'), newNote);
             console.log('Note saved to Firestore!');
+            
+            navigation.goBack();
         } catch (error) {
             console.error('Failed to save the note to Firestore.', error);
         }
