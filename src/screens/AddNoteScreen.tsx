@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { collection, addDoc } from 'firebase/firestore';
@@ -7,17 +7,24 @@ import { useNavigation } from '@react-navigation/native';
 
 interface AddNoteScreenProps {
     categories: string[];
-    addCategory: (newCategory: string) => void;
+    addCategory: (newCategory: string) => Promise<void>;
 }
 
 const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ categories, addCategory }) => {
+    const [name, setName] = useState('');
     const [comment, setComment] = useState('');
     const [rating, setRating] = useState('');
     const [image, setImage] = useState<string | null>(null);
-    const [category, setCategory] = useState(categories[0]);
+    const [category, setCategory] = useState(categories[0] || '');
     const [showCategoryInput, setShowCategoryInput] = useState(false);
     const [newCategory, setNewCategory] = useState('');
     const navigation = useNavigation();
+
+    useEffect(() => {
+        if (categories.length > 0 && !category) {
+            setCategory(categories[0]);
+        }
+    }, [categories]);
 
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -35,6 +42,7 @@ const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ categories, addCategory }
     const saveNote = async () => {
         try {
             const newNote = {
+                name,
                 comment,
                 rating,
                 category,
@@ -50,17 +58,29 @@ const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ categories, addCategory }
         }
     };
 
-    const handleAddCategory = () => {
-        if (newCategory) {
-            addCategory(newCategory);
-            setCategory(newCategory);
-            setNewCategory('');
-            setShowCategoryInput(false);
+    const handleAddCategory = async () => {
+        if (newCategory.trim()) {
+            try {
+                await addCategory(newCategory.trim());
+                setCategory(newCategory.trim());
+                setNewCategory('');
+                setShowCategoryInput(false);
+            } catch (error) {
+                console.error('Failed to add category:', error);
+            }
         }
     };
 
     return (
         <View style={styles.container}>
+            <Text style={styles.label}>Name:</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Enter the name of the product"
+                value={name}
+                onChangeText={setName}
+            />
+
             <Text style={styles.label}>Comment:</Text>
             <TextInput
                 style={styles.input}
@@ -80,28 +100,28 @@ const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ categories, addCategory }
 
             <Text style={styles.label}>Category:</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryList}>
-                {categories.map((cat) => (
-                    <TouchableOpacity
-                        key={cat}
-                        onPress={() => setCategory(cat)}
-                        style={[
-                            styles.categoryButton,
-                            category === cat && styles.selectedCategoryButton,
-                        ]}
-                    >
-                        <Text style={styles.categoryButtonText}>{cat}</Text>
-                    </TouchableOpacity>
-                ))}
+                {categories
+                    .filter(cat => cat && typeof cat === 'string' && cat.trim() !== '') // Filter to exclude empty categories
+                    .map((cat) => (
+                        <TouchableOpacity
+                            key={cat}
+                            onPress={() => setCategory(cat)}
+                            style={[
+                                styles.categoryButton,
+                                category === cat && styles.selectedCategoryButton,
+                            ]}
+                        >
+                            <Text style={styles.categoryButtonText}>{cat}</Text>
+                        </TouchableOpacity>
+                    ))}
             </ScrollView>
 
-            {/* Button to show new category input field */}
             {!showCategoryInput && (
                 <TouchableOpacity onPress={() => setShowCategoryInput(true)} style={styles.addCategoryButton}>
                     <Text style={styles.addCategoryButtonText}>+ Add Category</Text>
                 </TouchableOpacity>
             )}
 
-            {/* New category input field and save button */}
             {showCategoryInput && (
                 <View style={styles.newCategoryContainer}>
                     <TextInput
@@ -116,14 +136,12 @@ const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ categories, addCategory }
                 </View>
             )}
 
-            {/* Image picker button */}
             <TouchableOpacity onPress={pickImage} style={styles.roundButton}>
                 <Text style={styles.buttonText}>Pick Image</Text>
             </TouchableOpacity>
 
             {image && <Image source={{ uri: image }} style={styles.image} />}
 
-            {/* Save note button */}
             <TouchableOpacity onPress={saveNote} style={styles.roundButton}>
                 <Text style={styles.buttonText}>Save Note</Text>
             </TouchableOpacity>

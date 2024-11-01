@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen';
 import AddNoteScreen from '../screens/AddNoteScreen';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { firestore } from '../../firebaseConfig';
 
 export type RootStackParamList = {
     Home: undefined;
@@ -14,9 +16,21 @@ const Stack = createStackNavigator<RootStackParamList>();
 const AppNavigator = () => {
     const [categories, setCategories] = useState<string[]>(['Food', 'Cosmetics', 'Places']);
 
-    const addCategory = (newCategory: string) => {
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const querySnapshot = await getDocs(collection(firestore, 'categories'));
+            const loadedCategories = querySnapshot.docs.map((doc) => doc.data().name as string);
+            setCategories((prevCategories) => [...prevCategories, ...loadedCategories]);
+        };
+
+        fetchCategories();
+    }, []);
+
+    const addCategory = async (newCategory: string) => {
         if (!categories.includes(newCategory)) {
-            setCategories([...categories, newCategory]);
+            // Add new category to Firestore
+            await addDoc(collection(firestore, 'categories'), { name: newCategory });
+            setCategories((prevCategories) => [...prevCategories, newCategory]);
         }
     };
 

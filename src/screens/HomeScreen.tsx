@@ -53,7 +53,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
 
     return (
         <View style={styles.container}>
-            {/* Категории */}
+            {/* Category filter */}
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryContainer}>
                 <TouchableOpacity
                     style={[styles.categoryButton, selectedCategory === 'All' && styles.selectedCategoryButton]}
@@ -61,18 +61,20 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
                 >
                     <Text style={styles.categoryButtonText}>All</Text>
                 </TouchableOpacity>
-                {categories.map((cat) => (
-                    <TouchableOpacity
-                        key={cat}
-                        style={[styles.categoryButton, selectedCategory === cat && styles.selectedCategoryButton]}
-                        onPress={() => setSelectedCategory(cat)}
-                    >
-                        <Text style={styles.categoryButtonText}>{cat}</Text>
-                    </TouchableOpacity>
-                ))}
+                {categories
+                    .filter((cat) => cat && typeof cat === 'string' && cat.trim() !== '')
+                    .map((cat, index) => (
+                        <TouchableOpacity
+                            key={`category-${index}`}
+                            style={[styles.categoryButton, selectedCategory === cat && styles.selectedCategoryButton]}
+                            onPress={() => setSelectedCategory(cat)}
+                        >
+                            <Text style={styles.categoryButtonText}>{cat}</Text>
+                        </TouchableOpacity>
+                    ))}
             </ScrollView>
 
-            {/* Список заметок */}
+            {/* Notes list */}
             <FlatList
                 data={notes}
                 keyExtractor={(item) => item.id}
@@ -87,7 +89,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
                 )}
             />
 
-            {/* Кнопка добавления */}
+            {/* Add Note button */}
             <TouchableOpacity
                 style={styles.addButton}
                 onPress={() => navigation.navigate('AddNote')}
