@@ -1,29 +1,40 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where, DocumentData, Query } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+
+interface HomeScreenProps {
+    categories: string[];
+}
 
 interface Note {
     id: string;
     comment: string;
     rating: number;
     image?: string;
+    category: string;
 }
 
-const screenWidth = Dimensions.get('window').width; 
+const screenWidth = Dimensions.get('window').width;
 
-const HomeScreen = () => {
+const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
     const [notes, setNotes] = useState<Note[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState('All');
     const navigation = useNavigation<HomeScreenNavigationProp>();
 
     const fetchNotes = async () => {
         try {
-            const querySnapshot = await getDocs(collection(firestore, 'reviews'));
+            let notesQuery: Query<DocumentData> = collection(firestore, 'reviews');
+            if (selectedCategory !== 'All') {
+                notesQuery = query(notesQuery, where('category', '==', selectedCategory));
+            }
+
+            const querySnapshot = await getDocs(notesQuery);
             const notesList = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data(),
@@ -36,12 +47,32 @@ const HomeScreen = () => {
 
     useFocusEffect(
         React.useCallback(() => {
-            fetchNotes(); 
-        }, [])
+            fetchNotes();
+        }, [selectedCategory])
     );
 
     return (
         <View style={styles.container}>
+            {/* Категории */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryContainer}>
+                <TouchableOpacity
+                    style={[styles.categoryButton, selectedCategory === 'All' && styles.selectedCategoryButton]}
+                    onPress={() => setSelectedCategory('All')}
+                >
+                    <Text style={styles.categoryButtonText}>All</Text>
+                </TouchableOpacity>
+                {categories.map((cat) => (
+                    <TouchableOpacity
+                        key={cat}
+                        style={[styles.categoryButton, selectedCategory === cat && styles.selectedCategoryButton]}
+                        onPress={() => setSelectedCategory(cat)}
+                    >
+                        <Text style={styles.categoryButtonText}>{cat}</Text>
+                    </TouchableOpacity>
+                ))}
+            </ScrollView>
+
+            {/* Список заметок */}
             <FlatList
                 data={notes}
                 keyExtractor={(item) => item.id}
@@ -55,6 +86,8 @@ const HomeScreen = () => {
                     </View>
                 )}
             />
+
+            {/* Кнопка добавления */}
             <TouchableOpacity
                 style={styles.addButton}
                 onPress={() => navigation.navigate('AddNote')}
@@ -70,8 +103,31 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
     },
+    categoryContainer: {
+        flexDirection: 'row',
+        marginVertical: 10,
+        marginBottom: 0,
+    },
+    categoryButton: {
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        backgroundColor: '#ddd',
+        borderRadius: 15,
+        marginRight: 10,
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    selectedCategoryButton: {
+        backgroundColor: '#f4511e',
+    },
+    categoryButtonText: {
+        color: 'white',
+        fontWeight: '600',
+        fontSize: 14,
+    },
     row: {
-        justifyContent: 'space-between', 
+        justifyContent: 'space-between',
     },
     note: {
         backgroundColor: '#fff',
@@ -81,7 +137,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ddd',
         alignItems: 'center',
-        width: (screenWidth / 2) - 20, 
+        width: (screenWidth / 2) - 20,
     },
     comment: {
         fontSize: 16,
