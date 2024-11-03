@@ -6,9 +6,18 @@ import AddNoteScreen from '../screens/AddNoteScreen';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig';
 
+export interface Note {
+    id: string;
+    name: string;
+    comment: string;
+    rating: number;
+    image?: string;
+    category: string;
+}
+
 export type RootStackParamList = {
     Home: undefined;
-    AddNote: undefined;
+    AddNote: { note?: Note };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -28,7 +37,6 @@ const AppNavigator = () => {
 
     const addCategory = async (newCategory: string) => {
         if (!categories.includes(newCategory)) {
-            // Add new category to Firestore
             await addDoc(collection(firestore, 'categories'), { name: newCategory });
             setCategories((prevCategories) => [...prevCategories, newCategory]);
         }

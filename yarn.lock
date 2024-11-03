@@ -6050,6 +6050,11 @@ react-native-gesture-handler@^2.20.2:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
+react-native-material-menu@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-material-menu/-/react-native-material-menu-2.0.0.tgz#139f407a52fbc0d47e5351d50ac769e05812da5c"
+  integrity sha512-SmO9PLE3E469EPbVWZqvdu6JGPPZIm7YjqDcWs2PPoY0k7w2V9tFo3BmmLXNzNZDCVCAi+PPSsL7h/5WkfHcSg==
+
 react-native-reanimated@^3.16.1:
   version "3.16.1"
   resolved "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-3.16.1.tgz"

@@ -1,30 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, RouteProp } from '@react-navigation/native';
+import { Note, RootStackParamList } from '../navigation/AppNavigator';
 
 interface AddNoteScreenProps {
+    route: RouteProp<RootStackParamList, 'AddNote'>;
     categories: string[];
     addCategory: (newCategory: string) => Promise<void>;
 }
 
-const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ categories, addCategory }) => {
-    const [name, setName] = useState('');
-    const [comment, setComment] = useState('');
-    const [rating, setRating] = useState('');
-    const [image, setImage] = useState<string | null>(null);
-    const [category, setCategory] = useState(categories[0] || '');
+const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ route, categories, addCategory }) => {
+    const navigation = useNavigation();
+    const existingNote = route.params?.note as Note | undefined;
+
+    const [name, setName] = useState(existingNote?.name || '');
+    const [comment, setComment] = useState(existingNote?.comment || '');
+    const [rating, setRating] = useState(existingNote?.rating?.toString() || '');
+    const [image, setImage] = useState<string | null>(existingNote?.image || null);
+    const [category, setCategory] = useState(existingNote?.category || categories[0] || '');
     const [showCategoryInput, setShowCategoryInput] = useState(false);
     const [newCategory, setNewCategory] = useState('');
-    const navigation = useNavigation();
 
     useEffect(() => {
-        if (categories.length > 0 && !category) {
+        if (categories.length > 0 && !existingNote) {
             setCategory(categories[0]);
         }
-    }, [categories]);
+    }, [categories, existingNote]);
 
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -41,17 +45,21 @@ const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ categories, addCategory }
 
     const saveNote = async () => {
         try {
-            const newNote = {
+            const noteData = {
                 name,
                 comment,
-                rating,
+                rating: parseFloat(rating),
                 category,
                 image,
                 created: new Date(),
             };
 
-            await addDoc(collection(firestore, 'reviews'), newNote);
-            console.log('Note saved to Firestore!');
+            if (existingNote) {
+                const noteRef = doc(firestore, 'reviews', existingNote.id);
+                await updateDoc(noteRef, noteData);
+            } else {
+                await addDoc(collection(firestore, 'reviews'), noteData);
+            }
             navigation.goBack();
         } catch (error) {
             console.error('Failed to save the note to Firestore.', error);
@@ -101,7 +109,7 @@ const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ categories, addCategory }
             <Text style={styles.label}>Category:</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryList}>
                 {categories
-                    .filter(cat => cat && typeof cat === 'string' && cat.trim() !== '') // Filter to exclude empty categories
+                    .filter(cat => cat && typeof cat === 'string' && cat.trim() !== '')
                     .map((cat) => (
                         <TouchableOpacity
                             key={cat}
