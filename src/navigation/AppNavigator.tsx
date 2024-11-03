@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../screens/HomeScreen';
-import AddNoteScreen from '../screens/AddNoteScreen';
+import HomeScreen from '../components/HomeScreen';
+import AddNoteScreen from '../components/AddNoteScreen';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig';
 

@@ -1,0 +1,96 @@
+import React, { useState } from 'react';
+import { View, FlatList, TouchableOpacity, Alert, Text } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { Note, RootStackParamList } from '../navigation/AppNavigator';
+import { collection, getDocs, query, where, deleteDoc, doc, DocumentData, Query } from 'firebase/firestore';
+import { firestore } from '../../firebaseConfig';
+import { styles } from '../styles/HomeScreen.styles';
+import NoteItem from '../components/NoteItem';
+import CategoryList from '../components/CategoryList';
+
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+
+interface HomeScreenProps {
+    categories: string[];
+}
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
+    const [notes, setNotes] = useState<Note[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [visibleMenuId, setVisibleMenuId] = useState<string | null>(null);
+    const navigation = useNavigation<HomeScreenNavigationProp>();
+
+    const fetchNotes = async () => {
+        try {
+            let notesQuery: Query<DocumentData> = collection(firestore, 'reviews');
+            if (selectedCategory !== 'All') {
+                notesQuery = query(notesQuery, where('category', '==', selectedCategory));
+            }
+            const querySnapshot = await getDocs(notesQuery);
+            const notesList = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            })) as Note[];
+            setNotes(notesList);
+        } catch (error) {
+            console.error('Error fetching notes: ', error);
+        }
+    };
+
+    const handleDelete = async (noteId: string) => {
+        try {
+            await deleteDoc(doc(firestore, 'reviews', noteId));
+            setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
+            Alert.alert("Success", "Note deleted successfully.");
+        } catch (error) {
+            console.error('Error deleting note: ', error);
+        }
+    };
+
+    const openEditNote = (note: Note) => {
+        navigation.navigate('AddNote', { note });
+    };
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchNotes();
+        }, [selectedCategory])
+    );
+
+    return (
+        <View style={styles.container}>
+            <CategoryList
+                categories={categories}
+                selectedCategory={selectedCategory}
+                onSelectCategory={setSelectedCategory}
+            />
+
+            <FlatList
+                data={notes}
+                keyExtractor={(item) => item.id}
+                numColumns={2}
+                columnWrapperStyle={styles.columnWrapper}
+                contentContainerStyle={styles.flatListContentContainer}
+                renderItem={({ item }) => (
+                    <NoteItem
+                        note={item}
+                        onEdit={openEditNote}
+                        onDelete={handleDelete}
+                        visibleMenuId={visibleMenuId}
+                        setVisibleMenuId={setVisibleMenuId}
+                    />
+                )}
+            />
+
+            <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => navigation.navigate('AddNote', {})}
+            >
+                <Text style={styles.addButtonText}>+</Text>
+            </TouchableOpacity>
+        </View>
+    );
+};
+
+export default HomeScreen;
