@@ -50,6 +50,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
     const handleDelete = async (noteId: string) => {
         try {
             const note = notes.find(n => n.id === noteId);
+            console.log("image", note)
             if (note?.image?.startsWith('https://res.cloudinary.com')) {
                 await deleteFromCloudinary(note.image);
             }
