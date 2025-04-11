@@ -84,8 +84,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
             <FlatList
                 data={notes}
                 keyExtractor={(item) => item.id}
-                numColumns={2}
-                columnWrapperStyle={styles.columnWrapper}
+                numColumns={1}
                 contentContainerStyle={styles.flatListContentContainer}
                 renderItem={({ item }) => (
                     <NoteItem

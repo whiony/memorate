@@ -8,6 +8,7 @@ import { Note, RootStackParamList } from '../navigation/AppNavigator';
 import { styles } from '../styles/AddNoteScreen.styles';
 import { uploadToCloudinary } from '../utils/uploadToCloudinary';
 import FullscreenLoader from './FullscreenLoader';
+import { Picker } from '@react-native-picker/picker';
 
 interface AddNoteScreenProps {
     route: RouteProp<RootStackParamList, 'AddNote'>;
@@ -22,6 +23,8 @@ const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ route, categories, addCat
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const existingNote = route.params?.note as Note | undefined;
 
+    type Currency = '€' | '$' | '₴';
+
     const [name, setName] = useState(existingNote?.name || '');
     const [comment, setComment] = useState(existingNote?.comment || '');
     const [rating, setRating] = useState(existingNote?.rating?.toString() || '');
@@ -29,6 +32,10 @@ const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ route, categories, addCat
     const [category, setCategory] = useState(existingNote?.category || categories[0] || '');
     const [showCategoryInput, setShowCategoryInput] = useState(false);
     const [newCategory, setNewCategory] = useState('');
+    const [price, setPrice] = useState(existingNote?.price?.toString() || '');
+    const [currency, setCurrency] = useState<Currency>('€');
+    const [currencyMenuVisible, setCurrencyMenuVisible] = useState(false);
+    const currencyOptions: Currency[] = ['€', '$', '₴'];
 
     useEffect(() => {
         if (categories.length > 0 && !existingNote) {
@@ -68,6 +75,8 @@ const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ route, categories, addCat
                 category,
                 image: imageUrl,
                 created: new Date(),
+                price: price ? parseFloat(price) : undefined,
+                currency: currency || undefined,
             };
 
             if (existingNote) {
@@ -82,11 +91,11 @@ const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ route, categories, addCat
         } finally {
             setLoading(false);
             if (navigation.canGoBack()) {
-              navigation.goBack();
+                navigation.goBack();
             } else {
-              navigation.navigate('Home');
+                navigation.navigate('Home');
             }
-          }
+        }
     };
 
     const handleAddCategory = async () => {
@@ -112,6 +121,41 @@ const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ route, categories, addCat
                     value={name}
                     onChangeText={setName}
                 />
+
+                <View style={styles.row}>
+                    <TextInput
+                        style={styles.priceInput}
+                        keyboardType="numeric"
+                        placeholder="Price"
+                        value={price}
+                        onChangeText={setPrice}
+                    />
+                    
+                    <View style={{ position: 'relative' }}>
+                        <TouchableOpacity
+                            style={styles.currencyDropdown}
+                            onPress={() => setCurrencyMenuVisible(!currencyMenuVisible)}
+                        >
+                            <Text style={styles.currencyText}>{currency}</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {currencyMenuVisible && (
+                        <View style={styles.currencyOptions}>
+                            {currencyOptions.map((option) => (
+                                <TouchableOpacity
+                                    key={option}
+                                    onPress={() => {
+                                        setCurrency(option);
+                                        setCurrencyMenuVisible(false);
+                                    }}
+                                >
+                                    <Text style={styles.currencyOption}>{option}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
+                </View>
 
                 <Text style={styles.label}>Comment:</Text>
                 <TextInput

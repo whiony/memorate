@@ -14,6 +14,8 @@ export interface Note {
     image?: string;
     category: string;
     created?: Date;
+    price?: number;
+    currency?: '€' | '$' | '₴';
 }
 
 export type RootStackParamList = {

@@ -1,47 +1,86 @@
-import { Dimensions, StyleSheet } from 'react-native';
-
-const screenWidth = Dimensions.get('window').width;
+import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-    note: {
+    card: {
         backgroundColor: '#fff',
-        padding: 10,
-        marginBottom: 20,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#ddd',
+        borderRadius: 16,
+        padding: 12,
+        marginBottom: 12,
+        flexDirection: 'column',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+
+    row: {
+        flexDirection: 'row',
+    },
+
+    imageContainer: {
+        width: 100,
+        marginRight: 12,
         alignItems: 'center',
-        width: screenWidth / 2 - 30,
-        position: 'relative',
     },
-    name: {
-        fontSize: 18,
+
+    image: {
+        width: 100,
+        height: 100,
+        borderRadius: 12,
+        marginBottom: 4,
+    },
+
+    date: {
+        fontSize: 12,
+        color: '#777',
+    },
+
+    textContainer: {
+        flex: 1,
+        justifyContent: 'flex-start',
+    },
+
+    title: {
         fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 5,
+        fontSize: 16,
+        marginBottom: 4,
     },
+
+    stars: {
+        flexDirection: 'row',
+        marginBottom: 4,
+    },
+
     comment: {
         fontSize: 14,
-        color: '#999',
-        textAlign: 'center',
-        marginBottom: 10,
+        color: '#555',
     },
-    rating: {
-        fontSize: 14,
-        color: '#666',
-        textAlign: 'center',
+
+    menuContainer: {
+        position: 'absolute',
+        top: -4,
+        right: 0,
+        zIndex: 1,
     },
-    image: {
-        width: 120,
-        height: 120,
-        borderRadius: 8,
-        marginBottom: 10,
-    },
+
     menuButton: {
-        padding: 10
+        padding: 8,
     },
+
     menuText: {
         fontSize: 18,
-        color: '#666',
     },
+
+    ratingRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+
+    priceText: {
+        fontWeight: 'bold',
+        fontSize: 14,
+    },
+
 });
