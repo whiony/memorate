@@ -1,6 +1,6 @@
 {
-  "name": "productnotesapp",
-  "version": "1.0.0",
+  "name": "memorate-app",
+  "version": "1.1.0",
   "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start",

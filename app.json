@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ProductNotesApp",
-    "slug": "ProductNotesApp",
+    "name": "Memorate",
+    "slug": "Memorate",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.whiony.ProductNotesApp"
+      "bundleIdentifier": "com.whiony.Memorate"
     },
     "android": {
       "adaptiveIcon": {
