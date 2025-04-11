@@ -27,11 +27,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
             if (selectedCategory !== 'All') {
                 notesQuery = query(notesQuery, where('category', '==', selectedCategory));
             }
+    
             const querySnapshot = await getDocs(notesQuery);
-            const notesList = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            })) as Note[];
+            const notesList = querySnapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    ...data,
+                    created: data.created?.toDate ? data.created.toDate() : new Date(data.created || Date.now()),
+                } as Note;
+            });
+    
+            notesList.sort((a, b) => (b.created?.getTime() || 0) - (a.created?.getTime() || 0));
+    
             setNotes(notesList);
         } catch (error) {
             console.error('Error fetching notes: ', error);

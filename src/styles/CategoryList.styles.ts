@@ -3,8 +3,8 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
     categoryContainer: {
         flexDirection: 'row',
-        marginVertical: 10,
-        marginBottom: 0,
+        marginVertical: 12,
+        marginBottom: 15,
     },
     categoryButton: {
         paddingHorizontal: 12,

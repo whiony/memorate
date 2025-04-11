@@ -14,19 +14,22 @@ interface NoteItemProps {
 
 const NoteItem: React.FC<NoteItemProps> = ({ note, onEdit, onDelete, visibleMenuId, setVisibleMenuId }) => (
     <View style={styles.note}>
-        <TouchableOpacity style={styles.menuButton} onPress={() => setVisibleMenuId(note.id)}>
-            <Text style={styles.menuText}>⋮</Text>
-        </TouchableOpacity>
-        <Menu
-            visible={visibleMenuId === note.id}
-            onRequestClose={() => setVisibleMenuId(null)}
-            anchor={<View />}
-        >
-            <MenuItem onPress={() => { setVisibleMenuId(null); onEdit(note); }}>Edit</MenuItem>
-            <MenuDivider />
-            <MenuItem onPress={() => { setVisibleMenuId(null); onDelete(note.id); }}>Delete</MenuItem>
-        </Menu>
-        <Text style={styles.name}>{note.name}</Text>
+            <Text style={{ ...styles.name, position:"absolute", top: 0, width:"100%", paddingVertical: 12  }}>{note.name}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width:"100%"}}>
+            <View style={{flex:1}}/>
+            <Menu
+                visible={visibleMenuId === note.id}
+                onRequestClose={() => setVisibleMenuId(null)}
+                anchor={
+                    <TouchableOpacity style={styles.menuButton} onPress={() => setVisibleMenuId(note.id)}>
+                        <Text style={styles.menuText}>⋮</Text>
+                    </TouchableOpacity>}
+                >
+                <MenuItem onPress={() => { setVisibleMenuId(null); onEdit(note); }}>Edit</MenuItem>
+                <MenuDivider />
+                <MenuItem onPress={() => { setVisibleMenuId(null); onDelete(note.id); }}>Delete</MenuItem>
+            </Menu>
+        </View>
         {note.image && <Image source={{ uri: note.image }} style={styles.image} />}
         <Text style={styles.comment}>{note.comment}</Text>
         <Text style={styles.rating}>Rating: {note.rating}</Text>

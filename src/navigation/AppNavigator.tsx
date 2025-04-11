@@ -13,6 +13,7 @@ export interface Note {
     rating: number;
     image?: string;
     category: string;
+    created?: Date;
 }
 
 export type RootStackParamList = {
