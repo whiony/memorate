@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../components/HomeScreen';
 import AddNoteScreen from '../components/AddNoteScreen';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
-import { firestore } from '../../firebaseConfig';
+import { firestore } from '../firebase/firebaseConfig';
 
 export interface Note {
     id: string;
@@ -48,7 +48,7 @@ const AppNavigator = () => {
             <Stack.Navigator>
                 <Stack.Screen
                     name="Home"
-                    options={{ title: 'Review Notes' }}
+                    options={{ title: 'Memorate' }}
                 >
                     {(props) => (
                         <HomeScreen

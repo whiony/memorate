@@ -4,7 +4,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Note, RootStackParamList } from '../navigation/AppNavigator';
 import { collection, getDocs, query, where, deleteDoc, doc, DocumentData, Query } from 'firebase/firestore';
-import { firestore } from '../../firebaseConfig';
+import { firestore } from '../firebase/firebaseConfig';
 import { styles } from '../styles/HomeScreen.styles';
 import NoteItem from '../components/NoteItem';
 import CategoryList from '../components/CategoryList';
