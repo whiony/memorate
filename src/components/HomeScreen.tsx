@@ -8,6 +8,7 @@ import { firestore } from '../firebase/firebaseConfig';
 import { styles } from '../styles/HomeScreen.styles';
 import NoteItem from '../components/NoteItem';
 import CategoryList from '../components/CategoryList';
+import { deleteFromCloudinary } from '../utils/deleteFromCloudinary';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -27,7 +28,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
             if (selectedCategory !== 'All') {
                 notesQuery = query(notesQuery, where('category', '==', selectedCategory));
             }
-    
+
             const querySnapshot = await getDocs(notesQuery);
             const notesList = querySnapshot.docs.map(doc => {
                 const data = doc.data();
@@ -37,9 +38,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
                     created: data.created?.toDate ? data.created.toDate() : new Date(data.created || Date.now()),
                 } as Note;
             });
-    
+
             notesList.sort((a, b) => (b.created?.getTime() || 0) - (a.created?.getTime() || 0));
-    
+
             setNotes(notesList);
         } catch (error) {
             console.error('Error fetching notes: ', error);
@@ -48,6 +49,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
 
     const handleDelete = async (noteId: string) => {
         try {
+            const note = notes.find(n => n.id === noteId);
+            if (note?.image?.startsWith('https://res.cloudinary.com')) {
+                await deleteFromCloudinary(note.image);
+            }
+
             await deleteDoc(doc(firestore, 'reviews', noteId));
             setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
             Alert.alert("Success", "Note deleted successfully.");
