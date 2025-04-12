@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from './CategorySection.styles';
+import { globalStyles } from '../../theme/theme';
 
 interface CategorySectionProps {
     category: string;
@@ -31,7 +32,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
     loading,
 }) => (
     <View style={styles.section}>
-        <Text style={styles.label}>Category</Text>
+        <Text style={globalStyles.label}>Category</Text>
         <View style={styles.categoryRow}>
             <View style={{ flex: 1 }}>
                 <DropDownPicker
@@ -41,9 +42,9 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                     value={category}
                     setValue={setCategory}
                     placeholder="Select category"
-                    style={styles.dropdown}
-                    dropDownContainerStyle={styles.dropdownContainer}
-                    textStyle={styles.dropdownText}
+                    style={globalStyles.standartDropdown}
+                    dropDownContainerStyle={globalStyles.standartDropdownContainer}
+                    textStyle={globalStyles.standartDropdownText}
                     listMode="SCROLLVIEW"
                     scrollViewProps={{ nestedScrollEnabled: true }}
                     zIndex={2000}
@@ -52,7 +53,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
             </View>
             <TouchableOpacity
                 onPress={() => setShowCategoryInput(!showCategoryInput)}
-                style={[styles.addCategoryButton, { marginLeft: 8 }]}
+                style={[styles.addCategoryButton, globalStyles.standartButton, { marginLeft: 8 }]}
             >
                 <Text style={styles.addCategoryButtonText}>+ Add</Text>
             </TouchableOpacity>

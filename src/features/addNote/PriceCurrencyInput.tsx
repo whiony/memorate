@@ -1,7 +1,7 @@
-// src/components/PriceCurrencyInput.tsx
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
 import LabeledInput from '../../components/LabeledInput';
+import { styles } from './PriceCurrencyInput.styles';
 
 interface PriceCurrencyInputProps {
     price: string;
@@ -35,21 +35,3 @@ const PriceCurrencyInput: React.FC<PriceCurrencyInputProps> = ({
 };
 
 export default PriceCurrencyInput;
-
-const styles = StyleSheet.create({
-    priceInput: {
-    },
-    currencyToggle: {
-        paddingHorizontal: 14,
-        paddingVertical: 10,
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: '#D0D0D0',
-        marginLeft: 8,
-    },
-    currencyText: {
-        fontSize: 16,
-        color: '#333',
-    },
-});

@@ -6,12 +6,6 @@ export const styles = StyleSheet.create({
         marginBottom: 6,
         marginTop: 14,
     },
-    label: {
-        fontSize: 16,
-        fontWeight: '600',
-        marginBottom: 8,
-        color: '#333',
-    },
     starContainer: {
         flexDirection: 'row',
     },

@@ -1,8 +1,9 @@
 import { StyleSheet } from 'react-native';
+import { colors } from '../../theme/theme';
 
 export const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: '#F7F8FA',
+        backgroundColor: colors.background,
     },
 });

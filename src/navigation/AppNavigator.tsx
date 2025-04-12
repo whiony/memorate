@@ -50,7 +50,10 @@ const AppNavigator = () => {
             <Stack.Navigator>
                 <Stack.Screen
                     name="Home"
-                    options={{ title: 'Memorate' }}
+                    options={{
+                        title: 'Memorate',
+                        headerTitleStyle: { fontFamily: 'Poppins-Regular', fontWeight: 'bold', fontSize: 18 },
+                    }}
                 >
                     {(props) => (
                         <HomeScreen
@@ -68,7 +71,7 @@ const AppNavigator = () => {
                             headerTitleAlign: 'center',
                             headerStyle: { backgroundColor: '#4C4F6D' },
                             headerTintColor: '#fff',
-                            headerTitleStyle: { fontWeight: 'bold', fontSize: 18 },
+                            headerTitleStyle: { fontFamily: 'Poppins-Regular', fontWeight: 'bold', fontSize: 18 },
                         };
                     }}
                 >

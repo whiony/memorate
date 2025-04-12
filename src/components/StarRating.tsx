@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 import { styles } from './StarRating.styles';
 import { Ionicons } from '@expo/vector-icons';
+import { globalStyles } from '../theme/theme';
 
 interface StarRatingProps {
     rating: number;
@@ -19,7 +20,7 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, onChange, disabled = fa
 
     return (
         <View style={cardList ? styles.cardStarContainer : styles.section}>
-            {!cardList && <Text style={styles.label}>Rating</Text>}
+            {!cardList && <Text style={globalStyles.label}>Rating</Text>}
             <View style={styles.starContainer}>
                 {[1, 2, 3, 4, 5].map((i) => {
                     const isFilled = i <= rating;

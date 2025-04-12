@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import LabeledInput from '../../components/LabeledInput';
+import { styles } from './CommentInput.styles';
 
 interface CommentInputProps {
     comment: string;
@@ -21,10 +21,3 @@ const CommentInput: React.FC<CommentInputProps> = ({ comment, onChangeComment })
 };
 
 export default CommentInput;
-
-const styles = StyleSheet.create({
-    multiline: {
-        height: 80,
-        textAlignVertical: 'top',
-    },
-});

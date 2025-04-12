@@ -17,6 +17,7 @@ import SaveButton from '../../components/SaveButton';
 import StarRating from '../../components/StarRating';
 import FullscreenLoader from '../../components/FullscreenLoader';
 import { styles } from './AddNoteScreen.styles';
+import { globalStyles } from '../../theme/theme';
 
 interface Props {
     route: RouteProp<RootStackParamList, 'AddNote'>;
@@ -120,8 +121,12 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
     };
 
     return (
-        <KeyboardAwareScrollView style={styles.screen} enableOnAndroid extraScrollHeight={20}>
-            <ScrollView contentContainerStyle={{ paddingBottom: 40 }} nestedScrollEnabled>
+        <KeyboardAwareScrollView
+            style={[globalStyles.screenBackground, styles.screen]}
+            enableOnAndroid
+            extraScrollHeight={20}
+        >
+            <ScrollView contentContainerStyle={[globalStyles.container, { paddingBottom: 40 }]} nestedScrollEnabled>
                 <TitleInput value={title} onChange={setTitle} />
                 <ImagePickerComponent image={image} onPickImage={pickImage} />
                 <StarRating rating={rating} onChange={setRating} />
@@ -149,6 +154,7 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
                 {loading && <FullscreenLoader />}
             </ScrollView>
         </KeyboardAwareScrollView>
+
     );
 };
 

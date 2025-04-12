@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { colors, fonts } from '../../theme/theme';
 
 export const styles = StyleSheet.create({
     section: {
@@ -6,42 +7,20 @@ export const styles = StyleSheet.create({
         marginBottom: 6,
         marginTop: 14,
     },
-    label: {
-        fontSize: 16,
-        fontWeight: '600',
-        marginBottom: 8,
-        color: '#333',
-    },
     categoryRow: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
         zIndex: 2000,
     },
-    dropdown: {
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: '#D0D0D0',
-        backgroundColor: '#fff',
-    },
-    dropdownContainer: {
-        borderColor: '#D0D0D0',
-        borderRadius: 10,
-    },
-    dropdownText: {
-        fontSize: 15,
-        color: '#000',
-    },
     addCategoryButton: {
-        backgroundColor: '#4C4F6D',
-        borderRadius: 10,
         paddingHorizontal: 12,
-        paddingVertical: 10,
     },
     addCategoryButtonText: {
-        color: '#fff',
+        color: colors.buttonText,
         fontSize: 16,
         fontWeight: 'bold',
+        fontFamily: fonts.mainFont,
     },
     row: {
         flexDirection: 'row',

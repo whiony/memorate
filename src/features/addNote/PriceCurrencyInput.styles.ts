@@ -1,26 +1,11 @@
 import { StyleSheet } from 'react-native';
+import { borders, colors, globalStyles } from '../../theme/theme';
 
 export const styles = StyleSheet.create({
-    section: {
-        marginHorizontal: 16,
-        marginBottom: 6,
-        marginTop: 14,
-    },
-    label: {
-        fontSize: 16,
-        fontWeight: '600',
-        marginBottom: 8,
-        color: '#333',
-    },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
     priceInput: {
         flex: 1,
         borderWidth: 1,
-        borderColor: '#D0D0D0',
-        borderRadius: 10,
+        borderColor: colors.borderAccent,
         paddingHorizontal: 14,
         paddingVertical: 10,
         backgroundColor: '#fff',
@@ -32,12 +17,12 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 14,
         paddingVertical: 10,
         backgroundColor: '#fff',
-        borderRadius: 10,
+        borderRadius: borders.radius,
         borderWidth: 1,
-        borderColor: '#D0D0D0',
+        borderColor: colors.borderAccent,
     },
     currencyText: {
         fontSize: 16,
-        color: '#333',
+        color: colors.text,
     },
 });
