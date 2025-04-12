@@ -1,23 +1,20 @@
 import React from 'react';
-import { View, Text, TextInput } from 'react-native';
-import { styles } from '../styles/TitleInput.styles';
+import LabeledInput from './LabeledInput';
 
 interface TitleInputProps {
     value: string;
     onChange: (text: string) => void;
 }
 
-const TitleInput: React.FC<TitleInputProps> = ({ value, onChange }) => (
-    <View style={styles.section}>
-        <Text style={styles.label}>Title</Text>
-        <TextInput
-            style={styles.input}
+const TitleInput: React.FC<TitleInputProps> = ({ value, onChange }) => {
+    return (
+        <LabeledInput
+            label="Title"
             value={value}
             onChangeText={onChange}
             placeholder="Enter title"
-            placeholderTextColor="#888"
         />
-    </View>
-);
+    );
+};
 
 export default TitleInput;

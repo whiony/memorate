@@ -1,6 +1,7 @@
+// src/components/PriceCurrencyInput.tsx
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { styles } from '../styles/PriceCurrencyInput.styles';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import LabeledInput from './LabeledInput';
 
 interface PriceCurrencyInputProps {
     price: string;
@@ -14,23 +15,41 @@ const PriceCurrencyInput: React.FC<PriceCurrencyInputProps> = ({
     onChangePrice,
     currency,
     onToggleCurrency,
-}) => (
-    <View style={styles.section}>
-        <Text style={styles.label}>Price</Text>
-        <View style={styles.row}>
-            <TextInput
-                style={styles.priceInput}
-                value={price}
-                onChangeText={onChangePrice}
-                keyboardType="numeric"
-                placeholder="Enter price"
-                placeholderTextColor="#888"
-            />
-            <TouchableOpacity onPress={onToggleCurrency} style={styles.currencyToggle}>
-                <Text style={styles.currencyText}>{currency}</Text>
-            </TouchableOpacity>
-        </View>
-    </View>
-);
+}) => {
+    const rightElement = (
+        <TouchableOpacity onPress={onToggleCurrency} style={styles.currencyToggle}>
+            <Text style={styles.currencyText}>{currency}</Text>
+        </TouchableOpacity>
+    );
+    return (
+        <LabeledInput
+            label="Price"
+            value={price}
+            onChangeText={onChangePrice}
+            placeholder="Enter price"
+            keyboardType="numeric"
+            inputStyle={styles.priceInput}
+            rightElement={rightElement}
+        />
+    );
+};
 
 export default PriceCurrencyInput;
+
+const styles = StyleSheet.create({
+    priceInput: {
+    },
+    currencyToggle: {
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#D0D0D0',
+        marginLeft: 8,
+    },
+    currencyText: {
+        fontSize: 16,
+        color: '#333',
+    },
+});
