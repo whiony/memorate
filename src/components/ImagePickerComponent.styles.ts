@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { fonts } from '../theme/theme';
 
 export const styles = StyleSheet.create({
     imageContainer: {
@@ -19,5 +20,6 @@ export const styles = StyleSheet.create({
     imagePlaceholder: {
         color: '#999',
         fontSize: 14,
+        fontFamily: fonts.mainFont,
     },
 });

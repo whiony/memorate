@@ -5,6 +5,7 @@ import HomeScreen from '../features/home/HomeScreen';
 import AddNoteScreen from '../features/addNote/AddNoteScreen';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { firestore } from '../services/firebaseConfig';
+import { colors, fonts } from '../theme/theme';
 
 export interface Note {
     id: string;
@@ -25,6 +26,10 @@ export type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
+const createCategoryList = (prevCategories: string[], ...newCategories: string[]) => {
+    return [...new Set([...prevCategories, ...newCategories]).values()]
+}
+
 const AppNavigator = () => {
     const [categories, setCategories] = useState<string[]>(['Food', 'Cosmetics', 'Places']);
 
@@ -32,7 +37,7 @@ const AppNavigator = () => {
         const fetchCategories = async () => {
             const querySnapshot = await getDocs(collection(firestore, 'categories'));
             const loadedCategories = querySnapshot.docs.map((doc) => doc.data().name as string);
-            setCategories((prevCategories) => [...prevCategories, ...loadedCategories]);
+            setCategories((prevCategories) => createCategoryList(prevCategories, ...loadedCategories));
         };
 
         fetchCategories();
@@ -41,7 +46,7 @@ const AppNavigator = () => {
     const addCategory = async (newCategory: string) => {
         if (!categories.includes(newCategory)) {
             await addDoc(collection(firestore, 'categories'), { name: newCategory });
-            setCategories((prevCategories) => [...prevCategories, newCategory]);
+            setCategories((prevCategories) => createCategoryList(prevCategories, newCategory));
         }
     };
 
@@ -69,9 +74,9 @@ const AppNavigator = () => {
                         return {
                             title: isEditing ? 'Edit Review' : 'Add Review',
                             headerTitleAlign: 'center',
-                            headerStyle: { backgroundColor: '#4C4F6D' },
+                            headerStyle: { backgroundColor: colors.primary },
                             headerTintColor: '#fff',
-                            headerTitleStyle: { fontFamily: 'Poppins-Regular', fontWeight: 'bold', fontSize: 18 },
+                            headerTitleStyle: { fontFamily: fonts.mainFont, fontWeight: 'bold', fontSize: 18 },
                         };
                     }}
                 >

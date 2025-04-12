@@ -53,7 +53,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
             </View>
             <TouchableOpacity
                 onPress={() => setShowCategoryInput(!showCategoryInput)}
-                style={[styles.addCategoryButton, globalStyles.standartButton, { marginLeft: 8 }]}
+                style={[styles.categoryButton, globalStyles.standartButton]}
             >
                 <Text style={styles.addCategoryButtonText}>+ Add</Text>
             </TouchableOpacity>
@@ -61,13 +61,13 @@ const CategorySection: React.FC<CategorySectionProps> = ({
         {showCategoryInput && (
             <View style={[styles.row, { marginTop: 8 }]}>
                 <TextInput
-                    style={[styles.input, { flex: 3 }]}
+                    style={[globalStyles.standartInput, { flex: 3 }]}
                     placeholder="Enter new category"
                     value={newCategory}
                     onChangeText={setNewCategory}
                     placeholderTextColor="#888"
                 />
-                <TouchableOpacity onPress={handleAddCategory} style={styles.roundButton}>
+                <TouchableOpacity onPress={handleAddCategory} style={[styles.categoryButton, globalStyles.standartButton]}>
                     <Text style={styles.buttonText}>Save</Text>
                 </TouchableOpacity>
             </View>

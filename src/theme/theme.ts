@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
 
 export const colors = {
-    background: '#FAF8FF',
+    screenBackground: '#FAF8FF',
     containerBackground: '#FFFFFF',
-    primary: '#4C4F6D', // #4C4F6D #f56969
+    primary: '#4C4F6D',
     text: '#333',
     buttonText: '#fff',
     placeholder: '#999',
@@ -23,28 +23,28 @@ export const fonts = {
 export const globalStyles = StyleSheet.create({
     screenBackground: {
         flex: 1,
-        backgroundColor: colors.background,
+        backgroundColor: colors.screenBackground,
     },
     label: {
         fontSize: 16,
-        fontFamily: 'Poppins-Regular',
+        fontFamily: fonts.mainFont,
         fontWeight: '600',
         marginBottom: 8,
         color: colors.text,
     },
     container: {
         backgroundColor: colors.containerBackground,
-        borderRadius: 16,
+        borderRadius: 20,
         borderWidth: borders.width,
         borderColor: colors.borderAccent,
         padding: 16,
         marginHorizontal: 16,
-        marginVertical: 8,
+        marginVertical: 16,
         shadowColor: colors.shadow,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-        elevation: 4,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.2,
+        shadowRadius: 12,
+        elevation: 8,
     },
     standartInput: {
         flex: 1,
@@ -54,6 +54,7 @@ export const globalStyles = StyleSheet.create({
         paddingHorizontal: 14,
         paddingVertical: 10,
         fontSize: 15,
+        fontFamily: fonts.mainFont,
         backgroundColor: '#fff',
         color: '#000',
     },
@@ -65,7 +66,7 @@ export const globalStyles = StyleSheet.create({
     },
     standartDropdownContainer: {
         borderColor: colors.borderAccent,
-        borderRadius: 12,
+        borderRadius: borders.radius,
     },
     standartDropdownText: {
         fontSize: 15,
@@ -76,7 +77,7 @@ export const globalStyles = StyleSheet.create({
         borderRadius: borders.radius,
     },
     standartButton: {
-        paddingVertical: 14,
+        paddingVertical: 13,
         alignItems: 'center',
         borderRadius: borders.radius,
         backgroundColor: colors.primary,

@@ -13,7 +13,8 @@ export const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         zIndex: 2000,
     },
-    addCategoryButton: {
+    categoryButton: {
+        marginLeft: 8,
         paddingHorizontal: 12,
     },
     addCategoryButtonText: {
@@ -36,16 +37,10 @@ export const styles = StyleSheet.create({
         backgroundColor: '#fff',
         color: '#000',
     },
-    roundButton: {
-        marginLeft: 8,
-        backgroundColor: '#4C4F6D',
-        borderRadius: 10,
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-    },
     buttonText: {
-        color: '#fff',
-        fontSize: 15,
-        fontWeight: '600',
+        color: colors.buttonText,
+        fontSize: 16,
+        fontWeight: 'bold',
+        fontFamily: fonts.mainFont,
     },
 });
