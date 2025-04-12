@@ -59,7 +59,19 @@ const AppNavigator = () => {
                         />
                     )}
                 </Stack.Screen>
-                <Stack.Screen name="AddNote">
+                <Stack.Screen
+                    name="AddNote"
+                    options={({ route }) => {
+                        const isEditing = Boolean(route.params?.note);
+                        return {
+                            title: isEditing ? 'Edit Review' : 'Add Review',
+                            headerTitleAlign: 'center',
+                            headerStyle: { backgroundColor: '#4C4F6D' },
+                            headerTintColor: '#fff',
+                            headerTitleStyle: { fontWeight: 'bold', fontSize: 18 },
+                        };
+                    }}
+                >
                     {(props) => (
                         <AddNoteScreen
                             {...props}

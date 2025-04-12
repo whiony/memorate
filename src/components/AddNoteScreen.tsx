@@ -8,7 +8,6 @@ import { firestore } from '../firebase/firebaseConfig';
 import { RootStackParamList, Note } from '../navigation/AppNavigator';
 import { uploadToCloudinary } from '../utils/uploadToCloudinary';
 
-import AddNoteHeader from '../components/AddNoteHeader';
 import TitleInput from '../components/TitleInput';
 import ImagePickerComponent from '../components/ImagePickerComponent';
 import PriceCurrencyInput from '../components/PriceCurrencyInput';
@@ -123,7 +122,6 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
     return (
         <KeyboardAwareScrollView style={styles.screen} enableOnAndroid extraScrollHeight={20}>
             <ScrollView contentContainerStyle={{ paddingBottom: 40 }} nestedScrollEnabled>
-                <AddNoteHeader title={existingNote ? 'Edit Review' : 'Add Review'} />
                 <TitleInput value={title} onChange={setTitle} />
                 <ImagePickerComponent image={image} onPickImage={pickImage} />
                 <StarRating rating={rating} onChange={setRating} />
