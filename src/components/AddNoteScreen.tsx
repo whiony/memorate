@@ -5,8 +5,9 @@ import {
     TextInput,
     TouchableOpacity,
     Image,
-    ScrollView
+    ScrollView,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation, RouteProp, NavigationProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -123,132 +124,135 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
     };
 
     return (
-        <ScrollView
-            style={styles.screen}
-            contentContainerStyle={styles.screenContent}
-            nestedScrollEnabled
-        >
-            {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>
-                    {existingNote ? 'Edit Review' : 'Add Review'}
-                </Text>
-            </View>
-
-            {/* Title */}
-            <View style={styles.section}>
-                <Text style={styles.label}>Title</Text>
-                <TextInput
-                    style={styles.input}
-                    value={title}
-                    onChangeText={setTitle}
-                    placeholder="Enter title"
-                    placeholderTextColor="#888"
-                />
-            </View>
-
-            {/* Image */}
-            <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
-                {image ? (
-                    <Image source={{ uri: image }} style={styles.image} />
-                ) : (
-                    <Text style={styles.imagePlaceholder}>Tap to pick image</Text>
-                )}
-            </TouchableOpacity>
-
-            {/* Rating */}
-            <View style={styles.section}>
-                <Text style={styles.label}>Rating</Text>
-                <View style={styles.starWrapper}>
-                    <StarRating rating={rating} onChange={setRating} />
+        <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={20}>
+            <ScrollView
+                style={styles.screen}
+                contentContainerStyle={styles.screenContent}
+                nestedScrollEnabled
+            >
+                {/* Header */}
+                <View style={styles.header}>
+                    <Text style={styles.headerTitle}>
+                        {existingNote ? 'Edit Review' : 'Add Review'}
+                    </Text>
                 </View>
-            </View>
 
-            {/* Price + Currency */}
-            <View style={styles.section}>
-                <Text style={styles.label}>Price</Text>
-                <View style={styles.row}>
+                {/* Title */}
+                <View style={styles.section}>
+                    <Text style={styles.label}>Title</Text>
                     <TextInput
-                        style={styles.priceInput}
-                        value={price}
-                        onChangeText={setPrice}
-                        keyboardType="numeric"
-                        placeholder="Enter price"
+                        style={styles.input}
+                        value={title}
+                        onChangeText={setTitle}
+                        placeholder="Enter title"
                         placeholderTextColor="#888"
                     />
-                    <TouchableOpacity onPress={toggleCurrency} style={styles.currencyToggle}>
-                        <Text style={styles.currencyText}>{currency}</Text>
-                    </TouchableOpacity>
                 </View>
-            </View>
 
-            {/* Comment */}
-            <View style={styles.section}>
-                <Text style={styles.label}>Comment</Text>
-                <TextInput
-                    style={[styles.input, styles.multiline]}
-                    value={comment}
-                    onChangeText={setComment}
-                    placeholder="Write your comment"
-                    placeholderTextColor="#888"
-                    multiline
-                />
-            </View>
+                {/* Image */}
+                <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
+                    {image ? (
+                        <Image source={{ uri: image }} style={styles.image} />
+                    ) : (
+                        <Text style={styles.imagePlaceholder}>Tap to pick image</Text>
+                    )}
+                </TouchableOpacity>
 
-            {/* Category + Add button */}
-            <View style={styles.section}>
-                <Text style={styles.label}>Category</Text>
-                <View style={styles.categoryRow}>
-                    <View style={{ flex: 1 }}>
-                        <DropDownPicker
-                            open={openDropdown}
-                            setOpen={setOpenDropdown}
-                            items={categories.map((c) => ({ label: c, value: c }))}
-                            value={category}
-                            setValue={setCategory}
-                            placeholder="Select category"
-                            style={styles.dropdown}
-                            dropDownContainerStyle={styles.dropdownContainer}
-                            textStyle={styles.dropdownText}
-                            listMode="SCROLLVIEW"
-                            scrollViewProps={{ nestedScrollEnabled: true }}
-                            zIndex={2000}
-                        />
+                {/* Rating */}
+                <View style={styles.section}>
+                    <Text style={styles.label}>Rating</Text>
+                    <View style={styles.starWrapper}>
+                        <StarRating rating={rating} onChange={setRating} />
                     </View>
-                    <TouchableOpacity
-                        onPress={() => setShowCategoryInput(!showCategoryInput)}
-                        style={[styles.addCategoryButton, { marginLeft: 8 }]}
-                    >
-                        <Text style={styles.addCategoryButtonText}>+ Add</Text>
-                    </TouchableOpacity>
                 </View>
 
-                {/* New category field (+Add button) */}
-                {showCategoryInput && (
-                    <View style={[styles.row, { marginTop: 8 }]}>
+                {/* Price + Currency */}
+                <View style={styles.section}>
+                    <Text style={styles.label}>Price</Text>
+                    <View style={styles.row}>
                         <TextInput
-                            style={[styles.input, { flex: 3 }]}
-                            placeholder="Enter new category"
-                            value={newCategory}
-                            onChangeText={setNewCategory}
+                            style={styles.priceInput}
+                            value={price}
+                            onChangeText={setPrice}
+                            keyboardType="numeric"
+                            placeholder="Enter price"
                             placeholderTextColor="#888"
                         />
-                        <TouchableOpacity onPress={handleAddCategory} style={styles.roundButton}>
-                            <Text style={styles.buttonText}>Save</Text>
+                        <TouchableOpacity onPress={toggleCurrency} style={styles.currencyToggle}>
+                            <Text style={styles.currencyText}>{currency}</Text>
                         </TouchableOpacity>
                     </View>
-                )}
-            </View>
+                </View>
 
-            {/* Save */}
-            <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>
-                    {existingNote ? 'Update' : 'Save'}
-                </Text>
-            </TouchableOpacity>
+                {/* Comment */}
+                <View style={styles.section}>
+                    <Text style={styles.label}>Comment</Text>
+                    <TextInput
+                        style={[styles.input, styles.multiline]}
+                        value={comment}
+                        onChangeText={setComment}
+                        placeholder="Write your comment"
+                        placeholderTextColor="#888"
+                        multiline
+                    />
+                </View>
 
-            {loading && <FullscreenLoader />}
-        </ScrollView>
+                {/* Category + Add button */}
+                <View style={styles.section}>
+                    <Text style={styles.label}>Category</Text>
+                    <View style={styles.categoryRow}>
+                        <View style={{ flex: 1 }}>
+                            <DropDownPicker
+                                open={openDropdown}
+                                setOpen={setOpenDropdown}
+                                items={categories.map((c) => ({ label: c, value: c }))}
+                                value={category}
+                                setValue={setCategory}
+                                placeholder="Select category"
+                                style={styles.dropdown}
+                                dropDownContainerStyle={styles.dropdownContainer}
+                                textStyle={styles.dropdownText}
+                                listMode="SCROLLVIEW"
+                                scrollViewProps={{ nestedScrollEnabled: true }}
+                                zIndex={2000}
+                                disabled={loading}
+                            />
+                        </View>
+                        <TouchableOpacity
+                            onPress={() => setShowCategoryInput(!showCategoryInput)}
+                            style={[styles.addCategoryButton, { marginLeft: 8 }]}
+                        >
+                            <Text style={styles.addCategoryButtonText}>+ Add</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* New category field (+Add button) */}
+                    {showCategoryInput && (
+                        <View style={[styles.row, { marginTop: 8 }]}>
+                            <TextInput
+                                style={[styles.input, { flex: 3 }]}
+                                placeholder="Enter new category"
+                                value={newCategory}
+                                onChangeText={setNewCategory}
+                                placeholderTextColor="#888"
+                            />
+                            <TouchableOpacity onPress={handleAddCategory} style={styles.roundButton}>
+                                <Text style={styles.buttonText}>Save</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                </View>
+
+                {/* Save */}
+                <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+                    <Text style={styles.saveButtonText}>
+                        {existingNote ? 'Update' : 'Save'}
+                    </Text>
+                </TouchableOpacity>
+
+                {loading && <FullscreenLoader />}
+            </ScrollView>
+        </KeyboardAwareScrollView>
     );
 };
 
