@@ -4,6 +4,7 @@ import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Note } from '../navigation/AppNavigator';
 import { styles } from '../styles/NoteItem.styles';
 import { format } from 'date-fns';
+import StarRating from './StarRating';
 
 interface NoteItemProps {
     note: Note;
@@ -41,14 +42,12 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, onEdit, onDelete, visibleMenu
                     </View>
 
                     <Text style={styles.title}>{note.name}</Text>
-                    <View style={styles.ratingRow}>
-                        <Text style={styles.stars}>
-                            {'★'.repeat(Math.round(note.rating || 0)) + '☆'.repeat(5 - Math.round(note.rating || 0))}
-                        </Text>
 
-                        {note.price && note.currency && (
+                    <View style={styles.ratingRow}>
+                        <StarRating rating={note.rating || 0} disabled={true} cardList={true} />
+                        {(note.price !== undefined && note.price > 0 && note.currency) && (
                             <Text style={styles.priceText}>
-                                {note.currency}{note.price}
+                                {`${note.currency}${note.price}`}
                             </Text>
                         )}
                     </View>

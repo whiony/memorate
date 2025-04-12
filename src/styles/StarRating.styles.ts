@@ -26,4 +26,12 @@ export const styles = StyleSheet.create({
         textShadowOffset: { width: 1, height: 1 },
         textShadowRadius: 2,
     },
+    cardStarContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    cardStar: {
+        fontSize: 18,
+        marginHorizontal: 2,
+    },
 });
