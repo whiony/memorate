@@ -1,48 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
-import { firestore } from '../firebase/firebaseConfig';
+import React, { useEffect, useState } from 'react';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    Image,
+    ScrollView
+} from 'react-native';
 import { useNavigation, RouteProp, NavigationProp } from '@react-navigation/native';
-import { Note, RootStackParamList } from '../navigation/AppNavigator';
-import { styles } from '../styles/AddNoteScreen.styles';
-import { uploadToCloudinary } from '../utils/uploadToCloudinary';
-import FullscreenLoader from './FullscreenLoader';
-import { Picker } from '@react-native-picker/picker';
+import * as ImagePicker from 'expo-image-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
 
-interface AddNoteScreenProps {
+import { styles } from '../styles/AddNoteScreen.styles';
+import { firestore } from '../firebase/firebaseConfig';
+import { RootStackParamList, Note } from '../navigation/AppNavigator';
+import { uploadToCloudinary } from '../utils/uploadToCloudinary';
+import StarRating from './StarRating';
+import FullscreenLoader from './FullscreenLoader';
+
+interface Props {
     route: RouteProp<RootStackParamList, 'AddNote'>;
     categories: string[];
-    addCategory: (newCategory: string) => Promise<void>;
+    addCategory: (category: string) => Promise<void>;
 }
 
-const CLOUD_NAME = process.env.CLOUD_NAME
+const CLOUD_NAME = process.env.CLOUD_NAME;
 const UPLOAD_PRESET = process.env.UPLOAD_PRESET;
 
-const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ route, categories, addCategory }) => {
+const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-    const existingNote = route.params?.note as Note | undefined;
+    const existingNote = route.params?.note;
 
     type Currency = '€' | '$' | '₴';
 
-    const [name, setName] = useState(existingNote?.name || '');
+    const [title, setTitle] = useState(existingNote?.name || '');
     const [comment, setComment] = useState(existingNote?.comment || '');
-    const [rating, setRating] = useState(existingNote?.rating?.toString() || '');
-    const [image, setImage] = useState<string | null>(existingNote?.image || null);
-    const [category, setCategory] = useState(existingNote?.category || categories[0] || '');
+    const [rating, setRating] = useState(existingNote?.rating || 0);
+    const [price, setPrice] = useState(existingNote?.price?.toString() || '');
+    const [currency, setCurrency] = useState<Currency>(existingNote?.currency || '€');
+    const [image, setImage] = useState(existingNote?.image || null);
+    const [loading, setLoading] = useState(false);
+
+    // Блок категорий
+    const [category, setCategory] = useState(existingNote?.category || '');
+    const [openDropdown, setOpenDropdown] = useState(false);
     const [showCategoryInput, setShowCategoryInput] = useState(false);
     const [newCategory, setNewCategory] = useState('');
-    const [price, setPrice] = useState(existingNote?.price?.toString() || '');
-    const [currency, setCurrency] = useState<Currency>('€');
-    const [currencyMenuVisible, setCurrencyMenuVisible] = useState(false);
-    const currencyOptions: Currency[] = ['€', '$', '₴'];
 
     useEffect(() => {
-        if (categories.length > 0 && !existingNote) {
+        if (!category && categories.length) {
             setCategory(categories[0]);
         }
-    }, [categories, existingNote]);
+    }, [categories]);
 
+    // Переключение валют
+    const currencyOptions: Currency[] = ['€', '$', '₴'];
+    const toggleCurrency = () => {
+        const currentIndex = currencyOptions.indexOf(currency);
+        setCurrency(currencyOptions[(currentIndex + 1) % currencyOptions.length]);
+    };
+
+    // Выбор изображения
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -51,180 +70,185 @@ const AddNoteScreen: React.FC<AddNoteScreenProps> = ({ route, categories, addCat
             quality: 0.7,
             base64: true,
         });
-
         if (!result.canceled) {
-            const asset = result.assets[0];
-            setImage(`data:image/jpeg;base64,${asset.base64}`);
+            setImage(`data:image/jpeg;base64,${result.assets[0].base64}`);
         }
     };
 
-    const [loading, setLoading] = useState(false);
+    // Добавление новой категории
+    const handleAddCategory = async () => {
+        if (newCategory.trim()) {
+            await addCategory(newCategory.trim());
+            setCategory(newCategory.trim());
+            setNewCategory('');
+        }
+        setShowCategoryInput(false);
+    };
 
-    const saveNote = async () => {
-        setLoading(true);
+    // Сохранение
+    const handleSave = async () => {
         try {
+            setLoading(true);
+
             let imageUrl = image;
-            if (image && image.startsWith('data:image')) {
+            if (image?.startsWith('data:image')) {
                 imageUrl = await uploadToCloudinary(image, CLOUD_NAME, UPLOAD_PRESET);
             }
 
-            const noteData = {
-                name,
+            const noteData: Partial<Note> = {
+                name: title,
                 comment,
-                rating: parseFloat(rating),
+                rating,
                 category,
-                image: imageUrl,
+                image: imageUrl || undefined,
                 created: new Date(),
                 price: price ? parseFloat(price) : undefined,
-                currency: currency || undefined,
+                currency,
             };
 
             if (existingNote) {
-                const noteRef = doc(firestore, 'reviews', existingNote.id);
-                await updateDoc(noteRef, noteData);
+                // Редактируем
+                await updateDoc(doc(firestore, 'reviews', existingNote.id), noteData);
             } else {
+                // Создаём
                 await addDoc(collection(firestore, 'reviews'), noteData);
             }
+
             navigation.goBack();
-        } catch (error) {
-            console.error('Upload or save failed', error);
+        } catch (err) {
+            console.error('Save failed', err);
         } finally {
             setLoading(false);
-            if (navigation.canGoBack()) {
-                navigation.goBack();
-            } else {
-                navigation.navigate('Home');
-            }
-        }
-    };
-
-    const handleAddCategory = async () => {
-        if (newCategory.trim()) {
-            try {
-                await addCategory(newCategory.trim());
-                setCategory(newCategory.trim());
-                setNewCategory('');
-                setShowCategoryInput(false);
-            } catch (error) {
-                console.error('Failed to add category:', error);
-            }
         }
     };
 
     return (
-        <>
-            <View style={styles.container}>
-                <Text style={styles.label}>Name:</Text>
+        <ScrollView
+            style={styles.screen}
+            contentContainerStyle={styles.screenContent}
+            nestedScrollEnabled
+        >
+            {/* Header */}
+            <View style={styles.header}>
+                <Text style={styles.headerTitle}>
+                    {existingNote ? 'Edit Review' : 'Add Review'}
+                </Text>
+            </View>
+
+            {/* Title */}
+            <View style={styles.section}>
+                <Text style={styles.label}>Title</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Enter the name of the product"
-                    value={name}
-                    onChangeText={setName}
+                    value={title}
+                    onChangeText={setTitle}
+                    placeholder="Enter title"
+                    placeholderTextColor="#888"
                 />
+            </View>
 
+            {/* Image */}
+            <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
+                {image ? (
+                    <Image source={{ uri: image }} style={styles.image} />
+                ) : (
+                    <Text style={styles.imagePlaceholder}>Tap to pick image</Text>
+                )}
+            </TouchableOpacity>
+
+            {/* Rating */}
+            <View style={styles.section}>
+                <Text style={styles.label}>Rating</Text>
+                <View style={styles.starWrapper}>
+                    <StarRating rating={rating} onChange={setRating} />
+                </View>
+            </View>
+
+            {/* Price + Currency */}
+            <View style={styles.section}>
+                <Text style={styles.label}>Price</Text>
                 <View style={styles.row}>
                     <TextInput
                         style={styles.priceInput}
-                        keyboardType="numeric"
-                        placeholder="Price"
                         value={price}
                         onChangeText={setPrice}
+                        keyboardType="numeric"
+                        placeholder="Enter price"
+                        placeholderTextColor="#888"
                     />
-                    
-                    <View style={{ position: 'relative' }}>
-                        <TouchableOpacity
-                            style={styles.currencyDropdown}
-                            onPress={() => setCurrencyMenuVisible(!currencyMenuVisible)}
-                        >
-                            <Text style={styles.currencyText}>{currency}</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    {currencyMenuVisible && (
-                        <View style={styles.currencyOptions}>
-                            {currencyOptions.map((option) => (
-                                <TouchableOpacity
-                                    key={option}
-                                    onPress={() => {
-                                        setCurrency(option);
-                                        setCurrencyMenuVisible(false);
-                                    }}
-                                >
-                                    <Text style={styles.currencyOption}>{option}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    )}
+                    <TouchableOpacity onPress={toggleCurrency} style={styles.currencyToggle}>
+                        <Text style={styles.currencyText}>{currency}</Text>
+                    </TouchableOpacity>
                 </View>
+            </View>
 
-                <Text style={styles.label}>Comment:</Text>
+            {/* Comment */}
+            <View style={styles.section}>
+                <Text style={styles.label}>Comment</Text>
                 <TextInput
-                    style={styles.input}
-                    placeholder="Add a comment"
+                    style={[styles.input, styles.multiline]}
                     value={comment}
                     onChangeText={setComment}
+                    placeholder="Write your comment"
+                    placeholderTextColor="#888"
+                    multiline
                 />
+            </View>
 
-                <Text style={styles.label}>Rating:</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter a rating from 1 to 5"
-                    keyboardType="numeric"
-                    value={rating}
-                    onChangeText={setRating}
-                />
-
-                <Text style={styles.label}>Category:</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryList}>
-                    {categories
-                        .filter(cat => cat && typeof cat === 'string' && cat.trim() !== '')
-                        .map((cat) => (
-                            <TouchableOpacity
-                                key={cat}
-                                onPress={() => setCategory(cat)}
-                                style={[
-                                    styles.categoryButton,
-                                    category === cat && styles.selectedCategoryButton,
-                                ]}
-                            >
-                                <Text style={styles.categoryButtonText}>{cat}</Text>
-                            </TouchableOpacity>
-                        ))}
-                </ScrollView>
-
-                {!showCategoryInput && (
-                    <TouchableOpacity onPress={() => setShowCategoryInput(true)} style={styles.addCategoryButton}>
-                        <Text style={styles.addCategoryButtonText}>+ Add Category</Text>
+            {/* Category + Add button */}
+            <View style={styles.section}>
+                <Text style={styles.label}>Category</Text>
+                <View style={styles.categoryRow}>
+                    <View style={{ flex: 1 }}>
+                        <DropDownPicker
+                            open={openDropdown}
+                            setOpen={setOpenDropdown}
+                            items={categories.map((c) => ({ label: c, value: c }))}
+                            value={category}
+                            setValue={setCategory}
+                            placeholder="Select category"
+                            style={styles.dropdown}
+                            dropDownContainerStyle={styles.dropdownContainer}
+                            textStyle={styles.dropdownText}
+                            listMode="SCROLLVIEW"
+                            scrollViewProps={{ nestedScrollEnabled: true }}
+                            zIndex={2000}
+                        />
+                    </View>
+                    <TouchableOpacity
+                        onPress={() => setShowCategoryInput(!showCategoryInput)}
+                        style={[styles.addCategoryButton, { marginLeft: 8 }]}
+                    >
+                        <Text style={styles.addCategoryButtonText}>+ Add</Text>
                     </TouchableOpacity>
-                )}
+                </View>
 
+                {/* New category field (+Add button) */}
                 {showCategoryInput && (
-                    <View style={styles.newCategoryContainer}>
+                    <View style={[styles.row, { marginTop: 8 }]}>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, { flex: 3 }]}
                             placeholder="Enter new category"
                             value={newCategory}
                             onChangeText={setNewCategory}
+                            placeholderTextColor="#888"
                         />
                         <TouchableOpacity onPress={handleAddCategory} style={styles.roundButton}>
-                            <Text style={styles.buttonText}>Save Category</Text>
+                            <Text style={styles.buttonText}>Save</Text>
                         </TouchableOpacity>
                     </View>
                 )}
-
-                <TouchableOpacity onPress={pickImage} style={styles.roundButton}>
-                    <Text style={styles.buttonText}>Pick Image</Text>
-                </TouchableOpacity>
-
-                {image && <Image source={{ uri: image }} style={styles.image} />}
-
-                <TouchableOpacity onPress={saveNote} style={styles.roundButton}>
-                    <Text style={styles.buttonText}>Save Note</Text>
-                </TouchableOpacity>
             </View>
 
+            {/* Save */}
+            <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+                <Text style={styles.saveButtonText}>
+                    {existingNote ? 'Update' : 'Save'}
+                </Text>
+            </TouchableOpacity>
+
             {loading && <FullscreenLoader />}
-        </>
+        </ScrollView>
     );
 };
 
