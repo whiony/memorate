@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    Image,
-    ScrollView,
-} from 'react-native';
+import { ScrollView } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation, RouteProp, NavigationProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import DropDownPicker from 'react-native-dropdown-picker';
 import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
-
-import { styles } from '../styles/AddNoteScreen.styles';
 import { firestore } from '../firebase/firebaseConfig';
 import { RootStackParamList, Note } from '../navigation/AppNavigator';
 import { uploadToCloudinary } from '../utils/uploadToCloudinary';
-import StarRating from './StarRating';
-import FullscreenLoader from './FullscreenLoader';
+
+import AddNoteHeader from '../components/AddNoteHeader';
+import TitleInput from '../components/TitleInput';
+import ImagePickerComponent from '../components/ImagePickerComponent';
+import PriceCurrencyInput from '../components/PriceCurrencyInput';
+import CommentInput from '../components/CommentInput';
+import CategorySection from '../components/CategorySection';
+import SaveButton from '../components/SaveButton';
+import StarRating from '../components/StarRating';
+import FullscreenLoader from '../components/FullscreenLoader';
+import { styles } from '../styles/AddNoteScreen.styles';
 
 interface Props {
     route: RouteProp<RootStackParamList, 'AddNote'>;
@@ -43,7 +42,7 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
     const [image, setImage] = useState(existingNote?.image || null);
     const [loading, setLoading] = useState(false);
 
-    // Блок категорий
+    // Categories block
     const [category, setCategory] = useState(existingNote?.category || '');
     const [openDropdown, setOpenDropdown] = useState(false);
     const [showCategoryInput, setShowCategoryInput] = useState(false);
@@ -55,14 +54,14 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
         }
     }, [categories]);
 
-    // Переключение валют
+    // Currency switch
     const currencyOptions: Currency[] = ['€', '$', '₴'];
     const toggleCurrency = () => {
         const currentIndex = currencyOptions.indexOf(currency);
         setCurrency(currencyOptions[(currentIndex + 1) % currencyOptions.length]);
     };
 
-    // Выбор изображения
+    // Pick image
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -76,7 +75,7 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
         }
     };
 
-    // Добавление новой категории
+    // Add new category
     const handleAddCategory = async () => {
         if (newCategory.trim()) {
             await addCategory(newCategory.trim());
@@ -86,7 +85,7 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
         setShowCategoryInput(false);
     };
 
-    // Сохранение
+    // Saving
     const handleSave = async () => {
         try {
             setLoading(true);
@@ -108,10 +107,8 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
             };
 
             if (existingNote) {
-                // Редактируем
                 await updateDoc(doc(firestore, 'reviews', existingNote.id), noteData);
             } else {
-                // Создаём
                 await addDoc(collection(firestore, 'reviews'), noteData);
             }
 
@@ -124,132 +121,33 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
     };
 
     return (
-        <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={20}>
-            <ScrollView
-                style={styles.screen}
-                contentContainerStyle={styles.screenContent}
-                nestedScrollEnabled
-            >
-                {/* Header */}
-                <View style={styles.header}>
-                    <Text style={styles.headerTitle}>
-                        {existingNote ? 'Edit Review' : 'Add Review'}
-                    </Text>
-                </View>
-
-                {/* Title */}
-                <View style={styles.section}>
-                    <Text style={styles.label}>Title</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={title}
-                        onChangeText={setTitle}
-                        placeholder="Enter title"
-                        placeholderTextColor="#888"
-                    />
-                </View>
-
-                {/* Image */}
-                <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
-                    {image ? (
-                        <Image source={{ uri: image }} style={styles.image} />
-                    ) : (
-                        <Text style={styles.imagePlaceholder}>Tap to pick image</Text>
-                    )}
-                </TouchableOpacity>
-
-                {/* Rating */}
-                <View style={styles.section}>
-                    <Text style={styles.label}>Rating</Text>
-                    <View style={styles.starWrapper}>
-                        <StarRating rating={rating} onChange={setRating} />
-                    </View>
-                </View>
-
-                {/* Price + Currency */}
-                <View style={styles.section}>
-                    <Text style={styles.label}>Price</Text>
-                    <View style={styles.row}>
-                        <TextInput
-                            style={styles.priceInput}
-                            value={price}
-                            onChangeText={setPrice}
-                            keyboardType="numeric"
-                            placeholder="Enter price"
-                            placeholderTextColor="#888"
-                        />
-                        <TouchableOpacity onPress={toggleCurrency} style={styles.currencyToggle}>
-                            <Text style={styles.currencyText}>{currency}</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                {/* Comment */}
-                <View style={styles.section}>
-                    <Text style={styles.label}>Comment</Text>
-                    <TextInput
-                        style={[styles.input, styles.multiline]}
-                        value={comment}
-                        onChangeText={setComment}
-                        placeholder="Write your comment"
-                        placeholderTextColor="#888"
-                        multiline
-                    />
-                </View>
-
-                {/* Category + Add button */}
-                <View style={styles.section}>
-                    <Text style={styles.label}>Category</Text>
-                    <View style={styles.categoryRow}>
-                        <View style={{ flex: 1 }}>
-                            <DropDownPicker
-                                open={openDropdown}
-                                setOpen={setOpenDropdown}
-                                items={categories.map((c) => ({ label: c, value: c }))}
-                                value={category}
-                                setValue={setCategory}
-                                placeholder="Select category"
-                                style={styles.dropdown}
-                                dropDownContainerStyle={styles.dropdownContainer}
-                                textStyle={styles.dropdownText}
-                                listMode="SCROLLVIEW"
-                                scrollViewProps={{ nestedScrollEnabled: true }}
-                                zIndex={2000}
-                                disabled={loading}
-                            />
-                        </View>
-                        <TouchableOpacity
-                            onPress={() => setShowCategoryInput(!showCategoryInput)}
-                            style={[styles.addCategoryButton, { marginLeft: 8 }]}
-                        >
-                            <Text style={styles.addCategoryButtonText}>+ Add</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* New category field (+Add button) */}
-                    {showCategoryInput && (
-                        <View style={[styles.row, { marginTop: 8 }]}>
-                            <TextInput
-                                style={[styles.input, { flex: 3 }]}
-                                placeholder="Enter new category"
-                                value={newCategory}
-                                onChangeText={setNewCategory}
-                                placeholderTextColor="#888"
-                            />
-                            <TouchableOpacity onPress={handleAddCategory} style={styles.roundButton}>
-                                <Text style={styles.buttonText}>Save</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                </View>
-
-                {/* Save */}
-                <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-                    <Text style={styles.saveButtonText}>
-                        {existingNote ? 'Update' : 'Save'}
-                    </Text>
-                </TouchableOpacity>
-
+        <KeyboardAwareScrollView style={styles.screen} enableOnAndroid extraScrollHeight={20}>
+            <ScrollView contentContainerStyle={{ paddingBottom: 40 }} nestedScrollEnabled>
+                <AddNoteHeader title={existingNote ? 'Edit Review' : 'Add Review'} />
+                <TitleInput value={title} onChange={setTitle} />
+                <ImagePickerComponent image={image} onPickImage={pickImage} />
+                <StarRating rating={rating} onChange={setRating} />
+                <PriceCurrencyInput
+                    price={price}
+                    onChangePrice={setPrice}
+                    currency={currency}
+                    onToggleCurrency={toggleCurrency}
+                />
+                <CommentInput comment={comment} onChangeComment={setComment} />
+                <CategorySection
+                    category={category}
+                    setCategory={setCategory}
+                    categories={categories}
+                    openDropdown={openDropdown}
+                    setOpenDropdown={setOpenDropdown}
+                    showCategoryInput={showCategoryInput}
+                    setShowCategoryInput={setShowCategoryInput}
+                    newCategory={newCategory}
+                    setNewCategory={setNewCategory}
+                    handleAddCategory={handleAddCategory}
+                    loading={loading}
+                />
+                <SaveButton onPress={handleSave} title={existingNote ? 'Update' : 'Save'} />
                 {loading && <FullscreenLoader />}
             </ScrollView>
         </KeyboardAwareScrollView>
