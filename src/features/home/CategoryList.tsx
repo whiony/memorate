@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, TouchableOpacity, Text, View } from 'react-native';
-import { styles } from '../styles/CategoryList.styles';
+import { styles } from './CategoryList.styles';
 
 interface CategoryListProps {
     categories: string[];

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import LabeledInput from './LabeledInput';
+import LabeledInput from '../../components/LabeledInput';
 
 interface CommentInputProps {
     comment: string;

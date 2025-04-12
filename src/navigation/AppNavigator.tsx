@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../components/HomeScreen';
-import AddNoteScreen from '../components/AddNoteScreen';
+import HomeScreen from '../features/home/HomeScreen';
+import AddNoteScreen from '../features/addNote/AddNoteScreen';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
-import { firestore } from '../firebase/firebaseConfig';
+import { firestore } from '../services/firebaseConfig';
 
 export interface Note {
     id: string;

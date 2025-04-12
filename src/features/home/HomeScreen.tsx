@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { View, FlatList, TouchableOpacity, Alert, Text } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Note, RootStackParamList } from '../navigation/AppNavigator';
+import { Note, RootStackParamList } from '../../navigation/AppNavigator';
 import { collection, getDocs, query, where, deleteDoc, doc, DocumentData, Query } from 'firebase/firestore';
-import { firestore } from '../firebase/firebaseConfig';
-import { styles } from '../styles/HomeScreen.styles';
-import NoteItem from '../components/NoteItem';
-import CategoryList from '../components/CategoryList';
-import { deleteFromCloudinary } from '../utils/deleteFromCloudinary';
+import { firestore } from '../../services/firebaseConfig';
+import { styles } from './HomeScreen.styles';
+import NoteItem from './NoteItem';
+import CategoryList from './CategoryList';
+import { deleteFromCloudinary } from '../../utils/deleteFromCloudinary';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, ActivityIndicator } from 'react-native';
-import { fullscreenLoaderStyles as styles } from '../styles/FullscreenLoader.styles';
+import { fullscreenLoaderStyles as styles } from './FullscreenLoader.styles';
 
 const FullscreenLoader: React.FC = () => {
   const opacity = useRef(new Animated.Value(0)).current;

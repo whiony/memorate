@@ -1,4 +1,3 @@
-// src/components/LabeledInput.tsx
 import React from 'react';
 import { View, Text, TextInput, TextInputProps, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 

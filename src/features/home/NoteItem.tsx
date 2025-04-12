@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
-import { Note } from '../navigation/AppNavigator';
-import { styles } from '../styles/NoteItem.styles';
+import { Note } from '../../navigation/AppNavigator';
+import { styles } from './NoteItem.styles';
 import { format } from 'date-fns';
-import StarRating from './StarRating';
+import StarRating from '../../components/StarRating';
 
 interface NoteItemProps {
     note: Note;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Image, Text } from 'react-native';
-import { styles } from '../styles/ImagePickerComponent.styles';
+import { styles } from './ImagePickerComponent.styles';
 
 interface ImagePickerComponentProps {
     image: string | null;

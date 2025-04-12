@@ -1,7 +1,7 @@
 // src/components/PriceCurrencyInput.tsx
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import LabeledInput from './LabeledInput';
+import LabeledInput from '../../components/LabeledInput';
 
 interface PriceCurrencyInputProps {
     price: string;

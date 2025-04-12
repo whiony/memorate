@@ -4,19 +4,19 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { useNavigation, RouteProp, NavigationProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
-import { firestore } from '../firebase/firebaseConfig';
-import { RootStackParamList, Note } from '../navigation/AppNavigator';
-import { uploadToCloudinary } from '../utils/uploadToCloudinary';
+import { firestore } from '../../services/firebaseConfig';
+import { RootStackParamList, Note } from '../../navigation/AppNavigator';
+import { uploadToCloudinary } from '../../utils/uploadToCloudinary';
 
-import TitleInput from '../components/TitleInput';
-import ImagePickerComponent from '../components/ImagePickerComponent';
-import PriceCurrencyInput from '../components/PriceCurrencyInput';
-import CommentInput from '../components/CommentInput';
-import CategorySection from '../components/CategorySection';
-import SaveButton from '../components/SaveButton';
-import StarRating from '../components/StarRating';
-import FullscreenLoader from '../components/FullscreenLoader';
-import { styles } from '../styles/AddNoteScreen.styles';
+import TitleInput from './TitleInput';
+import ImagePickerComponent from '../../components/ImagePickerComponent';
+import PriceCurrencyInput from './PriceCurrencyInput';
+import CommentInput from './CommentInput';
+import CategorySection from './CategorySection';
+import SaveButton from '../../components/SaveButton';
+import StarRating from '../../components/StarRating';
+import FullscreenLoader from '../../components/FullscreenLoader';
+import { styles } from './AddNoteScreen.styles';
 
 interface Props {
     route: RouteProp<RootStackParamList, 'AddNote'>;

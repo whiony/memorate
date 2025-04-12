@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { styles } from '../styles/CategorySection.styles';
+import { styles } from './CategorySection.styles';
 
 interface CategorySectionProps {
     category: string;

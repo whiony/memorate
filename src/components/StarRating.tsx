@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
-import { styles } from '../styles/StarRating.styles';
+import { styles } from './StarRating.styles';
 import { Ionicons } from '@expo/vector-icons';
 
 interface StarRatingProps {
