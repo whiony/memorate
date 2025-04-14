@@ -7,20 +7,24 @@ import { collection, getDocs, query, where, deleteDoc, doc, DocumentData, Query 
 import { firestore } from '../../services/firebaseConfig';
 import { styles } from './HomeScreen.styles';
 import NoteItem from './NoteItem';
-import CategoryList from './CategoryList';
 import { deleteFromCloudinary } from '../../utils/deleteFromCloudinary';
+import CategorySection from '../addNote/CategorySection';
+import { useCategories } from '../../hooks/useCategories';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
-interface HomeScreenProps {
-    categories: string[];
-}
-
-const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
+const HomeScreen: React.FC<any> = () => {
     const [notes, setNotes] = useState<Note[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [selectedCategory] = useState('All');
     const [visibleMenuId, setVisibleMenuId] = useState<string | null>(null);
     const navigation = useNavigation<HomeScreenNavigationProp>();
+
+    const [category, setCategory] = useState('All');
+    const [openDropdown, setOpenDropdown] = useState(false);
+    const [showCategoryInput, setShowCategoryInput] = useState(false);
+    const [newCategory, setNewCategory] = useState('');
+
+    const { categories, addCategory, loading } = useCategories();
 
     const fetchNotes = async () => {
         try {
@@ -54,7 +58,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
             if (note?.image?.startsWith('https://res.cloudinary.com')) {
                 await deleteFromCloudinary(note.image);
             }
-
             await deleteDoc(doc(firestore, 'reviews', noteId));
             setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
             Alert.alert("Success", "Note deleted successfully.");
@@ -75,10 +78,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ categories }) => {
 
     return (
         <View style={styles.container}>
-            <CategoryList
+            <CategorySection
+                category={category}
+                setCategory={setCategory}
                 categories={categories}
-                selectedCategory={selectedCategory}
-                onSelectCategory={setSelectedCategory}
+                openDropdown={openDropdown}
+                setOpenDropdown={setOpenDropdown}
+                showCategoryInput={showCategoryInput}
+                setShowCategoryInput={setShowCategoryInput}
+                newCategory={newCategory}
+                setNewCategory={setNewCategory}
+                handleAddCategory={async () => await addCategory(newCategory)}
+                loading={loading}
+                showAddButton={false}
             />
 
             <FlatList

@@ -18,21 +18,20 @@ import StarRating from '../../components/StarRating';
 import FullscreenLoader from '../../components/FullscreenLoader';
 import { styles } from './AddNoteScreen.styles';
 import { globalStyles } from '../../theme/theme';
+import { useCategories } from '../../hooks/useCategories';
+
+type Currency = '€' | '$' | '₴';
 
 interface Props {
     route: RouteProp<RootStackParamList, 'AddNote'>;
-    categories: string[];
-    addCategory: (category: string) => Promise<void>;
 }
 
 const CLOUD_NAME = process.env.CLOUD_NAME;
 const UPLOAD_PRESET = process.env.UPLOAD_PRESET;
 
-const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
+const AddNoteScreen: React.FC<Props> = ({ route }) => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const existingNote = route.params?.note;
-
-    type Currency = '€' | '$' | '₴';
 
     const [title, setTitle] = useState(existingNote?.name || '');
     const [comment, setComment] = useState(existingNote?.comment || '');
@@ -40,13 +39,13 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
     const [price, setPrice] = useState(existingNote?.price?.toString() || '');
     const [currency, setCurrency] = useState<Currency>(existingNote?.currency || '€');
     const [image, setImage] = useState(existingNote?.image || null);
-    const [loading, setLoading] = useState(false);
+    const [loadingNote, setLoadingNote] = useState(false);
 
-    // Categories block
     const [category, setCategory] = useState(existingNote?.category || '');
     const [openDropdown, setOpenDropdown] = useState(false);
     const [showCategoryInput, setShowCategoryInput] = useState(false);
     const [newCategory, setNewCategory] = useState('');
+    const { categories, addCategory, loading } = useCategories();
 
     useEffect(() => {
         if (!category && categories.length) {
@@ -54,14 +53,12 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
         }
     }, [categories]);
 
-    // Currency switch
     const currencyOptions: Currency[] = ['€', '$', '₴'];
     const toggleCurrency = () => {
         const currentIndex = currencyOptions.indexOf(currency);
         setCurrency(currencyOptions[(currentIndex + 1) % currencyOptions.length]);
     };
 
-    // Pick image
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -75,7 +72,6 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
         }
     };
 
-    // Add new category
     const handleAddCategory = async () => {
         if (newCategory.trim()) {
             await addCategory(newCategory.trim());
@@ -85,16 +81,13 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
         setShowCategoryInput(false);
     };
 
-    // Saving
     const handleSave = async () => {
         try {
-            setLoading(true);
-
+            setLoadingNote(true);
             let imageUrl = image;
             if (image?.startsWith('data:image')) {
                 imageUrl = await uploadToCloudinary(image, CLOUD_NAME, UPLOAD_PRESET);
             }
-
             const noteData: Partial<Note> = {
                 name: title,
                 comment,
@@ -105,18 +98,16 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
                 price: price ? parseFloat(price) : undefined,
                 currency,
             };
-
             if (existingNote) {
                 await updateDoc(doc(firestore, 'reviews', existingNote.id), noteData);
             } else {
                 await addDoc(collection(firestore, 'reviews'), noteData);
             }
-
             navigation.goBack();
         } catch (err) {
             console.error('Save failed', err);
         } finally {
-            setLoading(false);
+            setLoadingNote(false);
         }
     };
 
@@ -148,13 +139,12 @@ const AddNoteScreen: React.FC<Props> = ({ route, categories, addCategory }) => {
                     newCategory={newCategory}
                     setNewCategory={setNewCategory}
                     handleAddCategory={handleAddCategory}
-                    loading={loading}
+                    loading={loadingNote || loading}
                 />
                 <SaveButton onPress={handleSave} title={existingNote ? 'Update' : 'Save'} />
-                {loading && <FullscreenLoader />}
+                {(loadingNote || loading) && <FullscreenLoader />}
             </ScrollView>
         </KeyboardAwareScrollView>
-
     );
 };
 
