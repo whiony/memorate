@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, FlatList, TouchableOpacity, Alert, Text } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Note, RootStackParamList } from '../../navigation/AppNavigator';
 import { collection, getDocs, query, where, deleteDoc, doc, DocumentData, Query } from 'firebase/firestore';
@@ -15,7 +15,6 @@ type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<any> = () => {
     const [notes, setNotes] = useState<Note[]>([]);
-    const [selectedCategory] = useState('All');
     const [visibleMenuId, setVisibleMenuId] = useState<string | null>(null);
     const navigation = useNavigation<HomeScreenNavigationProp>();
 
@@ -29,8 +28,8 @@ const HomeScreen: React.FC<any> = () => {
     const fetchNotes = async () => {
         try {
             let notesQuery: Query<DocumentData> = collection(firestore, 'reviews');
-            if (selectedCategory !== 'All') {
-                notesQuery = query(notesQuery, where('category', '==', selectedCategory));
+            if (category !== 'All') {
+                notesQuery = query(notesQuery, where('category', '==', category));
             }
 
             const querySnapshot = await getDocs(notesQuery);
@@ -39,17 +38,22 @@ const HomeScreen: React.FC<any> = () => {
                 return {
                     id: doc.id,
                     ...data,
-                    created: data.created?.toDate ? data.created.toDate() : new Date(data.created || Date.now()),
+                    created: data.created?.toDate
+                        ? data.created.toDate()
+                        : new Date(data.created || Date.now()),
                 } as Note;
             });
 
             notesList.sort((a, b) => (b.created?.getTime() || 0) - (a.created?.getTime() || 0));
-
             setNotes(notesList);
         } catch (error) {
             console.error('Error fetching notes: ', error);
         }
     };
+
+    useEffect(() => {
+        fetchNotes();
+    }, [category]);
 
     const handleDelete = async (noteId: string) => {
         try {
@@ -70,18 +74,12 @@ const HomeScreen: React.FC<any> = () => {
         navigation.navigate('AddNote', { note });
     };
 
-    useFocusEffect(
-        React.useCallback(() => {
-            fetchNotes();
-        }, [selectedCategory])
-    );
-
     return (
         <View style={styles.container}>
             <CategorySection
                 category={category}
                 setCategory={setCategory}
-                categories={categories}
+                categories={['All', ...categories]}
                 openDropdown={openDropdown}
                 setOpenDropdown={setOpenDropdown}
                 showCategoryInput={showCategoryInput}
