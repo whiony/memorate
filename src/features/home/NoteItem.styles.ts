@@ -3,15 +3,10 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
     card: {
         backgroundColor: '#fff',
-        borderRadius: 16,
+        borderRadius: 12,
         padding: 12,
         marginBottom: 12,
         flexDirection: 'column',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
     },
 
     row: {

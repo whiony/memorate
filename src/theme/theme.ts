@@ -1,14 +1,14 @@
 import { StyleSheet } from 'react-native';
 
 export const colors = {
-    screenBackground: '#FAF8FF',
+    screenBackground: '#F2F2F7',
     containerBackground: '#FFFFFF',
     primary: '#4C4F6D',
     text: '#333',
     buttonText: '#fff',
     placeholder: '#999',
-    borderAccent: '#E0DFF9',
-    shadow: '#4C4F6D'
+    borderAccent: '#54545657',
+    shadow: '#545456'
 };
 
 export const borders = {
@@ -35,16 +35,9 @@ export const globalStyles = StyleSheet.create({
     container: {
         backgroundColor: colors.containerBackground,
         borderRadius: 20,
-        borderWidth: borders.width,
-        borderColor: colors.borderAccent,
         padding: 16,
         marginHorizontal: 16,
         marginVertical: 16,
-        shadowColor: colors.shadow,
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.2,
-        shadowRadius: 12,
-        elevation: 8,
     },
     standartInput: {
         flex: 1,

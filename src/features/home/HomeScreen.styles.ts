@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { colors, fonts } from '../../theme/theme';
 
 export const styles = StyleSheet.create({
     container: {
@@ -15,10 +16,12 @@ export const styles = StyleSheet.create({
         paddingBottom: 100,
     },
     addButton: {
+        display: 'flex',
+        flexDirection: "row",
         position: 'absolute',
         right: 20,
         bottom: 30,
-        backgroundColor: '#f4511e',
+        backgroundColor: colors.primary,
         width: 60,
         height: 60,
         borderRadius: 30,
@@ -29,6 +32,8 @@ export const styles = StyleSheet.create({
     addButtonText: {
         color: 'white',
         fontSize: 30,
-        lineHeight: 34,
+        fontFamily: fonts.mainFont,
+        textAlign: 'center',
+        marginTop: -4,
     },
 });

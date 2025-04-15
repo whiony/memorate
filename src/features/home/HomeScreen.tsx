@@ -5,11 +5,12 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { Note, RootStackParamList } from '../../navigation/AppNavigator';
 import { collection, getDocs, query, where, deleteDoc, doc, DocumentData, Query } from 'firebase/firestore';
 import { firestore } from '../../services/firebaseConfig';
-import { styles } from './HomeScreen.styles';
-import NoteItem from './NoteItem';
 import { deleteFromCloudinary } from '../../utils/deleteFromCloudinary';
 import CategorySection from '../addNote/CategorySection';
+import NoteItem from './NoteItem';
 import { useCategories } from '../../hooks/useCategories';
+import { globalStyles } from '../../theme/theme';
+import { styles } from './HomeScreen.styles';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -58,7 +59,6 @@ const HomeScreen: React.FC<any> = () => {
     const handleDelete = async (noteId: string) => {
         try {
             const note = notes.find(n => n.id === noteId);
-            console.log("image", note)
             if (note?.image?.startsWith('https://res.cloudinary.com')) {
                 await deleteFromCloudinary(note.image);
             }
@@ -75,7 +75,7 @@ const HomeScreen: React.FC<any> = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[globalStyles.screenBackground, { flex: 1 }]}>
             <CategorySection
                 category={category}
                 setCategory={setCategory}
@@ -88,14 +88,12 @@ const HomeScreen: React.FC<any> = () => {
                 setNewCategory={setNewCategory}
                 handleAddCategory={async () => await addCategory(newCategory)}
                 loading={loading}
-                showAddButton={false}
+                editableCategory={false}
             />
 
             <FlatList
                 data={notes}
                 keyExtractor={(item) => item.id}
-                numColumns={1}
-                contentContainerStyle={styles.flatListContentContainer}
                 renderItem={({ item }) => (
                     <NoteItem
                         note={item}
@@ -105,6 +103,7 @@ const HomeScreen: React.FC<any> = () => {
                         setVisibleMenuId={setVisibleMenuId}
                     />
                 )}
+                contentContainerStyle={styles.flatListContentContainer}
             />
 
             <TouchableOpacity

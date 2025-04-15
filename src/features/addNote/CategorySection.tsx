@@ -17,7 +17,7 @@ interface CategorySectionProps {
     setNewCategory: React.Dispatch<React.SetStateAction<string>>;
     handleAddCategory: () => void;
     loading: boolean;
-    showAddButton?: boolean;
+    editableCategory?: boolean;
 }
 
 const CategorySection: React.FC<CategorySectionProps> = ({
@@ -32,11 +32,13 @@ const CategorySection: React.FC<CategorySectionProps> = ({
     setNewCategory,
     handleAddCategory,
     loading,
-    showAddButton,
+    editableCategory,
 }) => (
     <CategoriesProvider>
         <View style={styles.section}>
-            <Text style={globalStyles.label}>Category</Text>
+            {editableCategory !== false && (
+                <Text style={globalStyles.label}>Category</Text>
+            )}
             <View style={styles.categoryRow}>
                 <View style={{ flex: 1 }}>
                     <DropDownPicker
@@ -46,8 +48,14 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                         value={category}
                         setValue={setCategory}
                         placeholder="Select category"
-                        style={globalStyles.standartDropdown}
-                        dropDownContainerStyle={globalStyles.standartDropdownContainer}
+                        style={[
+                            globalStyles.standartDropdown,
+                            editableCategory === false && { borderWidth: 0, borderColor: 'transparent' },
+                        ]}
+                        dropDownContainerStyle={[
+                            globalStyles.standartDropdownContainer,
+                            editableCategory === false && { borderWidth: 0, borderColor: 'transparent' },
+                        ]}
                         textStyle={globalStyles.standartDropdownText}
                         listMode="SCROLLVIEW"
                         scrollViewProps={{ nestedScrollEnabled: true }}
@@ -55,7 +63,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                         disabled={loading}
                     />
                 </View>
-                {showAddButton !== false && (
+                {editableCategory !== false && (
                     <TouchableOpacity
                         onPress={() => setShowCategoryInput(!showCategoryInput)}
                         style={[styles.categoryButton, globalStyles.standartButton]}
