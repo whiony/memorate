@@ -54,7 +54,10 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                         ]}
                         dropDownContainerStyle={[
                             globalStyles.standartDropdownContainer,
-                            editableCategory === false && { borderWidth: 0, borderColor: 'transparent' },
+                            editableCategory === false && {
+                                borderWidth: 1,
+                                borderColor: '#e2e2e2',
+                            },
                         ]}
                         textStyle={globalStyles.standartDropdownText}
                         listMode="SCROLLVIEW"

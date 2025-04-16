@@ -1,3 +1,4 @@
+// HomeScreen.tsx
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, TouchableOpacity, Alert, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -6,25 +7,34 @@ import { Note, RootStackParamList } from '../../navigation/AppNavigator';
 import { collection, getDocs, query, where, deleteDoc, doc, DocumentData, Query } from 'firebase/firestore';
 import { firestore } from '../../services/firebaseConfig';
 import { deleteFromCloudinary } from '../../utils/deleteFromCloudinary';
-import CategorySection from '../addNote/CategorySection';
-import NoteItem from './NoteItem';
 import { useCategories } from '../../hooks/useCategories';
+import CategorySection from '../addNote/CategorySection';
+import SortingDropDown from './SortingDropDown'; // <-- наш новый компонент
+import NoteItem from './NoteItem';
 import { globalStyles } from '../../theme/theme';
 import { styles } from './HomeScreen.styles';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<any> = () => {
-    const [notes, setNotes] = useState<Note[]>([]);
-    const [visibleMenuId, setVisibleMenuId] = useState<string | null>(null);
     const navigation = useNavigation<HomeScreenNavigationProp>();
 
+    const [notes, setNotes] = useState<Note[]>([]);
+    const [visibleMenuId, setVisibleMenuId] = useState<string | null>(null);
+
+    // ============ Состояние для CategorySection ============
     const [category, setCategory] = useState('All');
     const [openDropdown, setOpenDropdown] = useState(false);
     const [showCategoryInput, setShowCategoryInput] = useState(false);
     const [newCategory, setNewCategory] = useState('');
 
+    // Подтягиваем категории из контекста
     const { categories, addCategory, loading } = useCategories();
+
+    // ============ Состояние для сортировки ============
+    const [sortBy, setSortBy] = useState<'date' | 'price'>('date');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+    const [openSortDropdown, setOpenSortDropdown] = useState(false);
 
     const fetchNotes = async () => {
         try {
@@ -34,7 +44,7 @@ const HomeScreen: React.FC<any> = () => {
             }
 
             const querySnapshot = await getDocs(notesQuery);
-            const notesList = querySnapshot.docs.map(doc => {
+            const loadedNotes = querySnapshot.docs.map((doc) => {
                 const data = doc.data();
                 return {
                     id: doc.id,
@@ -45,8 +55,23 @@ const HomeScreen: React.FC<any> = () => {
                 } as Note;
             });
 
-            notesList.sort((a, b) => (b.created?.getTime() || 0) - (a.created?.getTime() || 0));
-            setNotes(notesList);
+            // Сортируем в зависимости от sortBy и sortOrder
+            if (sortBy === 'date') {
+                loadedNotes.sort((a, b) => {
+                    const aTime = a.created?.getTime() ?? 0;
+                    const bTime = b.created?.getTime() ?? 0;
+                    return sortOrder === 'asc' ? aTime - bTime : bTime - aTime;
+                });
+            } else {
+                // sortBy === 'price'
+                loadedNotes.sort((a, b) => {
+                    const aPrice = a.price ?? 0;
+                    const bPrice = b.price ?? 0;
+                    return sortOrder === 'asc' ? aPrice - bPrice : bPrice - aPrice;
+                });
+            }
+
+            setNotes(loadedNotes);
         } catch (error) {
             console.error('Error fetching notes: ', error);
         }
@@ -54,17 +79,17 @@ const HomeScreen: React.FC<any> = () => {
 
     useEffect(() => {
         fetchNotes();
-    }, [category]);
+    }, [category, sortBy, sortOrder]);
 
     const handleDelete = async (noteId: string) => {
         try {
-            const note = notes.find(n => n.id === noteId);
+            const note = notes.find((n) => n.id === noteId);
             if (note?.image?.startsWith('https://res.cloudinary.com')) {
                 await deleteFromCloudinary(note.image);
             }
             await deleteDoc(doc(firestore, 'reviews', noteId));
-            setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
-            Alert.alert("Success", "Note deleted successfully.");
+            setNotes((prev) => prev.filter((n) => n.id !== noteId));
+            Alert.alert('Success', 'Note deleted successfully.');
         } catch (error) {
             console.error('Error deleting note: ', error);
         }
@@ -76,20 +101,45 @@ const HomeScreen: React.FC<any> = () => {
 
     return (
         <View style={[globalStyles.screenBackground, { flex: 1 }]}>
-            <CategorySection
-                category={category}
-                setCategory={setCategory}
-                categories={['All', ...categories]}
-                openDropdown={openDropdown}
-                setOpenDropdown={setOpenDropdown}
-                showCategoryInput={showCategoryInput}
-                setShowCategoryInput={setShowCategoryInput}
-                newCategory={newCategory}
-                setNewCategory={setNewCategory}
-                handleAddCategory={async () => await addCategory(newCategory)}
-                loading={loading}
-                editableCategory={false}
-            />
+            <View
+                style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 8,
+                    paddingHorizontal: 16,
+                    marginTop: 12,
+                    zIndex: 2000,
+                }}
+            >
+                <View style={{ flex: 1 }}>
+                    <CategorySection
+                        category={category}
+                        setCategory={setCategory}
+                        categories={['All', ...categories]}
+                        openDropdown={openDropdown}
+                        setOpenDropdown={setOpenDropdown}
+                        showCategoryInput={showCategoryInput}
+                        setShowCategoryInput={setShowCategoryInput}
+                        newCategory={newCategory}
+                        setNewCategory={setNewCategory}
+                        handleAddCategory={async () => await addCategory(newCategory)}
+                        loading={loading}
+                        editableCategory={false}
+                    />
+                </View>
+
+                <View style={{ flex: 1 }}>
+                    <SortingDropDown
+                        sortBy={sortBy}
+                        setSortBy={setSortBy}
+                        sortOrder={sortOrder}
+                        setSortOrder={setSortOrder}
+                        openSortDropdown={openSortDropdown}
+                        setOpenSortDropdown={setOpenSortDropdown}
+                    />
+                </View>
+            </View>
 
             <FlatList
                 data={notes}

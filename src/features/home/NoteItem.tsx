@@ -45,13 +45,13 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, onEdit, onDelete, visibleMenu
 
                     <View style={styles.ratingRow}>
                         <StarRating rating={note.rating || 0} disabled={true} cardList={true} />
-                        {(note.price !== undefined && note.price > 0 && note.currency) && (
-                            <Text style={styles.priceText}>
-                                {`${note.currency}${note.price}`}
-                            </Text>
-                        )}
                     </View>
                     <Text style={styles.comment}>{note.comment}</Text>
+                    {(note.price !== undefined && note.price > 0 && note.currency) && (
+                        <Text style={styles.priceText}>
+                            {`${note.currency}${note.price}`}
+                        </Text>
+                    )}
                 </View>
             </View>
         </View>
