@@ -17,7 +17,7 @@ export const borders = {
 }
 
 export const fonts = {
-    mainFont: 'Poppins-Regular',
+    mainFont: 'Montserrat-Regular',
 }
 
 export const globalStyles = StyleSheet.create({

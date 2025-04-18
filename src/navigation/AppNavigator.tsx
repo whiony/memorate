@@ -35,7 +35,7 @@ const AppNavigator = () => {
                         options={{
                             title: 'Memorate',
                             headerTitleStyle: {
-                                fontFamily: 'Poppins-Regular',
+                                fontFamily: 'Montserrat-Regular',
                                 fontWeight: 'bold',
                                 fontSize: 18,
                             },
