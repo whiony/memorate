@@ -12,7 +12,6 @@ export const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     flatListContentContainer: {
-        paddingHorizontal: 16,
         paddingBottom: 100,
     },
     addButton: {

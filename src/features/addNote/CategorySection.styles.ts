@@ -3,9 +3,6 @@ import { colors, fonts } from '../../theme/theme';
 
 export const styles = StyleSheet.create({
     section: {
-        marginHorizontal: 16,
-        marginBottom: 6,
-        marginTop: 14,
     },
     categoryRow: {
         flexDirection: 'row',

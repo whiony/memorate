@@ -100,45 +100,43 @@ const HomeScreen: React.FC<any> = () => {
     };
 
     return (
-        <View style={[globalStyles.screenBackground, { flex: 1 }]}>
+        <View style={[globalStyles.screenBackground, {
+            flex: 1,
+            paddingHorizontal: 16,
+        }]}>
             <View
                 style={{
                     display: 'flex',
                     flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 8,
-                    paddingHorizontal: 16,
-                    marginTop: 12,
+                    marginVertical: 16,
                     zIndex: 2000,
+                    width: "100%",
+                    gap: 16
                 }}
             >
-                <View style={{ flex: 1 }}>
-                    <CategorySection
-                        category={category}
-                        setCategory={setCategory}
-                        categories={['All', ...categories]}
-                        openDropdown={openDropdown}
-                        setOpenDropdown={setOpenDropdown}
-                        showCategoryInput={showCategoryInput}
-                        setShowCategoryInput={setShowCategoryInput}
-                        newCategory={newCategory}
-                        setNewCategory={setNewCategory}
-                        handleAddCategory={async () => await addCategory(newCategory)}
-                        loading={loading}
-                        editableCategory={false}
-                    />
-                </View>
-
-                <View style={{ flex: 1 }}>
-                    <SortingDropDown
-                        sortBy={sortBy}
-                        setSortBy={setSortBy}
-                        sortOrder={sortOrder}
-                        setSortOrder={setSortOrder}
-                        openSortDropdown={openSortDropdown}
-                        setOpenSortDropdown={setOpenSortDropdown}
-                    />
-                </View>
+                <CategorySection
+                    style={{ flex: 1 }}
+                    category={category}
+                    setCategory={setCategory}
+                    categories={['All', ...categories]}
+                    openDropdown={openDropdown}
+                    setOpenDropdown={setOpenDropdown}
+                    showCategoryInput={showCategoryInput}
+                    setShowCategoryInput={setShowCategoryInput}
+                    newCategory={newCategory}
+                    setNewCategory={setNewCategory}
+                    handleAddCategory={async () => await addCategory(newCategory)}
+                    loading={loading}
+                    editableCategory={false}
+                />
+                <SortingDropDown
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    sortOrder={sortOrder}
+                    setSortOrder={setSortOrder}
+                    openSortDropdown={openSortDropdown}
+                    setOpenSortDropdown={setOpenSortDropdown}
+                />
             </View>
 
             <FlatList
@@ -155,7 +153,6 @@ const HomeScreen: React.FC<any> = () => {
                 )}
                 contentContainerStyle={styles.flatListContentContainer}
             />
-
             <TouchableOpacity
                 style={styles.addButton}
                 onPress={() => navigation.navigate('AddNote', {})}

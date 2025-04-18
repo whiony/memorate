@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation, RouteProp, NavigationProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -117,32 +117,34 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
             enableOnAndroid
             extraScrollHeight={20}
         >
-            <ScrollView contentContainerStyle={[globalStyles.container, { paddingBottom: 40 }]} nestedScrollEnabled>
-                <TitleInput value={title} onChange={setTitle} />
-                <ImagePickerComponent image={image} onPickImage={pickImage} />
-                <StarRating rating={rating} onChange={setRating} />
-                <PriceCurrencyInput
-                    price={price}
-                    onChangePrice={setPrice}
-                    currency={currency}
-                    onToggleCurrency={toggleCurrency}
-                />
-                <CommentInput comment={comment} onChangeComment={setComment} />
-                <CategorySection
-                    category={category}
-                    setCategory={setCategory}
-                    categories={categories}
-                    openDropdown={openDropdown}
-                    setOpenDropdown={setOpenDropdown}
-                    showCategoryInput={showCategoryInput}
-                    setShowCategoryInput={setShowCategoryInput}
-                    newCategory={newCategory}
-                    setNewCategory={setNewCategory}
-                    handleAddCategory={handleAddCategory}
-                    loading={loadingNote || loading}
-                />
-                <SaveButton onPress={handleSave} title={existingNote ? 'Update' : 'Save'} />
-                {(loadingNote || loading) && <FullscreenLoader />}
+            <ScrollView contentContainerStyle={[globalStyles.container, { paddingBottom: 40, }]} nestedScrollEnabled>
+                <View style={{ paddingHorizontal: 16, flexDirection: "column", gap: 8 }}>
+                    <TitleInput value={title} onChange={setTitle} />
+                    <ImagePickerComponent image={image} onPickImage={pickImage} />
+                    <StarRating rating={rating} onChange={setRating} />
+                    <PriceCurrencyInput
+                        price={price}
+                        onChangePrice={setPrice}
+                        currency={currency}
+                        onToggleCurrency={toggleCurrency}
+                    />
+                    <CommentInput comment={comment} onChangeComment={setComment} />
+                    <CategorySection
+                        category={category}
+                        setCategory={setCategory}
+                        categories={categories}
+                        openDropdown={openDropdown}
+                        setOpenDropdown={setOpenDropdown}
+                        showCategoryInput={showCategoryInput}
+                        setShowCategoryInput={setShowCategoryInput}
+                        newCategory={newCategory}
+                        setNewCategory={setNewCategory}
+                        handleAddCategory={handleAddCategory}
+                        loading={loadingNote || loading}
+                    />
+                    <SaveButton onPress={handleSave} title={existingNote ? 'Update' : 'Save'} />
+                    {(loadingNote || loading) && <FullscreenLoader />}
+                </View>
             </ScrollView>
         </KeyboardAwareScrollView>
     );

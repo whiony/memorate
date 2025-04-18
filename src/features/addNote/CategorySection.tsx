@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from './CategorySection.styles';
 import { globalStyles } from '../../theme/theme';
@@ -18,6 +18,7 @@ interface CategorySectionProps {
     handleAddCategory: () => void;
     loading: boolean;
     editableCategory?: boolean;
+    style?: StyleProp<ViewStyle>
 }
 
 const CategorySection: React.FC<CategorySectionProps> = ({
@@ -33,9 +34,10 @@ const CategorySection: React.FC<CategorySectionProps> = ({
     handleAddCategory,
     loading,
     editableCategory,
+    style
 }) => (
     <CategoriesProvider>
-        <View style={styles.section}>
+        <View style={[styles.section, style]}>
             {editableCategory !== false && (
                 <Text style={globalStyles.label}>Category</Text>
             )}
