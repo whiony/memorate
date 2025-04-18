@@ -1,162 +1,74 @@
-// HomeScreen.tsx
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, TouchableOpacity, Alert, Text } from 'react-native';
+import { View, FlatList, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Note, RootStackParamList } from '../../navigation/AppNavigator';
-import { collection, getDocs, query, where, deleteDoc, doc, DocumentData, Query } from 'firebase/firestore';
+import { collection, getDocs, query, where, deleteDoc, doc, Query, DocumentData } from 'firebase/firestore';
 import { firestore } from '../../services/firebaseConfig';
 import { deleteFromCloudinary } from '../../utils/deleteFromCloudinary';
 import { useCategories } from '../../hooks/useCategories';
-import CategorySection from '../addNote/CategorySection';
-import SortingDropDown from './SortingDropDown'; // <-- наш новый компонент
 import NoteItem from './NoteItem';
-import { globalStyles } from '../../theme/theme';
+import CategoryFilter from './CategoryFilter';
 import { styles } from './HomeScreen.styles';
+import { globalStyles } from '../../theme/theme';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
-const HomeScreen: React.FC<any> = () => {
+const HomeScreen: React.FC = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>();
-
     const [notes, setNotes] = useState<Note[]>([]);
-    const [visibleMenuId, setVisibleMenuId] = useState<string | null>(null);
-
-    // ============ Состояние для CategorySection ============
     const [category, setCategory] = useState('All');
-    const [openDropdown, setOpenDropdown] = useState(false);
-    const [showCategoryInput, setShowCategoryInput] = useState(false);
-    const [newCategory, setNewCategory] = useState('');
-
-    // Подтягиваем категории из контекста
-    const { categories, addCategory, loading } = useCategories();
-
-    // ============ Состояние для сортировки ============
-    const [sortBy, setSortBy] = useState<'date' | 'price'>('date');
-    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-    const [openSortDropdown, setOpenSortDropdown] = useState(false);
+    const { categories } = useCategories();
 
     const fetchNotes = async () => {
-        try {
-            let notesQuery: Query<DocumentData> = collection(firestore, 'reviews');
-            if (category !== 'All') {
-                notesQuery = query(notesQuery, where('category', '==', category));
-            }
-
-            const querySnapshot = await getDocs(notesQuery);
-            const loadedNotes = querySnapshot.docs.map((doc) => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    ...data,
-                    created: data.created?.toDate
-                        ? data.created.toDate()
-                        : new Date(data.created || Date.now()),
-                } as Note;
-            });
-
-            // Сортируем в зависимости от sortBy и sortOrder
-            if (sortBy === 'date') {
-                loadedNotes.sort((a, b) => {
-                    const aTime = a.created?.getTime() ?? 0;
-                    const bTime = b.created?.getTime() ?? 0;
-                    return sortOrder === 'asc' ? aTime - bTime : bTime - aTime;
-                });
-            } else {
-                // sortBy === 'price'
-                loadedNotes.sort((a, b) => {
-                    const aPrice = a.price ?? 0;
-                    const bPrice = b.price ?? 0;
-                    return sortOrder === 'asc' ? aPrice - bPrice : bPrice - aPrice;
-                });
-            }
-
-            setNotes(loadedNotes);
-        } catch (error) {
-            console.error('Error fetching notes: ', error);
+        let notesQuery: Query<DocumentData> = collection(firestore, 'reviews');
+        if (category !== 'All') {
+            notesQuery = query(notesQuery, where('category', '==', category));
         }
+        const snap = await getDocs(notesQuery);
+        const loaded = snap.docs.map(d => ({
+            id: d.id,
+            ...d.data(),
+            created: d.data().created?.toDate ? d.data().created.toDate() : new Date(),
+        }));
+        (loaded as Note[]).sort((a, b) => (b.created?.getTime() ?? 0) - (a.created?.getTime() ?? 0));
+        setNotes(loaded as Note[]);
     };
 
-    useEffect(() => {
-        fetchNotes();
-    }, [category, sortBy, sortOrder]);
+    useEffect(() => { fetchNotes(); }, [category]);
 
     const handleDelete = async (noteId: string) => {
-        try {
-            const note = notes.find((n) => n.id === noteId);
-            if (note?.image?.startsWith('https://res.cloudinary.com')) {
-                await deleteFromCloudinary(note.image);
-            }
-            await deleteDoc(doc(firestore, 'reviews', noteId));
-            setNotes((prev) => prev.filter((n) => n.id !== noteId));
-            Alert.alert('Success', 'Note deleted successfully.');
-        } catch (error) {
-            console.error('Error deleting note: ', error);
+        const note = notes.find(n => n.id === noteId);
+        if (note?.image?.startsWith('https://res.cloudinary.com')) {
+            await deleteFromCloudinary(note.image);
         }
+        await deleteDoc(doc(firestore, 'reviews', noteId));
+        setNotes(prev => prev.filter(n => n.id !== noteId));
     };
 
-    const openEditNote = (note: Note) => {
+    const openEdit = (note: Note) => {
         navigation.navigate('AddNote', { note });
     };
 
     return (
-        <View style={[globalStyles.screenBackground, {
-            flex: 1,
-            paddingHorizontal: 16,
-        }]}>
-            <View
-                style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    marginVertical: 16,
-                    zIndex: 2000,
-                    width: "100%",
-                    gap: 16
-                }}
-            >
-                <CategorySection
-                    style={{ flex: 1 }}
-                    category={category}
-                    setCategory={setCategory}
+        <View style={[globalStyles.screenBackground, { flex: 1, paddingHorizontal: 14 }]}>
+            <Text style={styles.header}>Memorate</Text>
+            <View style={styles.categoryContainer}>
+                <CategoryFilter
                     categories={['All', ...categories]}
-                    openDropdown={openDropdown}
-                    setOpenDropdown={setOpenDropdown}
-                    showCategoryInput={showCategoryInput}
-                    setShowCategoryInput={setShowCategoryInput}
-                    newCategory={newCategory}
-                    setNewCategory={setNewCategory}
-                    handleAddCategory={async () => await addCategory(newCategory)}
-                    loading={loading}
-                    editableCategory={false}
-                />
-                <SortingDropDown
-                    sortBy={sortBy}
-                    setSortBy={setSortBy}
-                    sortOrder={sortOrder}
-                    setSortOrder={setSortOrder}
-                    openSortDropdown={openSortDropdown}
-                    setOpenSortDropdown={setOpenSortDropdown}
+                    selected={category}
+                    onSelect={setCategory}
                 />
             </View>
-
             <FlatList
                 data={notes}
-                keyExtractor={(item) => item.id}
+                keyExtractor={item => item.id}
                 renderItem={({ item }) => (
-                    <NoteItem
-                        note={item}
-                        onEdit={openEditNote}
-                        onDelete={handleDelete}
-                        visibleMenuId={visibleMenuId}
-                        setVisibleMenuId={setVisibleMenuId}
-                    />
+                    <NoteItem note={item} onEdit={openEdit} onDelete={handleDelete} />
                 )}
-                contentContainerStyle={styles.flatListContentContainer}
+                contentContainerStyle={styles.listContent}
             />
-            <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => navigation.navigate('AddNote', {})}
-            >
+            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddNote', {})}>
                 <Text style={styles.addButtonText}>+</Text>
             </TouchableOpacity>
         </View>

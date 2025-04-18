@@ -1,68 +1,64 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { collection, addDoc, getDocs, deleteDoc, updateDoc, query, where } from 'firebase/firestore';
 import { firestore } from '../services/firebaseConfig';
-
-const createCategoryList = (prev: string[], ...newCategories: string[]): string[] => {
-    return [...new Set([...prev, ...newCategories])];
-};
 
 export interface CategoriesContextProps {
     categories: string[];
     loading: boolean;
     addCategory: (newCategory: string) => Promise<void>;
     refreshCategories: () => Promise<void>;
+    deleteCategory: (category: string) => Promise<void>;
+    renameCategory: (oldName: string, newName: string) => Promise<void>;
 }
 
 const CategoriesContext = createContext<CategoriesContextProps | undefined>(undefined);
 
-export const CategoriesProvider: React.FC<{ children: ReactNode }> = ({ children }): JSX.Element => {
-    const [categories, setCategories] = useState<string[]>(['Food', 'Cosmetics', 'Places']);
-    const [loading, setLoading] = useState<boolean>(false);
+export const CategoriesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [categories, setCategories] = useState<string[]>([]);
+    const [loading, setLoading] = useState(false);
+    const colRef = collection(firestore, 'categories');
 
-    const refreshCategories = async (): Promise<void> => {
-        try {
-            setLoading(true);
-            const querySnapshot = await getDocs(collection(firestore, 'categories'));
-            const loaded = querySnapshot.docs.map((doc) => doc.data().name as string);
-            setCategories(prev => createCategoryList(prev, ...loaded));
-        } catch (error) {
-            console.error('Error fetching categories:', error);
-        } finally {
-            setLoading(false);
-        }
+    const refreshCategories = async () => {
+        setLoading(true);
+        const snap = await getDocs(colRef);
+        setCategories(snap.docs.map(d => d.data().name));
+        setLoading(false);
     };
 
-    useEffect(() => {
-        refreshCategories();
-    }, []);
-
-    const addCategory = async (newCategory: string): Promise<void> => {
-        if (!newCategory.trim()) return;
-        if (categories.includes(newCategory.trim())) return;
-        try {
-            setLoading(true);
-            await addDoc(collection(firestore, 'categories'), { name: newCategory.trim() });
-            setCategories(prev => createCategoryList(prev, newCategory.trim()));
-        } catch (error) {
-            console.error('Error adding category:', error);
-        } finally {
-            setLoading(false);
-        }
+    const addCategory = async (newCategory: string) => {
+        await addDoc(colRef, { name: newCategory });
+        await refreshCategories();
     };
 
-    const value: CategoriesContextProps = { categories, loading, addCategory, refreshCategories };
+    const deleteCategory = async (category: string) => {
+        const q = query(colRef, where('name', '==', category));
+        const snap = await getDocs(q);
+        for (let docSnap of snap.docs) {
+            await deleteDoc(docSnap.ref);
+        }
+        await refreshCategories();
+    };
+
+    const renameCategory = async (oldName: string, newName: string) => {
+        const q = query(colRef, where('name', '==', oldName));
+        const snap = await getDocs(q);
+        for (let docSnap of snap.docs) {
+            await updateDoc(docSnap.ref, { name: newName });
+        }
+        await refreshCategories();
+    };
+
+    useEffect(() => { refreshCategories(); }, []);
 
     return (
-        <CategoriesContext.Provider value={value} >
+        <CategoriesContext.Provider value={{ categories, loading, addCategory, refreshCategories, deleteCategory, renameCategory }}>
             {children}
         </CategoriesContext.Provider>
     );
 };
 
 export const useCategories = (): CategoriesContextProps => {
-    const context = useContext(CategoriesContext);
-    if (!context) {
-        throw new Error('useCategories must be used within a CategoriesProvider');
-    }
-    return context;
+    const ctx = useContext(CategoriesContext);
+    if (!ctx) throw new Error('useCategories must be within CategoriesProvider');
+    return ctx;
 };

@@ -33,7 +33,7 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, onChange, disabled = fa
                             <Ionicons
                                 name={isFilled ? 'star' : 'star-outline'}
                                 size={cardList ? 18 : 30}
-                                color={isFilled ? '#FFD700' : '#aaa'}
+                                color={isFilled ? '#000' : '#fff'}
                             />
                         </TouchableOpacity>
                     );

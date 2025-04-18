@@ -2,38 +2,34 @@ import { StyleSheet } from 'react-native';
 import { colors, fonts } from '../../theme/theme';
 
 export const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingHorizontal: 10,
-        paddingTop: 10,
+    header: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        marginTop: 65,
+        marginBottom: 14,
     },
-    columnWrapper: {
-        justifyContent: 'space-between',
-        marginHorizontal: 10,
+    categoryContainer: {
+        marginBottom: 14,
     },
-    flatListContentContainer: {
-        paddingBottom: 100,
+    listContent: {
+        paddingBottom: 90,
     },
     addButton: {
-        display: 'flex',
-        flexDirection: "row",
         position: 'absolute',
-        left: '50%',
         bottom: 30,
+        left: '50%',
         transform: [{ translateX: -30 }],
-        backgroundColor: colors.primary,
         width: 60,
         height: 60,
         borderRadius: 30,
+        backgroundColor: colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 8,
     },
     addButtonText: {
-        color: 'white',
         fontSize: 30,
+        color: '#fff',
         fontFamily: fonts.mainFont,
-        textAlign: 'center',
-        marginTop: -4,
     },
 });

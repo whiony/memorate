@@ -3,7 +3,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../features/home/HomeScreen';
 import AddNoteScreen from '../features/addNote/AddNoteScreen';
-import { colors, fonts } from '../theme/theme';
 import { CategoriesProvider } from '../hooks/useCategories';
 
 export interface Note {
@@ -25,39 +24,22 @@ export type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-const AppNavigator = () => {
+const AppNavigator: React.FC = () => {
     return (
         <CategoriesProvider>
             <NavigationContainer>
-                <Stack.Navigator>
-                    <Stack.Screen
-                        name="Home"
-                        options={{
-                            title: 'Memorate',
-                            headerTitleStyle: {
-                                fontFamily: 'Montserrat-Regular',
-                                fontWeight: 'bold',
-                                fontSize: 18,
-                            },
-                        }}
-                    >
-                        {(props) => <HomeScreen {...props} />}
-                    </Stack.Screen>
+                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="Home" component={HomeScreen} />
                     <Stack.Screen
                         name="AddNote"
+                        component={AddNoteScreen}
                         options={({ route }) => {
                             const isEditing = Boolean(route.params?.note);
                             return {
-                                title: isEditing ? 'Edit Review' : 'Add Review',
-                                headerTitleAlign: 'center',
-                                headerStyle: { backgroundColor: colors.primary },
-                                headerTintColor: '#fff',
-                                headerTitleStyle: { fontFamily: fonts.mainFont, fontWeight: 'bold', fontSize: 18 },
+                                headerShown: false,
                             };
                         }}
-                    >
-                        {(props) => <AddNoteScreen {...props} />}
-                    </Stack.Screen>
+                    />
                 </Stack.Navigator>
             </NavigationContainer>
         </CategoriesProvider>

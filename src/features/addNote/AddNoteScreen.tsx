@@ -38,7 +38,8 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
     const [rating, setRating] = useState(existingNote?.rating || 0);
     const [price, setPrice] = useState(existingNote?.price?.toString() || '');
     const [currency, setCurrency] = useState<Currency>(existingNote?.currency || '€');
-    const [image, setImage] = useState(existingNote?.image || null);
+    const [image, setImage] = useState<string | null>(existingNote?.image || null);
+    const [loadingImage, setLoading] = useState(false);
     const [loadingNote, setLoadingNote] = useState(false);
 
     const [category, setCategory] = useState(existingNote?.category || '');
@@ -83,31 +84,33 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
 
     const handleSave = async () => {
         try {
-            setLoadingNote(true);
-            let imageUrl = image;
+            setLoading(true);
+            let imageUrl: string | null = image;
             if (image?.startsWith('data:image')) {
                 imageUrl = await uploadToCloudinary(image, CLOUD_NAME, UPLOAD_PRESET);
             }
-            const noteData: Partial<Note> = {
+
+            const payload: Partial<Note> = {
                 name: title,
                 comment,
                 rating,
                 category,
-                image: imageUrl || undefined,
                 created: new Date(),
-                price: price ? parseFloat(price) : undefined,
-                currency,
             };
+            if (price) payload.price = parseFloat(price);
+            if (currency) payload.currency = currency;
+            if (imageUrl) payload.image = imageUrl;
+
             if (existingNote) {
-                await updateDoc(doc(firestore, 'reviews', existingNote.id), noteData);
+                await updateDoc(doc(firestore, 'reviews', existingNote.id), payload);
             } else {
-                await addDoc(collection(firestore, 'reviews'), noteData);
+                await addDoc(collection(firestore, 'reviews'), payload);
             }
             navigation.goBack();
-        } catch (err) {
-            console.error('Save failed', err);
+        } catch (e) {
+            console.error('Save failed', e);
         } finally {
-            setLoadingNote(false);
+            setLoading(false);
         }
     };
 
