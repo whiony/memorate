@@ -85,7 +85,7 @@ const CategoryFilter: React.FC<Props> = ({ categories, selected, onSelect }) => 
 
 const styles = StyleSheet.create({
     container: { paddingHorizontal: 14 },
-    pill: { height: 36, borderRadius: 18, justifyContent: 'center', paddingHorizontal: 20, marginRight: 8 },
+    pill: { height: 36, borderRadius: 18, justifyContent: 'center', paddingHorizontal: 40, marginRight: 8 },
     text: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
 });
 

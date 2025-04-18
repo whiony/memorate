@@ -5,8 +5,8 @@ export const styles = StyleSheet.create({
     header: {
         fontSize: 32,
         fontWeight: 'bold',
-        marginTop: 60,
-        marginBottom: 14,
+        marginTop: 70,
+        marginBottom: 20,
     },
     categoryContainer: {
         marginBottom: 14,
@@ -16,12 +16,14 @@ export const styles = StyleSheet.create({
     },
     addButton: {
         position: 'absolute',
-        bottom: 24,
-        left: '50%',
+        bottom: 40,
+        left: '53%',
         transform: [{ translateX: -32 }],
-        width: 64,
-        height: 64,
+        width: 67,
+        height: 65,
         borderRadius: 32,
+        borderWidth: 1,
+        borderColor: '#ffffff',
         backgroundColor: colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
@@ -30,7 +32,7 @@ export const styles = StyleSheet.create({
     addButtonText: {
         fontSize: 36,
         color: '#fff',
-        marginTop: -2,
+        marginTop: -5,
         fontFamily: fonts.mainFont,
     },
 });

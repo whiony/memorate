@@ -16,4 +16,8 @@ export const styles = StyleSheet.create({
     pricePlaceholder: { position: 'absolute', right: 16, width: 40, bottom: 0 },
     actions: { flexDirection: 'row', position: 'absolute', top: 0, right: 0, bottom: 0 },
     actionButton: { width: 60, justifyContent: 'center', alignItems: 'center' },
+    actionsContainer: { flexDirection: 'row' },
+    editAction: { backgroundColor: '#FFD700', justifyContent: 'center', alignItems: 'center', width: 80 },
+    deleteAction: { backgroundColor: '#E53935', justifyContent: 'center', alignItems: 'center', width: 80 },
+    actionText: { color: '#fff', fontWeight: 'bold' },
 });
