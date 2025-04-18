@@ -30,12 +30,14 @@ const HomeScreen: React.FC = () => {
             id: d.id,
             ...d.data(),
             created: d.data().created?.toDate ? d.data().created.toDate() : new Date(),
-        }));
-        (loaded as Note[]).sort((a, b) => (b.created?.getTime() ?? 0) - (a.created?.getTime() ?? 0));
-        setNotes(loaded as Note[]);
+        })) as Note[];
+        loaded.sort((a, b) => (b.created?.getTime() ?? 0) - (a.created?.getTime() ?? 0));
+        setNotes(loaded);
     };
 
-    useEffect(() => { fetchNotes(); }, [category]);
+    useEffect(() => {
+        fetchNotes();
+    }, [category]);
 
     const handleDelete = async (noteId: string) => {
         const note = notes.find(n => n.id === noteId);
@@ -60,6 +62,7 @@ const HomeScreen: React.FC = () => {
                     onSelect={setCategory}
                 />
             </View>
+
             <FlatList
                 data={notes}
                 keyExtractor={item => item.id}
@@ -68,6 +71,7 @@ const HomeScreen: React.FC = () => {
                 )}
                 contentContainerStyle={styles.listContent}
             />
+
             <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddNote', {})}>
                 <Text style={styles.addButtonText}>+</Text>
             </TouchableOpacity>

@@ -17,30 +17,26 @@ interface NoteItemProps {
 const NoteItem: React.FC<NoteItemProps> = ({ note, onEdit, onDelete }) => {
     const [delVisible, setDelVisible] = useState(false);
     const date = note.created ? format(new Date(note.created), 'MMM dd') : '';
-    const bg = categoryColors[note.category] || '#E0E0E0';
+    const bgColor = note.category ? (categoryColors[note.category] || '#E0E0E0') : '#E0E0E0';
 
-    const renderActions = () => (
+    const renderRightActions = () => (
         <View style={styles.actions}>
-            <TouchableOpacity onPress={() => onEdit(note)} style={styles.actionButton}>
-                <Text>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setDelVisible(true)} style={styles.actionButton}>
-                <Text>Delete</Text>
-            </TouchableOpacity>
+            <TouchableOpacity onPress={() => onEdit(note)} style={styles.actionButton}><Text>Edit</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => setDelVisible(true)} style={styles.actionButton}><Text>Delete</Text></TouchableOpacity>
         </View>
     );
 
     return (
         <>
-            <Swipeable renderRightActions={renderActions}>
-                <View style={[styles.card, { backgroundColor: bg }]}>
+            <Swipeable renderRightActions={renderRightActions}>
+                <View style={[styles.card, { backgroundColor: bgColor }]}>
                     <View style={styles.mainRow}>
                         {note.image && (
                             <View style={styles.imageWrapper}>
-                                <Image source={{ uri: note.image }} style={styles.image} />
+                                <Image source={{ uri: note.image }} style={styles.image} resizeMode="cover" />
                             </View>
                         )}
-                        <View style={[styles.mainContent, !note.image ? { marginLeft: 16 } : {}]}>
+                        <View style={[styles.mainContent, !note.image && { marginLeft: 16 }]}>
                             <Text style={styles.title}>{note.name}</Text>
                             <Text numberOfLines={2} style={styles.comment}>{note.comment}</Text>
                         </View>
@@ -48,10 +44,14 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, onEdit, onDelete }) => {
                     <View style={styles.divider} />
                     <View style={styles.footer}>
                         <Text style={styles.date}>{date}</Text>
-                        <View style={styles.stars}>
+                        <View style={styles.centerStars}>
                             <StarRating rating={note.rating} disabled cardList />
                         </View>
-                        {note.price != null && <Text style={styles.price}>{note.currency}{note.price}</Text>}
+                        {note.price && note.price > 0 ? (
+                            <Text style={styles.price}>{note.currency}{note.price}</Text>
+                        ) : (
+                            <View style={styles.pricePlaceholder} />
+                        )}
                     </View>
                 </View>
             </Swipeable>
