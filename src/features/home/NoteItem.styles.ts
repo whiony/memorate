@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
         marginBottom: 16,
     },
     date: { position: 'absolute', left: 16, fontSize: 14, color: '#000', bottom: 0 },
-    centerStars: { position: 'absolute', left: 15, right: 0, alignItems: 'center', bottom: 0 },
+    centerStars: { position: 'absolute', left: 0, right: 0, alignItems: 'center', bottom: 0 },
     price: { position: 'absolute', right: 16, fontSize: 14, bottom: 0 },
     pricePlaceholder: { position: 'absolute', right: 16, width: 40, bottom: 0 },
 

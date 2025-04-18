@@ -11,4 +11,7 @@ export const styles = StyleSheet.create({
         fontFamily: fonts.mainFont,
         fontWeight: '600',
     },
+    disabled: {
+        opacity: 0.5,
+    },
 });

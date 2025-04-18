@@ -6,12 +6,26 @@ import { globalStyles } from '../theme/theme';
 interface SaveButtonProps {
     onPress: () => void;
     title: string;
+    disabled?: boolean;
 }
 
-const SaveButton: React.FC<SaveButtonProps> = ({ onPress, title }) => (
-    <TouchableOpacity onPress={onPress} style={[styles.saveButton, globalStyles.standartButton]}>
+const SaveButton: React.FC<SaveButtonProps> = ({
+    onPress,
+    title,
+    disabled = false,
+}) => (
+    <TouchableOpacity
+        onPress={onPress}
+        disabled={disabled}
+        style={[
+            styles.saveButton,
+            globalStyles.standartButton,
+            disabled && styles.disabled
+        ]}
+    >
         <Text style={styles.saveButtonText}>{title}</Text>
     </TouchableOpacity>
 );
+
 
 export default SaveButton;

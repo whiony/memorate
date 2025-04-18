@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 import { ScrollView, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation, RouteProp, NavigationProp } from '@react-navigation/native';
@@ -83,6 +84,15 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
     };
 
     const handleSave = async () => {
+        if (!title.trim()) {
+            Alert.alert('Oops', 'Name is required');
+            return;
+        }
+        if (rating <= 0) {
+            Alert.alert('Oops', 'Please give a rating');
+            return;
+        }
+
         try {
             setLoading(true);
             let imageUrl: string | null = image;
@@ -145,7 +155,11 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
                         handleAddCategory={handleAddCategory}
                         loading={loadingNote || loading}
                     />
-                    <SaveButton onPress={handleSave} title={existingNote ? 'Update' : 'Save'} />
+                    <SaveButton
+                        onPress={handleSave}
+                        title={existingNote ? 'Update' : 'Save'}
+                        disabled={!title.trim() || rating <= 0}
+                    />
                     {(loadingNote || loading) && <FullscreenLoader />}
                 </View>
             </ScrollView>
