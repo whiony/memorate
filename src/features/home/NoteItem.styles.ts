@@ -1,23 +1,63 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-    card: { borderRadius: 20, marginBottom: 14, overflow: 'hidden' },
+    card: {
+        borderRadius: 20,
+        marginBottom: 14,
+        overflow: 'visible',
+    },
     mainRow: { flexDirection: 'row', paddingVertical: 16, paddingHorizontal: 16 },
-    imageWrapper: { width: 96, height: 96, borderRadius: 12, backgroundColor: '#fff', padding: 8, marginRight: 12 },
-    image: { width: '100%', height: '100%', borderRadius: 8 },
+
+    imageWrapper: {
+        width: 96,
+        height: 96,
+        borderRadius: 12,
+        backgroundColor: '#fff',
+        marginRight: 12,
+        overflow: 'hidden',
+    },
+    image: { width: '100%', height: '100%' },
+
     mainContent: { flex: 1, justifyContent: 'center' },
     title: { fontSize: 18, fontWeight: 'bold', marginBottom: 4 },
     comment: { fontSize: 14, color: '#333', lineHeight: 20 },
+
     divider: { height: 1, backgroundColor: 'rgba(0,0,0,0.1)', marginHorizontal: 16 },
-    footer: { position: 'relative', height: 32, marginTop: 12, marginBottom: 12 },
-    date: { position: 'absolute', left: 16, fontSize: 12, color: '#555', bottom: 0 },
-    centerStars: { position: 'absolute', left: 0, right: 0, alignItems: 'center', bottom: 0 },
-    price: { position: 'absolute', right: 16, fontSize: 14, fontWeight: 'bold', bottom: 0 },
+
+    footer: {
+        position: 'relative',
+        height: 32,
+        marginBottom: 16,
+    },
+    date: { position: 'absolute', left: 16, fontSize: 14, color: '#000', bottom: 0 },
+    centerStars: { position: 'absolute', left: 15, right: 0, alignItems: 'center', bottom: 0 },
+    price: { position: 'absolute', right: 16, fontSize: 14, bottom: 0 },
     pricePlaceholder: { position: 'absolute', right: 16, width: 40, bottom: 0 },
-    actions: { flexDirection: 'row', position: 'absolute', top: 0, right: 0, bottom: 0 },
-    actionButton: { width: 60, justifyContent: 'center', alignItems: 'center' },
-    actionsContainer: { flexDirection: 'row' },
-    editAction: { backgroundColor: '#FFD700', justifyContent: 'center', alignItems: 'center', width: 80 },
-    deleteAction: { backgroundColor: '#E53935', justifyContent: 'center', alignItems: 'center', width: 80 },
-    actionText: { color: '#fff', fontWeight: 'bold' },
-});
+
+    actions: {
+        flexDirection: 'row',
+        alignItems: 'center',      // вертикально по центру карточки
+        justifyContent: 'space-between',
+        height: '100%',
+        paddingHorizontal: 8,      // отступы слева/справа
+    },
+    actionButton: {
+        width: 50,
+        height: 50,
+        borderRadius: 50,          // круглая
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginHorizontal: 4,       // расстояние между кнопками
+    },
+    editAction: {
+        backgroundColor: '#FFD700',
+    },
+    deleteAction: {
+        backgroundColor: '#E53935',
+    },
+    actionText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 12,
+    },
+});    

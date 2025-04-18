@@ -4,18 +4,21 @@ import { styles } from './StarRating.styles';
 import { Ionicons } from '@expo/vector-icons';
 import { globalStyles } from '../theme/theme';
 
-interface StarRatingProps {
+interface Props {
     rating: number;
     onChange?: (val: number) => void;
     disabled?: boolean;
     cardList?: boolean;
 }
 
-const StarRating: React.FC<StarRatingProps> = ({ rating, onChange, disabled = false, cardList = false }) => {
+const StarRating: React.FC<Props> = ({
+    rating,
+    onChange,
+    disabled = false,
+    cardList = false,
+}) => {
     const handlePress = (val: number) => {
-        if (!disabled && onChange) {
-            onChange(val);
-        }
+        if (!disabled && onChange) onChange(val);
     };
 
     return (
@@ -31,9 +34,9 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, onChange, disabled = fa
                             disabled={disabled}
                         >
                             <Ionicons
-                                name={isFilled ? 'star' : 'star-outline'}
+                                name={'star'}                       // <-- всегда 'star'
                                 size={cardList ? 18 : 30}
-                                color={isFilled ? '#000' : '#fff'}
+                                color={isFilled ? '#000' : '#fff'} // <-- пустые — белые
                             />
                         </TouchableOpacity>
                     );
