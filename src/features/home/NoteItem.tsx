@@ -48,7 +48,7 @@ const NoteItem: React.FC<{
                                 />
                             </View>
                         )}
-                        <View style={[styles.mainContent, !note.image && { marginLeft: 16 }]}>
+                        <View style={styles.mainContent}>
                             <Text style={styles.title}>{note.name}</Text>
                             <Text numberOfLines={2} style={styles.comment}>
                                 {note.comment}

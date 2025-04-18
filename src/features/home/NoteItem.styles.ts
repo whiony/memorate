@@ -18,7 +18,11 @@ export const styles = StyleSheet.create({
     },
     image: { width: '100%', height: '100%' },
 
-    mainContent: { flex: 1, justifyContent: 'center' },
+    mainContent: {
+        flex: 1,
+        justifyContent: 'flex-start'   // <-- было center, теперь текст прилипает к верху
+    },
+
     title: { fontSize: 18, fontWeight: 'bold', marginBottom: 4 },
     comment: { fontSize: 14, color: '#333', lineHeight: 20 },
 
