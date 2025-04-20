@@ -21,6 +21,9 @@ const StarRating: React.FC<Props> = ({
         if (!disabled && onChange) onChange(val);
     };
 
+    const filledColor = disabled ? '#000' : '#FFEB3B'
+    const emptyColor = disabled ? '#FFF' : '#CCC'
+
     return (
         <View style={cardList ? styles.cardStarContainer : styles.section}>
             {!cardList && <Text style={globalStyles.label}>Rating</Text>}
@@ -34,9 +37,9 @@ const StarRating: React.FC<Props> = ({
                             disabled={disabled}
                         >
                             <Ionicons
-                                name={'star'}                       // <-- всегда 'star'
+                                name={'star'}
                                 size={cardList ? 18 : 30}
-                                color={isFilled ? '#000' : '#fff'} // <-- пустые — белые
+                                color={isFilled ? filledColor : emptyColor}
                             />
                         </TouchableOpacity>
                     );

@@ -166,7 +166,7 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
             >
                 <View style={{ paddingHorizontal: 16, flexDirection: 'column', gap: 8 }}>
                     <TitleInput value={title} onChange={setTitle} />
-                    <ImagePickerComponent image={image} onPickImage={pickImage} />
+                    <ImagePickerComponent image={image} onPickImage={pickImage} onRemoveImage={() => setImage(null)} />
                     <StarRating rating={rating} onChange={setRating} />
                     <PriceCurrencyInput
                         price={price}
