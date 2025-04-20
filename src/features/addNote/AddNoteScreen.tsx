@@ -1,4 +1,3 @@
-// src/features/addNote/AddNoteScreen.tsx
 import React, { useEffect, useState } from 'react'
 import {
     View,
@@ -8,10 +7,20 @@ import {
     Alert,
 } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { useNavigation, RouteProp, NavigationProp } from '@react-navigation/native'
+import {
+    useNavigation,
+    RouteProp,
+    NavigationProp,
+} from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker'
-import { collection, addDoc, doc, updateDoc } from 'firebase/firestore'
+import {
+    collection,
+    addDoc,
+    doc,
+    updateDoc,
+    deleteField,
+} from 'firebase/firestore'
 import { firestore } from '../../services/firebaseConfig'
 import { RootStackParamList, Note } from '../../navigation/AppNavigator'
 import { uploadToCloudinary } from '../../utils/uploadToCloudinary'
@@ -28,6 +37,7 @@ import FullscreenLoader from '../../components/FullscreenLoader'
 import { styles } from './AddNoteScreen.styles'
 import { globalStyles } from '../../theme/theme'
 import { useCategories } from '../../hooks/useCategories'
+import { deleteFromCloudinary } from '../../utils/deleteFromCloudinary'
 
 type Currency = '€' | '$' | '₴'
 
@@ -35,8 +45,8 @@ interface Props {
     route: RouteProp<RootStackParamList, 'AddNote'>
 }
 
-const CLOUD_NAME = process.env.CLOUD_NAME
-const UPLOAD_PRESET = process.env.UPLOAD_PRESET
+const CLOUD_NAME = process.env.CLOUD_NAME!
+const UPLOAD_PRESET = process.env.UPLOAD_PRESET!
 
 const AddNoteScreen: React.FC<Props> = ({ route }) => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
@@ -45,17 +55,26 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
     const [title, setTitle] = useState(existingNote?.name || '')
     const [comment, setComment] = useState(existingNote?.comment || '')
     const [rating, setRating] = useState(existingNote?.rating || 0)
-    const [price, setPrice] = useState(existingNote?.price?.toString() || '')
-    const [currency, setCurrency] = useState<Currency>(existingNote?.currency || '€')
-    const [image, setImage] = useState<string | null>(existingNote?.image || null)
-    const [loadingImage, setLoading] = useState(false)
-    const [loadingNote, setLoadingNote] = useState(false)
+    const [price, setPrice] = useState(
+        existingNote?.price?.toString() || ''
+    )
+    const [currency, setCurrency] = useState<Currency>(
+        existingNote?.currency || '€'
+    )
+    const [image, setImage] = useState<string | null>(
+        existingNote?.image || null
+    )
+    const [loadingImage, setLoadingImage] = useState(false)
+    const [saving, setSaving] = useState(false)
 
-    const [category, setCategory] = useState(existingNote?.category || '')
+    const [category, setCategory] = useState(
+        existingNote?.category || ''
+    )
     const [openDropdown, setOpenDropdown] = useState(false)
     const [showCategoryInput, setShowCategoryInput] = useState(false)
     const [newCategory, setNewCategory] = useState('')
-    const { categories, addCategory, loading } = useCategories()
+    const { categories, addCategory, loading: addingCategory } =
+        useCategories()
 
     useEffect(() => {
         if (!category && categories.length) {
@@ -78,7 +97,9 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
             base64: true,
         })
         if (!result.canceled) {
-            setImage(`data:image/jpeg;base64,${result.assets[0].base64}`)
+            setImage(
+                `data:image/jpeg;base64,${result.assets[0].base64}`
+            )
         }
     }
 
@@ -102,14 +123,20 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
         }
 
         try {
-            setLoading(true)
+            setSaving(true)
+            if (existingNote && existingNote.image && !image) {
+                await deleteFromCloudinary(existingNote.image)
+            }
+
             let imageUrl: string | null = image
             if (image?.startsWith('data:image')) {
+                setLoadingImage(true)
                 imageUrl = await uploadToCloudinary(
                     image,
-                    CLOUD_NAME!,
-                    UPLOAD_PRESET!
+                    CLOUD_NAME,
+                    UPLOAD_PRESET
                 )
+                setLoadingImage(false)
             }
 
             const payload: Partial<Note> = {
@@ -121,18 +148,41 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
             }
             if (price) payload.price = parseFloat(price)
             if (currency) payload.currency = currency
-            if (imageUrl) payload.image = imageUrl
+            if (imageUrl) {
+                payload.image = imageUrl
+            } else if (existingNote && existingNote.image && !image) {
+                payload.image = deleteField() as any
+            }
 
             if (existingNote) {
-                await updateDoc(doc(firestore, 'reviews', existingNote.id), payload)
+                await updateDoc(
+                    doc(firestore, 'reviews', existingNote.id),
+                    payload
+                )
             } else {
-                await addDoc(collection(firestore, 'reviews'), payload)
+                await addDoc(
+                    collection(firestore, 'reviews'),
+                    payload
+                )
             }
-            navigation.goBack()
+
+            Alert.alert(
+                'Success',
+                existingNote
+                    ? 'Note updated!'
+                    : 'Note saved!',
+                [
+                    {
+                        text: 'OK',
+                        onPress: () => navigation.goBack(),
+                    },
+                ]
+            )
         } catch (e) {
             console.error('Save failed', e)
+            Alert.alert('Error', 'Save failed. Try again.')
         } finally {
-            setLoading(false)
+            setSaving(false)
         }
     }
 
@@ -161,20 +211,42 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
             </View>
 
             <ScrollView
-                contentContainerStyle={[globalStyles.container, { paddingBottom: 40 }]}
+                contentContainerStyle={[
+                    globalStyles.container,
+                    { paddingBottom: 40 },
+                ]}
                 nestedScrollEnabled
             >
-                <View style={{ paddingHorizontal: 16, flexDirection: 'column', gap: 8 }}>
-                    <TitleInput value={title} onChange={setTitle} />
-                    <ImagePickerComponent image={image} onPickImage={pickImage} onRemoveImage={() => setImage(null)} />
-                    <StarRating rating={rating} onChange={setRating} />
+                <View
+                    style={{
+                        paddingHorizontal: 16,
+                        flexDirection: 'column',
+                        gap: 8,
+                    }}
+                >
+                    <TitleInput
+                        value={title}
+                        onChange={setTitle}
+                    />
+                    <ImagePickerComponent
+                        image={image}
+                        onPickImage={pickImage}
+                        onRemoveImage={() => setImage(null)}
+                    />
+                    <StarRating
+                        rating={rating}
+                        onChange={setRating}
+                    />
                     <PriceCurrencyInput
                         price={price}
                         onChangePrice={setPrice}
                         currency={currency}
                         onToggleCurrency={toggleCurrency}
                     />
-                    <CommentInput comment={comment} onChangeComment={setComment} />
+                    <CommentInput
+                        comment={comment}
+                        onChangeComment={setComment}
+                    />
                     <CategorySection
                         category={category}
                         setCategory={setCategory}
@@ -186,16 +258,26 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
                         newCategory={newCategory}
                         setNewCategory={setNewCategory}
                         handleAddCategory={handleAddCategory}
-                        loading={loadingNote || loading}
+                        loading={addingCategory}
                     />
                     <SaveButton
                         onPress={handleSave}
-                        title={existingNote ? 'Update' : 'Save'}
-                        disabled={!title.trim() || rating <= 0}
+                        title={
+                            existingNote ? 'Update' : 'Save'
+                        }
+                        disabled={
+                            !title.trim() ||
+                            rating <= 0 ||
+                            saving ||
+                            loadingImage
+                        }
                     />
-                    {(loadingNote || loading) && <FullscreenLoader />}
                 </View>
             </ScrollView>
+
+            {(saving || loadingImage) && (
+                <FullscreenLoader />
+            )}
         </KeyboardAwareScrollView>
     )
 }
