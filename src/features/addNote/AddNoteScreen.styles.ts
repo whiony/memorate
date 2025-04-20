@@ -3,16 +3,20 @@ import { colors } from '../../theme/theme';
 
 export const styles = StyleSheet.create({
     screen: {
-        flex: 1,
-        backgroundColor: colors.screenBackground,
+        padding: 16,
+        borderRadius: 8,
+        backgroundColor: "#fff",
+        margin: 10,
+        display: "flex",
+        flexDirection: "column",
+        gap: 8
     },
     headerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 14,
-        paddingBottom: 14,
-        paddingTop: 65,
+        paddingBottom: 16,
     },
     headerButton: {
         padding: 8,

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
     View,
-    ScrollView,
     Text,
     TouchableOpacity,
     Alert,
+    SafeAreaView,
+    findNodeHandle,
 } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {
@@ -76,6 +77,8 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
     const { categories, addCategory, loading: addingCategory } =
         useCategories()
 
+    const scrollRef = useRef<KeyboardAwareScrollView | null>(null)
+
     useEffect(() => {
         if (!category && categories.length) {
             setCategory(categories[0])
@@ -114,11 +117,11 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
 
     const handleSave = async () => {
         if (!title.trim()) {
-            Alert.alert('Oops', 'Name is required')
+            Alert.alert('Name is required')
             return
         }
         if (rating <= 0) {
-            Alert.alert('Oops', 'Please give a rating')
+            Alert.alert('Please give a rating')
             return
         }
 
@@ -168,15 +171,8 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
 
             Alert.alert(
                 'Success',
-                existingNote
-                    ? 'Note updated!'
-                    : 'Note saved!',
-                [
-                    {
-                        text: 'OK',
-                        onPress: () => navigation.goBack(),
-                    },
-                ]
+                existingNote ? 'Note updated!' : 'Note saved!',
+                [{ text: 'OK', onPress: () => navigation.goBack() }]
             )
         } catch (e) {
             console.error('Save failed', e)
@@ -187,98 +183,72 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
     }
 
     return (
-        <KeyboardAwareScrollView
-            style={[globalStyles.screenBackground, styles.screen]}
-            enableOnAndroid
-            extraScrollHeight={20}
-        >
-            <View style={styles.headerContainer}>
-                <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={styles.headerButton}
-                >
-                    <Ionicons name="arrow-back" size={24} color="#000" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>
-                    {existingNote ? 'Edit Note' : 'New Note'}
-                </Text>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('Home')}
-                    style={styles.headerButton}
-                >
-                    <Ionicons name="home-outline" size={24} color="#000" />
-                </TouchableOpacity>
-            </View>
-
-            <ScrollView
-                contentContainerStyle={[
-                    globalStyles.container,
-                    { paddingBottom: 40 },
-                ]}
-                nestedScrollEnabled
-            >
-                <View
-                    style={{
-                        paddingHorizontal: 16,
-                        flexDirection: 'column',
-                        gap: 8,
-                    }}
-                >
-                    <TitleInput
-                        value={title}
-                        onChange={setTitle}
-                    />
-                    <ImagePickerComponent
-                        image={image}
-                        onPickImage={pickImage}
-                        onRemoveImage={() => setImage(null)}
-                    />
-                    <StarRating
-                        rating={rating}
-                        onChange={setRating}
-                    />
-                    <PriceCurrencyInput
-                        price={price}
-                        onChangePrice={setPrice}
-                        currency={currency}
-                        onToggleCurrency={toggleCurrency}
-                    />
-                    <CommentInput
-                        comment={comment}
-                        onChangeComment={setComment}
-                    />
-                    <CategorySection
-                        category={category}
-                        setCategory={setCategory}
-                        categories={categories}
-                        openDropdown={openDropdown}
-                        setOpenDropdown={setOpenDropdown}
-                        showCategoryInput={showCategoryInput}
-                        setShowCategoryInput={setShowCategoryInput}
-                        newCategory={newCategory}
-                        setNewCategory={setNewCategory}
-                        handleAddCategory={handleAddCategory}
-                        loading={addingCategory}
-                    />
-                    <SaveButton
-                        onPress={handleSave}
-                        title={
-                            existingNote ? 'Update' : 'Save'
-                        }
-                        disabled={
-                            !title.trim() ||
-                            rating <= 0 ||
-                            saving ||
-                            loadingImage
-                        }
-                    />
+        <>
+            <SafeAreaView >
+                <View style={styles.headerContainer}>
+                    <TouchableOpacity
+                        onPress={() => navigation.goBack()}
+                        style={styles.headerButton}
+                    >
+                        <Ionicons name="arrow-back" size={24} color="#000" />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>
+                        {existingNote ? 'Edit Note' : 'New Note'}
+                    </Text>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('Home')}
+                        style={styles.headerButton}
+                    >
+                        <Ionicons name="home-outline" size={24} color="#000" />
+                    </TouchableOpacity>
                 </View>
-            </ScrollView>
+                <KeyboardAwareScrollView ref={ref => { scrollRef.current = ref }} enableAutomaticScroll>
+                    <View style={[globalStyles.screenBackground, styles.screen]}>
+                        <TitleInput value={title} onChange={setTitle} />
+                        <ImagePickerComponent
+                            image={image}
+                            onPickImage={pickImage}
+                            onRemoveImage={() => setImage(null)}
+                        />
+                        <StarRating rating={rating} onChange={setRating} />
+                        <PriceCurrencyInput
+                            price={price}
+                            onChangePrice={setPrice}
+                            currency={currency}
+                            onToggleCurrency={toggleCurrency}
+                        />
+                        <CommentInput onFocus={(event) => {
+                            scrollRef.current?.scrollToFocusedInput(findNodeHandle(event.target)!)
+                        }} comment={comment} onChangeComment={setComment} />
+                        <CategorySection
+                            category={category}
+                            setCategory={setCategory}
+                            categories={categories}
+                            openDropdown={openDropdown}
+                            setOpenDropdown={setOpenDropdown}
+                            showCategoryInput={showCategoryInput}
+                            setShowCategoryInput={setShowCategoryInput}
+                            newCategory={newCategory}
+                            setNewCategory={setNewCategory}
+                            handleAddCategory={handleAddCategory}
+                            loading={addingCategory}
+                        />
+                        <SaveButton
+                            onPress={handleSave}
+                            title={existingNote ? 'Update' : 'Save'}
+                            disabled={
+                                !title.trim() ||
+                                rating <= 0 ||
+                                saving ||
+                                loadingImage
+                            }
+                        />
 
-            {(saving || loadingImage) && (
-                <FullscreenLoader />
-            )}
-        </KeyboardAwareScrollView>
+                        {(saving || loadingImage) && <FullscreenLoader />}
+                    </View>
+                </KeyboardAwareScrollView>
+            </SafeAreaView>
+        </>
     )
 }
 
