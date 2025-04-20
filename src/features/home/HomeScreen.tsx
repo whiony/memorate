@@ -10,7 +10,6 @@ import {
     onSnapshot,
     deleteDoc,
     doc,
-    getDocs,
     Query,
     DocumentData,
 } from 'firebase/firestore';
@@ -31,7 +30,6 @@ const HomeScreen: React.FC = () => {
     const [category, setCategory] = useState('All');
     const { categories } = useCategories();
 
-    // live‑обновления
     useEffect(() => {
         let base: Query<DocumentData> = collection(firestore, 'reviews');
         if (category !== 'All') {

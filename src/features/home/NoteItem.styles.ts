@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
 
     mainContent: {
         flex: 1,
-        justifyContent: 'flex-start'   // <-- было center, теперь текст прилипает к верху
+        justifyContent: 'flex-start'
     },
 
     title: { fontSize: 18, fontWeight: 'bold', marginBottom: 4 },
@@ -40,21 +40,25 @@ export const styles = StyleSheet.create({
 
     actions: {
         flexDirection: 'row',
-        alignItems: 'center',      // вертикально по центру карточки
+        alignItems: 'center',
         justifyContent: 'space-between',
         height: '100%',
-        paddingHorizontal: 8,      // отступы слева/справа
+        paddingHorizontal: 8,
+        overflow: 'hidden',
     },
     actionButton: {
-        width: 50,
-        height: 50,
-        borderRadius: 50,          // круглая
+        width: 72,
+        height: 70,
+        borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
-        marginHorizontal: 4,       // расстояние между кнопками
+        marginHorizontal: 4,
     },
     editAction: {
         backgroundColor: '#FFD700',
+    },
+    editIcon: {
+        paddingLeft: 3,
     },
     deleteAction: {
         backgroundColor: '#E53935',
