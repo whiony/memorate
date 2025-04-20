@@ -2,11 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Note, RootStackParamList } from '../../navigation/AppNavigator';
-import { collection, getDocs, query, where, deleteDoc, doc, Query, DocumentData } from 'firebase/firestore';
+import {
+    collection,
+    query,
+    where,
+    orderBy,
+    onSnapshot,
+    deleteDoc,
+    doc,
+    getDocs,
+    Query,
+    DocumentData,
+} from 'firebase/firestore';
 import { firestore } from '../../services/firebaseConfig';
 import { deleteFromCloudinary } from '../../utils/deleteFromCloudinary';
 import { useCategories } from '../../hooks/useCategories';
+import { Note, RootStackParamList } from '../../navigation/AppNavigator';
 import NoteItem from './NoteItem';
 import CategoryFilter from './CategoryFilter';
 import { styles } from './HomeScreen.styles';
@@ -20,23 +31,29 @@ const HomeScreen: React.FC = () => {
     const [category, setCategory] = useState('All');
     const { categories } = useCategories();
 
-    const fetchNotes = async () => {
-        let notesQuery: Query<DocumentData> = collection(firestore, 'reviews');
-        if (category !== 'All') {
-            notesQuery = query(notesQuery, where('category', '==', category));
-        }
-        const snap = await getDocs(notesQuery);
-        const loaded = snap.docs.map(d => ({
-            id: d.id,
-            ...d.data(),
-            created: d.data().created?.toDate ? d.data().created.toDate() : new Date(),
-        })) as Note[];
-        loaded.sort((a, b) => (b.created?.getTime() ?? 0) - (a.created?.getTime() ?? 0));
-        setNotes(loaded);
-    };
-
+    // live‑обновления
     useEffect(() => {
-        fetchNotes();
+        let base: Query<DocumentData> = collection(firestore, 'reviews');
+        if (category !== 'All') {
+            base = query(base, where('category', '==', category));
+        }
+        const q = query(base, orderBy('created', 'desc'));
+
+        const unsub = onSnapshot(q, snap => {
+            const loaded = snap.docs.map(d => {
+                const data = d.data();
+                return {
+                    id: d.id,
+                    ...data,
+                    created: data.created?.toDate
+                        ? data.created.toDate()
+                        : new Date(data.created as any),
+                } as Note;
+            });
+            setNotes(loaded);
+        });
+
+        return () => unsub();
     }, [category]);
 
     const handleDelete = async (noteId: string) => {
@@ -45,15 +62,18 @@ const HomeScreen: React.FC = () => {
             await deleteFromCloudinary(note.image);
         }
         await deleteDoc(doc(firestore, 'reviews', noteId));
-        setNotes(prev => prev.filter(n => n.id !== noteId));
     };
 
-    const openEdit = (note: Note) => {
+    const openEdit = (note: Note) =>
         navigation.navigate('AddNote', { note });
-    };
 
     return (
-        <View style={[globalStyles.screenBackground, { flex: 1, paddingHorizontal: 14 }]}>
+        <View
+            style={[
+                globalStyles.screenBackground,
+                { flex: 1, paddingHorizontal: 14 },
+            ]}
+        >
             <Text style={styles.header}>Memorate</Text>
             <View style={styles.categoryContainer}>
                 <CategoryFilter
@@ -72,7 +92,10 @@ const HomeScreen: React.FC = () => {
                 contentContainerStyle={styles.listContent}
             />
 
-            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddNote', {})}>
+            <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => navigation.navigate('AddNote', {})}
+            >
                 <Text style={styles.addButtonText}>+</Text>
             </TouchableOpacity>
         </View>
