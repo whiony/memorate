@@ -37,7 +37,6 @@ export const globalStyles = StyleSheet.create({
         borderRadius: 20,
         padding: 16,
         marginHorizontal: 16,
-        marginVertical: 16,
     },
     standartInput: {
         flex: 1,
