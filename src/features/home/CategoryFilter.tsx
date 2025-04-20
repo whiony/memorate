@@ -44,7 +44,7 @@ const CategoryFilter: React.FC<Props> = ({ categories, selected, onSelect }) => 
 
     return (
         <>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.container}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} >
                 {categories.map(cat => {
                     const isSel = cat === selected;
                     const bg = categoryColors[cat] || '#aaa';
@@ -84,7 +84,6 @@ const CategoryFilter: React.FC<Props> = ({ categories, selected, onSelect }) => 
 };
 
 const styles = StyleSheet.create({
-    container: { paddingHorizontal: 14 },
     pill: { height: 36, borderRadius: 18, justifyContent: 'center', paddingHorizontal: 40, marginRight: 8 },
     text: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
 });
