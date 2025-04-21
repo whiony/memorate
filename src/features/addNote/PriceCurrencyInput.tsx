@@ -1,13 +1,13 @@
-import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
-import LabeledInput from '../../components/LabeledInput';
-import { styles } from './PriceCurrencyInput.styles';
+import React from 'react'
+import { TouchableOpacity, Text } from 'react-native'
+import LabeledInput from '../../components/LabeledInput'
+import { styles } from './PriceCurrencyInput.styles'
 
 interface PriceCurrencyInputProps {
-    price: string;
-    onChangePrice: (price: string) => void;
-    currency: string;
-    onToggleCurrency: () => void;
+    price: string
+    onChangePrice: (price: string) => void
+    currency: string
+    onToggleCurrency: () => void
 }
 
 const PriceCurrencyInput: React.FC<PriceCurrencyInputProps> = ({
@@ -16,22 +16,40 @@ const PriceCurrencyInput: React.FC<PriceCurrencyInputProps> = ({
     currency,
     onToggleCurrency,
 }) => {
+    const handleChange = (raw: string) => {
+        // keep only digits, comma or dot
+        let cleaned = raw.replace(/[^0-9.,]/g, '')
+        // split on both . and ,
+        const parts = cleaned.split(/[.,]/)
+        // limit integer part to 7 digits
+        parts[0] = parts[0].slice(0, 7)
+        if (parts[1] !== undefined) {
+            // only one decimal digit
+            parts[1] = parts[1].slice(0, 1)
+            cleaned = `${parts[0]},${parts[1]}`
+        } else {
+            cleaned = parts[0]
+        }
+        onChangePrice(cleaned)
+    }
+
     const rightElement = (
         <TouchableOpacity onPress={onToggleCurrency} style={styles.currencyToggle}>
             <Text style={styles.currencyText}>{currency}</Text>
         </TouchableOpacity>
-    );
+    )
+
     return (
         <LabeledInput
             label="Price"
             value={price}
-            onChangeText={onChangePrice}
+            onChangeText={handleChange}
             placeholder="Enter price"
             keyboardType="numeric"
             inputStyle={styles.priceInput}
             rightElement={rightElement}
         />
-    );
-};
+    )
+}
 
-export default PriceCurrencyInput;
+export default PriceCurrencyInput

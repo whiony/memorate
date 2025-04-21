@@ -19,6 +19,7 @@ import { deleteFromCloudinary } from '../../utils/deleteFromCloudinary'
 import { deleteDoc, doc } from 'firebase/firestore'
 import { firestore } from '../../services/firebaseConfig'
 import DeleteNoteModal from '../../components/DeleteNoteModal'
+import { formatPrice } from '../../utils/formatPrice'
 
 export type NoteItemNavigationProp = StackNavigationProp<
     RootStackParamList,
@@ -39,6 +40,10 @@ const NoteItem: React.FC<Props> = ({ route }) => {
         ? format(new Date(note.created), 'MMMM dd, yyyy')
         : ''
     const pillColor = categoryColors[note.category] || '#CCC'
+
+    const priceDisplay = note.price && note.price > 0
+        ? `${note.currency}${formatPrice(note.price)}`
+        : '—'
 
     const onConfirmDelete = async () => {
         setDelVisible(false)
@@ -104,9 +109,7 @@ const NoteItem: React.FC<Props> = ({ route }) => {
 
                     <View style={styles.infoRow}>
                         <Text style={styles.label}>Price:</Text>
-                        <Text style={styles.value}>
-                            {note.price ? `${note.currency}${note.price}` : '—'}
-                        </Text>
+                        <Text style={styles.value}>{priceDisplay}</Text>
                     </View>
 
                     <View style={styles.ratingContainer}>

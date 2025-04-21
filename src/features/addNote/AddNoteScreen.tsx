@@ -58,7 +58,9 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
     const [comment, setComment] = useState(existingNote?.comment || '')
     const [rating, setRating] = useState(existingNote?.rating || 0)
     const [price, setPrice] = useState(
-        existingNote?.price?.toString() || ''
+        existingNote?.price != null
+            ? existingNote.price.toString().replace('.', ',')
+            : ''
     )
     const [currency, setCurrency] = useState<Currency>(
         existingNote?.currency || '€'
@@ -150,7 +152,10 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
                 category,
                 created: new Date(),
             }
-            if (price) payload.price = parseFloat(price)
+            if (price) {
+                const normalized = price.replace(',', '.')
+                payload.price = parseFloat(normalized)
+            }
             if (currency) payload.currency = currency
             if (imageUrl) {
                 payload.image = imageUrl

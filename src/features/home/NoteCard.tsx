@@ -14,6 +14,7 @@ import DeleteNoteModal from '../../components/DeleteNoteModal'
 import { categoryColors } from '../../utils/categoryColors'
 import type { Note } from '../../navigation/AppNavigator'
 import { styles } from './NoteCard.styles'
+import { formatPrice } from '../../utils/formatPrice'
 
 type Props = {
     note: Note
@@ -32,17 +33,12 @@ const NoteCard = forwardRef<SwipeableType, Props>(
             ? categoryColors[note.category] || '#E0E0E0'
             : '#E0E0E0'
 
+        const priceDisplay = note.price && note.price > 0
+            ? formatPrice(note.price)
+            : ''
+
         const renderRightActions = () => (
             <View style={styles.actions}>
-                <TouchableOpacity
-                    onPress={() => {
-                        ; (swipeableRef as React.RefObject<SwipeableType>).current?.close()
-                        setDelVisible(true)
-                    }}
-                    style={[styles.actionButton, styles.deleteAction]}
-                >
-                    <Ionicons name="trash-outline" size={25} color="#fff" />
-                </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
                         ; (swipeableRef as React.RefObject<SwipeableType>).current?.close()
@@ -51,6 +47,15 @@ const NoteCard = forwardRef<SwipeableType, Props>(
                     style={[styles.actionButton, styles.editAction]}
                 >
                     <Ionicons name="create-outline" size={25} color="#fff" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        ; (swipeableRef as React.RefObject<SwipeableType>).current?.close()
+                        setDelVisible(true)
+                    }}
+                    style={[styles.actionButton, styles.deleteAction]}
+                >
+                    <Ionicons name="trash-outline" size={25} color="#fff" />
                 </TouchableOpacity>
             </View>
         )
@@ -97,8 +102,7 @@ const NoteCard = forwardRef<SwipeableType, Props>(
                                 </View>
                                 {note.price && note.price > 0 ? (
                                     <Text style={styles.price}>
-                                        {note.currency}
-                                        {note.price}
+                                        {note.currency}{priceDisplay}
                                     </Text>
                                 ) : (
                                     <View style={styles.pricePlaceholder} />
