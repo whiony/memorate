@@ -55,13 +55,13 @@ export const styles = StyleSheet.create({
         marginHorizontal: 4,
     },
     editAction: {
-        backgroundColor: '#FFD700',
+        backgroundColor: '#FFE066',
     },
     editIcon: {
         paddingLeft: 3,
     },
     deleteAction: {
-        backgroundColor: '#E53935',
+        backgroundColor: '#EF5350',
     },
     actionText: {
         color: '#fff',

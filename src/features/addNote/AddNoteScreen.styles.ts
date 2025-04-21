@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '../../theme/theme';
 
 export const styles = StyleSheet.create({
     screen: {
@@ -15,14 +14,12 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 14,
-        paddingBottom: 16,
-    },
-    headerButton: {
-        padding: 8,
+        padding: 16,
+        borderBottomWidth: 1,
+        borderColor: '#dbdada',
     },
     headerTitle: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
     },
 });

@@ -1,8 +1,15 @@
+// src/features/home/HomeScreen.tsx
 import React, { useEffect, useState, useRef } from 'react'
-import { View, FlatList, TouchableOpacity, Text } from 'react-native'
+import {
+    View,
+    FlatList,
+    TouchableOpacity,
+    Text,
+    TouchableWithoutFeedback,
+} from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
-import { StackNavigationProp } from '@react-navigation/stack'
+import type { StackNavigationProp } from '@react-navigation/stack'
 import {
     collection,
     query,
@@ -17,8 +24,8 @@ import {
 import { firestore } from '../../services/firebaseConfig'
 import { deleteFromCloudinary } from '../../utils/deleteFromCloudinary'
 import { useCategories } from '../../hooks/useCategories'
-import { Note, RootStackParamList } from '../../navigation/AppNavigator'
-import NoteItem from './NoteItem'
+import type { Note, RootStackParamList } from '../../navigation/AppNavigator'
+import NoteCard from './NoteCard'
 import CategoryFilter from './CategoryFilter'
 import { styles } from './HomeScreen.styles'
 import { globalStyles } from '../../theme/theme'
@@ -28,9 +35,8 @@ type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
 const HomeScreen: React.FC = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
     const [notes, setNotes] = useState<Note[]>([])
-    const [category, setCategory] = useState('All')
+    const [category, setCategory] = useState<'All' | string>('All')
     const { categories } = useCategories()
-
     const swipeableRefs = useRef<Swipeable[]>([])
 
     useEffect(() => {
@@ -40,7 +46,7 @@ const HomeScreen: React.FC = () => {
         }
         const q = query(base, orderBy('created', 'desc'))
 
-        const unsub = onSnapshot(q, snap => {
+        const unsubscribe = onSnapshot(q, snap => {
             const loaded = snap.docs.map(d => {
                 const data = d.data()
                 return {
@@ -54,7 +60,7 @@ const HomeScreen: React.FC = () => {
             setNotes(loaded)
         })
 
-        return () => unsub()
+        return unsubscribe
     }, [category])
 
     const closeAll = () => {
@@ -69,11 +75,21 @@ const HomeScreen: React.FC = () => {
         await deleteDoc(doc(firestore, 'reviews', noteId))
     }
 
-    const openEdit = (note: Note) => navigation.navigate('AddNote', { note })
+    const openEdit = (note: Note) =>
+        navigation.navigate('AddNote', { note })
+
+    const openDetail = (note: Note) =>
+        navigation.navigate('NoteItem', { note })
 
     return (
-        <View style={[globalStyles.screenBackground, { flex: 1, paddingHorizontal: 14 }]}>
+        <View
+            style={[
+                globalStyles.screenBackground,
+                { flex: 1, paddingHorizontal: 16 },
+            ]}
+        >
             <Text style={styles.header}>Memorate</Text>
+
             <View style={styles.categoryContainer}>
                 <CategoryFilter
                     categories={['All', ...categories]}
@@ -88,17 +104,29 @@ const HomeScreen: React.FC = () => {
                 onScroll={closeAll}
                 onTouchStart={closeAll}
                 renderItem={({ item, index }) => (
-                    <NoteItem
-                        ref={r => (swipeableRefs.current[index] = r!)}
-                        note={item}
-                        onEdit={openEdit}
-                        onDelete={handleDelete}
-                    />
+                    <TouchableWithoutFeedback
+                        onPress={() => openDetail(item)}
+                    >
+                        <View>
+                            <NoteCard
+                                ref={ref => {
+                                    swipeableRefs.current[index] = ref!
+                                }}
+                                note={item}
+                                onEdit={openEdit}
+                                onDelete={handleDelete}
+                                onPress={openDetail}
+                            />
+                        </View>
+                    </TouchableWithoutFeedback>
                 )}
                 contentContainerStyle={styles.listContent}
             />
 
-            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddNote', {})}>
+            <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => navigation.navigate('AddNote', {})}
+            >
                 <Text style={styles.addButtonText}>+</Text>
             </TouchableOpacity>
         </View>

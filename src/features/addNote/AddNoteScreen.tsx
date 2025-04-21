@@ -188,7 +188,6 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
                 <View style={styles.headerContainer}>
                     <TouchableOpacity
                         onPress={() => navigation.goBack()}
-                        style={styles.headerButton}
                     >
                         <Ionicons name="arrow-back" size={24} color="#000" />
                     </TouchableOpacity>
@@ -197,11 +196,11 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
                     </Text>
                     <TouchableOpacity
                         onPress={() => navigation.navigate('Home')}
-                        style={styles.headerButton}
                     >
                         <Ionicons name="home-outline" size={24} color="#000" />
                     </TouchableOpacity>
                 </View>
+
                 <KeyboardAwareScrollView ref={ref => { scrollRef.current = ref }} enableAutomaticScroll>
                     <View style={[globalStyles.screenBackground, styles.screen]}>
                         <TitleInput value={title} onChange={setTitle} />

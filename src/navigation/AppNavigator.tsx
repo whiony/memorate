@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../features/home/HomeScreen';
 import AddNoteScreen from '../features/addNote/AddNoteScreen';
 import { CategoriesProvider } from '../hooks/useCategories';
+import NoteItem from '../features/noteItem/NoteItem';
 
 export interface Note {
     id: string;
@@ -20,6 +21,7 @@ export interface Note {
 export type RootStackParamList = {
     Home: undefined;
     AddNote: { note?: Note };
+    NoteItem: { note: Note }
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -40,6 +42,7 @@ const AppNavigator: React.FC = () => {
                             };
                         }}
                     />
+                    <Stack.Screen name="NoteItem" component={NoteItem} options={{ headerShown: false }} />
                 </Stack.Navigator>
             </NavigationContainer>
         </CategoriesProvider>

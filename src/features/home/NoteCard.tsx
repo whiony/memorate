@@ -4,7 +4,6 @@ import {
     Text,
     Image,
     TouchableOpacity,
-    TouchableWithoutFeedback,
 } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import type { Swipeable as SwipeableType } from 'react-native-gesture-handler'
@@ -13,17 +12,18 @@ import { format } from 'date-fns'
 import StarRating from '../../components/StarRating'
 import DeleteNoteModal from '../../components/DeleteNoteModal'
 import { categoryColors } from '../../utils/categoryColors'
-import { Note } from '../../navigation/AppNavigator'
-import { styles } from './NoteItem.styles'
+import type { Note } from '../../navigation/AppNavigator'
+import { styles } from './NoteCard.styles'
 
 type Props = {
     note: Note
     onEdit: (n: Note) => void
     onDelete: (id: string) => void
+    onPress: (n: Note) => void
 }
 
-const NoteItem = forwardRef<SwipeableType, Props>(
-    ({ note, onEdit, onDelete }, swipeableRef) => {
+const NoteCard = forwardRef<SwipeableType, Props>(
+    ({ note, onEdit, onDelete, onPress }, swipeableRef) => {
         const [delVisible, setDelVisible] = useState(false)
         const date = note.created
             ? format(new Date(note.created), 'MMM dd')
@@ -58,10 +58,12 @@ const NoteItem = forwardRef<SwipeableType, Props>(
         return (
             <>
                 <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
-                    <TouchableWithoutFeedback
-                        onPress={() =>
-                            (swipeableRef as React.RefObject<SwipeableType>).current?.close()
-                        }
+                    <TouchableOpacity
+                        activeOpacity={0.9}
+                        onPress={() => {
+                            ; (swipeableRef as React.RefObject<SwipeableType>).current?.close()
+                            onPress(note)
+                        }}
                     >
                         <View style={[styles.card, { backgroundColor: bgColor }]}>
                             <View style={styles.mainRow}>
@@ -97,7 +99,7 @@ const NoteItem = forwardRef<SwipeableType, Props>(
                                 )}
                             </View>
                         </View>
-                    </TouchableWithoutFeedback>
+                    </TouchableOpacity>
                 </Swipeable>
 
                 <DeleteNoteModal
@@ -114,4 +116,4 @@ const NoteItem = forwardRef<SwipeableType, Props>(
     }
 )
 
-export default NoteItem
+export default NoteCard
