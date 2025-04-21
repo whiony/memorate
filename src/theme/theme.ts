@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 export const colors = {
-    screenBackground: '#F2F2F7',
+    screenBackground: '#F8FAFC',
     containerBackground: '#FFFFFF',
     primary: '#FF6F61',
     text: '#333',
@@ -17,7 +17,7 @@ export const borders = {
 }
 
 export const fonts = {
-    mainFont: 'Montserrat-Regular',
+    mainFont: 'Inter',
 }
 
 export const globalStyles = StyleSheet.create({
