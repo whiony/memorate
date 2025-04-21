@@ -16,9 +16,11 @@ export const styles = StyleSheet.create({
         borderColor: '#dbdada',
     },
     headerTitle: {
+        flex: 1,
         fontSize: 20,
         fontWeight: 'bold',
         color: colors.text,
+        marginHorizontal: 14,
     },
     headerRight: {
         flexDirection: 'row',
@@ -76,6 +78,7 @@ export const styles = StyleSheet.create({
     },
     commentContainer: {
         marginTop: 8,
+        marginBottom: 12,
     },
     commentText: {
         marginTop: 4,

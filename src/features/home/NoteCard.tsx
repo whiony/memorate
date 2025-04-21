@@ -77,8 +77,14 @@ const NoteCard = forwardRef<SwipeableType, Props>(
                                     </View>
                                 )}
                                 <View style={styles.mainContent}>
-                                    <Text style={styles.title}>{note.name}</Text>
-                                    <Text numberOfLines={2} style={styles.comment}>
+                                    <Text
+                                        style={styles.title}
+                                        numberOfLines={1}
+                                        ellipsizeMode="tail"
+                                    >
+                                        {note.name}
+                                    </Text>
+                                    <Text numberOfLines={3} style={styles.comment}>
                                         {note.comment}
                                     </Text>
                                 </View>

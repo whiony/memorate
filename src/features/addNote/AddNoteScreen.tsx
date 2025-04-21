@@ -48,6 +48,7 @@ interface Props {
 
 const CLOUD_NAME = process.env.CLOUD_NAME!
 const UPLOAD_PRESET = process.env.UPLOAD_PRESET!
+const MAX_TITLE_LENGTH = 50;
 
 const AddNoteScreen: React.FC<Props> = ({ route }) => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
@@ -182,6 +183,10 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
         }
     }
 
+    const handleTitleChange = (t: string) => {
+        setTitle(t.length <= MAX_TITLE_LENGTH ? t : t.substr(0, MAX_TITLE_LENGTH));
+    };
+
     return (
         <>
             <SafeAreaView >
@@ -203,7 +208,7 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
 
                 <KeyboardAwareScrollView ref={ref => { scrollRef.current = ref }} enableAutomaticScroll>
                     <View style={[globalStyles.screenBackground, styles.screen]}>
-                        <TitleInput value={title} onChange={setTitle} />
+                        <TitleInput value={title} onChange={handleTitleChange} />
                         <ImagePickerComponent
                             image={image}
                             onPickImage={pickImage}

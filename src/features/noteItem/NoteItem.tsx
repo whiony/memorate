@@ -55,7 +55,13 @@ const NoteItem: React.FC<Props> = ({ route }) => {
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={24} color="#000" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{note.name}</Text>
+                <Text
+                    style={styles.headerTitle}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                >
+                    {note.name}
+                </Text>
                 <View style={styles.headerRight}>
                     <TouchableOpacity
                         onPress={() => navigation.navigate('AddNote', { note })}
@@ -79,6 +85,17 @@ const NoteItem: React.FC<Props> = ({ route }) => {
                     {note.image ? (
                         <Image source={{ uri: note.image }} style={styles.image} />
                     ) : null}
+
+                    <View style={styles.infoRow}>
+                        <Text style={styles.label}>Name:</Text>
+                        <Text
+                            style={styles.value}
+                            numberOfLines={2}
+                            ellipsizeMode="tail"
+                        >
+                            {note.name}
+                        </Text>
+                    </View>
 
                     <View style={styles.infoRow}>
                         <Text style={styles.label}>Date:</Text>
