@@ -1,10 +1,11 @@
 import { StyleSheet, Dimensions } from 'react-native'
+import { colors } from '../../theme/theme'
 const { width } = Dimensions.get('window')
 
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFF',
+        backgroundColor: colors.screenBackground,
     },
     header: {
         flexDirection: 'row',
@@ -12,47 +13,73 @@ export const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 16,
         borderBottomWidth: 1,
-        borderColor: '#EEE',
+        borderColor: '#dbdada',
     },
     headerTitle: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
+        color: colors.text,
     },
-    content: {
+    headerRight: {
+        flexDirection: 'row',
+    },
+    headerIcon: {
+        marginLeft: 16,
+    },
+    scrollContent: {
+        paddingHorizontal: 16,
+        paddingTop: 8,
+        paddingBottom: 24,
+    },
+    pill: {
+        alignSelf: 'flex-start',
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 12,
+    },
+    pillText: {
+        color: '#fff',
+        fontWeight: '600',
+    },
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: 16,
         padding: 16,
-        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 3,
     },
     image: {
-        width: width - 32,
-        height: (width - 32) * 0.6,
+        width: width - 64,
+        height: (width - 64) * 0.6,
         borderRadius: 12,
         marginBottom: 16,
     },
     infoRow: {
         flexDirection: 'row',
-        width: '100%',
         marginBottom: 12,
     },
     label: {
+        width: 80,
         fontWeight: '600',
-        width: 90,
+        color: colors.text,
     },
     value: {
         flex: 1,
-        flexWrap: 'wrap',
+        color: colors.text,
     },
     ratingContainer: {
-        width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 12,
     },
     commentContainer: {
-        width: '100%',
         marginTop: 8,
     },
-    comment: {
+    commentText: {
         marginTop: 4,
         lineHeight: 20,
+        color: colors.text,
     },
 })

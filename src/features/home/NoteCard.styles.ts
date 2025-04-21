@@ -47,8 +47,8 @@ export const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     actionButton: {
-        width: 72,
-        height: 70,
+        width: 67,
+        height: 65,
         borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
