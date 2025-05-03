@@ -1,6 +1,7 @@
 export const categoryColors: Record<string, string> = {
     All: '#FF6F61',
     Food: '#FFD966',
-    AI: '#FF8C66',
-    New: '#B29AEA',
+    Places: '#C0F1F9',
+    Clothing: '#B29AEA',
+    'Care products': '#F9C0C0',
 };

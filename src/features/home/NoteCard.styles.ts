@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
         borderRadius: 20,
         marginBottom: 14,
         overflow: 'visible',
+        padding: 4,
     },
     mainRow: { flexDirection: 'row', paddingVertical: 16, paddingHorizontal: 16 },
 
@@ -23,8 +24,8 @@ export const styles = StyleSheet.create({
         justifyContent: 'flex-start'
     },
 
-    title: { fontSize: 18, fontWeight: 'bold', marginBottom: 4 },
-    comment: { fontSize: 14, color: '#333', lineHeight: 20 },
+    title: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
+    comment: { fontSize: 14, color: '#333', lineHeight: 15 },
 
     divider: { height: 1, backgroundColor: 'rgba(0,0,0,0.1)', marginHorizontal: 16 },
 

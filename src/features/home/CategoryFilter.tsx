@@ -53,7 +53,7 @@ const CategoryFilter: React.FC<Props> = ({ categories, selected, onSelect }) => 
                             key={cat}
                             onPress={() => onSelect(cat)}
                             onLongPress={() => handleLong(cat)}
-                            style={[styles.pill, { backgroundColor: bg, opacity: isSel ? 1 : 0.6 }]}>
+                            style={[styles.pill, { backgroundColor: bg, opacity: isSel ? 1 : 0.7 }]}>
                             <Text style={styles.text}>{cat}</Text>
                         </TouchableOpacity>
                     );
@@ -85,7 +85,7 @@ const CategoryFilter: React.FC<Props> = ({ categories, selected, onSelect }) => 
 
 const styles = StyleSheet.create({
     pill: { height: 36, borderRadius: 18, justifyContent: 'center', paddingHorizontal: 40, marginRight: 8 },
-    text: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+    text: { color: '#000', fontSize: 14 },
 });
 
 export default CategoryFilter;
