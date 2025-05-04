@@ -1,5 +1,4 @@
-// src/features/home/HomeScreen.tsx
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useMemo } from 'react'
 import {
     View,
     FlatList,
@@ -9,6 +8,7 @@ import {
 } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import type { StackNavigationProp } from '@react-navigation/stack'
 import {
     collection,
@@ -29,13 +29,16 @@ import NoteCard from './NoteCard'
 import CategoryFilter from './CategoryFilter'
 import { styles } from './HomeScreen.styles'
 import { globalStyles } from '../../theme/theme'
+import { useSort } from '../../contexts/SortContext'
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
+type SortKey = 'price' | 'rating' | 'date'
 
 const HomeScreen: React.FC = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
     const [notes, setNotes] = useState<Note[]>([])
     const [category, setCategory] = useState<'All' | string>('All')
+    const { sortBy, setSortBy } = useSort()
     const { categories } = useCategories()
     const swipeableRefs = useRef<Swipeable[]>([])
 
@@ -63,9 +66,17 @@ const HomeScreen: React.FC = () => {
         return unsubscribe
     }, [category])
 
-    const closeAll = () => {
-        swipeableRefs.current.forEach(r => r?.close())
-    }
+    const closeAll = () => swipeableRefs.current.forEach(r => r?.close())
+
+    const sortedNotes = useMemo(() => {
+        return [...notes].sort((a, b) => {
+            switch (sortBy) {
+                case 'price': return (a.price || 0) - (b.price || 0)
+                case 'rating': return b.rating - a.rating
+                case 'date': return new Date(b.created!).getTime() - new Date(a.created!).getTime()
+            }
+        })
+    }, [notes, sortBy])
 
     const handleDelete = async (noteId: string) => {
         const note = notes.find(n => n.id === noteId)
@@ -99,14 +110,12 @@ const HomeScreen: React.FC = () => {
             </View>
 
             <FlatList
-                data={notes}
+                data={sortedNotes}
                 keyExtractor={item => item.id}
                 onScroll={closeAll}
                 onTouchStart={closeAll}
                 renderItem={({ item, index }) => (
-                    <TouchableWithoutFeedback
-                        onPress={() => openDetail(item)}
-                    >
+                    <TouchableWithoutFeedback onPress={() => openDetail(item)}>
                         <View>
                             <NoteCard
                                 ref={ref => {
@@ -128,6 +137,15 @@ const HomeScreen: React.FC = () => {
                 onPress={() => navigation.navigate('AddNote', {})}
             >
                 <Text style={styles.addButtonText}>+</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={styles.filterButton}
+                onPress={() =>
+                    navigation.navigate('FilterModal', { current: sortBy })
+                }
+            >
+                <MaterialIcons name="sort" size={24} color="#fff" />
             </TouchableOpacity>
         </View>
     )
