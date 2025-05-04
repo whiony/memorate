@@ -37,7 +37,7 @@ const HomeScreen: React.FC = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
     const [notes, setNotes] = useState<Note[]>([])
     const [category, setCategory] = useState<'All' | string>('All')
-    const { sortBy } = useSort()
+    const { sortBy, sortOrder } = useSort()
     const { categories } = useCategories()
     const swipeableRefs = useRef<Swipeable[]>([])
 
@@ -68,14 +68,19 @@ const HomeScreen: React.FC = () => {
     const closeAll = () => swipeableRefs.current.forEach(r => r?.close())
 
     const sortedNotes = useMemo(() => {
+        const dir = sortOrder === 'asc' ? 1 : -1
         return [...notes].sort((a, b) => {
             switch (sortBy) {
-                case 'price': return (a.price || 0) - (b.price || 0)
-                case 'rating': return b.rating - a.rating
-                case 'date': return new Date(b.created!).getTime() - new Date(a.created!).getTime()
+                case 'price': return dir * ((a.price || 0) - (b.price || 0))
+                case 'rating': return dir * (b.rating - a.rating)
+                case 'date': {
+                    const ta = new Date(a.created!).getTime()
+                    const tb = new Date(b.created!).getTime()
+                    return dir * (tb - ta)
+                }
             }
         })
-    }, [notes, sortBy])
+    }, [notes, sortBy, sortOrder])
 
     const handleDelete = async (noteId: string) => {
         const note = notes.find(n => n.id === noteId)

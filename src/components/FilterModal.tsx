@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
     View,
     Text,
@@ -11,14 +11,13 @@ import type { StackScreenProps } from '@react-navigation/stack'
 import { colors, fonts } from '../theme/theme'
 import { RootStackParamList } from '../navigation/AppNavigator'
 import { useSort } from '../contexts/SortContext'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 type Props = StackScreenProps<RootStackParamList, 'FilterModal'>
 type SortKey = 'price' | 'rating' | 'date'
 
 const FilterModal: React.FC<Props> = ({ route, navigation }) => {
-    const { sortBy, setSortBy } = useSort()
-    const { current } = route.params
-    const [selected, setSelected] = useState<SortKey>(current)
+    const { sortBy, sortOrder, setSort } = useSort()
 
     const labels: Record<SortKey, string> = {
         price: 'Price',
@@ -35,21 +34,27 @@ const FilterModal: React.FC<Props> = ({ route, navigation }) => {
                             key={key}
                             style={[
                                 styles.option,
-                                selected === key && styles.optionActive,
+                                sortBy === key && styles.optionActive,
                             ]}
                             onPress={() => {
-                                setSortBy(key)
-                                navigation.goBack()
+                                setSort(key)
                             }}
                         >
                             <Text
                                 style={[
                                     styles.optionText,
-                                    selected === key && styles.optionTextActive,
+                                    sortBy === key && styles.optionTextActive,
                                 ]}
                             >
                                 {labels[key]}
                             </Text>
+                            {sortBy === key && (
+                                <MaterialIcons
+                                    name={sortOrder === 'asc' ? 'arrow-upward' : 'arrow-downward'}
+                                    size={16}
+                                    color={'#fff'}
+                                />
+                            )}
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -80,10 +85,12 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     option: {
-        paddingVertical: 8,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 8,
         borderRadius: 6,
         marginBottom: 4,
-        alignItems: 'center',
     },
     optionActive: {
         backgroundColor: colors.primary,
