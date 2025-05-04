@@ -13,11 +13,9 @@
 
 Track progress in [Projects](https://github.com/whiony/memorate).
 
-
 ## 🔒 Privacy
 
 Your notes never leave your phone unless you turn on cloud backup. We don’t collect personal data, ads or tracking.
-
 
 ## 🤝 Contributing
 
@@ -28,10 +26,9 @@ Bug reports & pull requests are welcome. Before opening a large PR, please file 
 3. Commit & push
 4. Open a PR – GitHub Actions will run lint & tests automatically.
 
-
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
-© 2025 [Yana Bychilova](https://twitter.com/WhyDevOni). All rights reserved.
+© 2025 [Yana Bychilova](https://twitter.com/whyDEVoni). All rights reserved.
 
 Made with lemon pepsi and sushi.
