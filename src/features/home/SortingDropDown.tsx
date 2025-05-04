@@ -1,4 +1,3 @@
-// SortingDropDown.tsx
 import React from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -6,7 +5,6 @@ import type { DropDownPickerProps } from 'react-native-dropdown-picker';
 
 import { globalStyles } from '../../theme/theme';
 
-// Типы сортировки и пропсы, которые мы примем от HomeScreen
 type SortBy = 'date' | 'price';
 type SortOrder = 'asc' | 'desc';
 type SortItem = NonNullable<DropDownPickerProps<string>['items']>[0];
@@ -20,7 +18,6 @@ interface SortingDropDownProps {
     setOpenSortDropdown: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// Массив пунктов — "Date" и "Price"
 const sortItems = [
     { label: 'Date', value: 'date' },
     { label: 'Price', value: 'price' },
@@ -34,11 +31,6 @@ const SortingDropDown: React.FC<SortingDropDownProps> = ({
     openSortDropdown,
     setOpenSortDropdown,
 }) => {
-    /**
-     * Когда пользователь нажимает на пункт в списке:
-     * - Если уже выбран тот же пункт, переключаем порядок сортировки (asc<->desc)
-     * - Иначе выбираем новую опцию с порядком по умолчанию (например, 'desc')
-     */
     const handleItemPress = (value: SortBy) => {
         if (value === sortBy) {
             setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
@@ -46,13 +38,9 @@ const SortingDropDown: React.FC<SortingDropDownProps> = ({
             setSortBy(value);
             setSortOrder('desc');
         }
-        // Закрываем дропдаун
         setOpenSortDropdown(false);
     };
 
-    /**
-     * Кастомный рендер опций, чтобы выводить стрелочку (↑/↓) только у текущего пункта.
-     */
     const renderListItem = ({ item }: { item: SortItem }) => {
         const isSelected = item.value === sortBy;
         const arrow = isSelected ? (sortOrder === 'asc' ? '↑' : '↓') : '';
@@ -74,8 +62,8 @@ const SortingDropDown: React.FC<SortingDropDownProps> = ({
                 open={openSortDropdown}
                 setOpen={setOpenSortDropdown}
                 value={sortBy}
-                setValue={setSortBy} // обязательно
-                multiple={false} // обязательно
+                setValue={setSortBy}
+                multiple={false}
 
                 items={sortItems}
                 showArrowIcon
