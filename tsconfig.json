@@ -4,35 +4,8 @@
     "strict": true,
     "baseUrl": "src",
     "paths": {
-      "@features/*": [
-        "features/*"
-      ],
-      "@ui/*": [
-        "ui/*"
-      ],
-      "@modals/*": [
-        "modals/*"
-      ],
-      "@hooks/*": [
-        "hooks/*"
-      ],
-      "@services/*": [
-        "services/*"
-      ],
-      "@utils/*": [
-        "utils/*"
-      ],
-      "@navigation/*": [
-        "navigation/*"
-      ],
-      "@theme/*": [
-        "theme/*"
-      ],
-      "@types/*": [
-        "types/*"
-      ],
-      "@contexts/*": [
-        "contexts/*"
+      "@/*": [
+        "*"
       ]
     }
   }

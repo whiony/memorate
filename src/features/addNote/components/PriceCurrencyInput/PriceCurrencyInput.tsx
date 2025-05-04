@@ -1,6 +1,6 @@
 import React from 'react'
 import { TouchableOpacity, Text } from 'react-native'
-import LabeledInput from '@ui/Input/LabeledInput'
+import LabeledInput from '@/ui/Input/LabeledInput'
 import { styles } from './PriceCurrencyInput.styles'
 
 interface PriceCurrencyInputProps {

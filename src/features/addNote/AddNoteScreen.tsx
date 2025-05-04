@@ -22,23 +22,23 @@ import {
     updateDoc,
     deleteField,
 } from 'firebase/firestore'
-import { firestore } from '@services/firebaseConfig'
-import { RootStackParamList, Note } from '@navigation/AppNavigator'
-import { uploadToCloudinary } from '@utils/uploadToCloudinary'
+import { firestore } from '@/services/firebaseConfig'
+import { RootStackParamList, Note } from '@/navigation/AppNavigator'
+import { uploadToCloudinary } from '@/utils/uploadToCloudinary'
 
 import TitleInput from './components/TitleInput/TitleInput'
-import ImagePickerComponent from '@ui/ImagePicker/ImagePickerComponent'
+import ImagePickerComponent from '@/ui/ImagePicker/ImagePickerComponent'
 import PriceCurrencyInput from './components/PriceCurrencyInput/PriceCurrencyInput'
 import CommentInput from './components/CommentInput/CommentInput'
 import CategorySection from './components/CategorySection/CategorySection'
-import SaveButton from '@ui/Button/SaveButton'
-import StarRating from '@ui/Rating/StarRating'
-import FullscreenLoader from '@ui/Loader/FullscreenLoader'
+import SaveButton from '@/ui/Button/SaveButton'
+import StarRating from '@/ui/Rating/StarRating'
+import FullscreenLoader from '@/ui/Loader/FullscreenLoader'
 
 import { styles } from '@features/addNote/AddNoteScreen.styles'
-import { globalStyles } from '@theme/theme'
-import { useCategories } from '@hooks/useCategories'
-import { deleteFromCloudinary } from '@utils/deleteFromCloudinary'
+import { globalStyles } from '@/theme/theme'
+import { useCategories } from '@/hooks/useCategories'
+import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
 
 type Currency = '€' | '$' | '₴'
 

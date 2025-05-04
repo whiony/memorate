@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { categoryColors } from '@utils/categoryColors';
-import { useCategories } from '@hooks/useCategories';
-import ActionCategoryModal from '@modals/ActionCategoryModal';
-import RenameCategoryModal from '@modals/RenameCategoryModal';
-import DeleteCategoryModal from '@modals/DeleteCategoryModal';
+import { categoryColors } from '@/utils/categoryColors';
+import { useCategories } from '@/hooks/useCategories';
+import ActionCategoryModal from '@/modals/ActionCategoryModal';
+import RenameCategoryModal from '@/modals/RenameCategoryModal';
+import DeleteCategoryModal from '@/modals/DeleteCategoryModal';
 
 interface Props {
     categories: string[];

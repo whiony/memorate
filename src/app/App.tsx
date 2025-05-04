@@ -1,5 +1,5 @@
 import React from 'react';
-import AppNavigator from '@navigation/AppNavigator';
+import AppNavigator from '@/navigation/AppNavigator';
 import * as SplashScreen from 'expo-splash-screen';
 
 SplashScreen.preventAutoHideAsync();

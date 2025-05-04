@@ -9,12 +9,12 @@ import { Swipeable } from 'react-native-gesture-handler'
 import type { Swipeable as SwipeableType } from 'react-native-gesture-handler'
 import { Ionicons } from '@expo/vector-icons'
 import { format, isValid, parseISO } from 'date-fns'
-import StarRating from '@ui/Rating/StarRating'
-import DeleteNoteModal from '@modals/DeleteNoteModal'
-import { categoryColors } from '@utils/categoryColors'
-import type { Note } from '@navigation/AppNavigator'
+import StarRating from '@/ui/Rating/StarRating'
+import DeleteNoteModal from '@/modals/DeleteNoteModal'
+import { categoryColors } from '@/utils/categoryColors'
+import type { Note } from '@/navigation/AppNavigator'
 import { styles } from './NoteCard.styles'
-import { formatPrice } from '@utils/formatPrice'
+import { formatPrice } from '@/utils/formatPrice'
 
 type Props = {
     note: Note

@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 import { styles } from './StarRating.styles';
 import { Ionicons } from '@expo/vector-icons';
-import { globalStyles } from '@theme/theme';
+import { globalStyles } from '@/theme/theme';
 
 interface Props {
     rating: number;

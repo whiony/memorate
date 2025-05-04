@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 import { styles } from './SaveButton.styles';
-import { globalStyles } from '@theme/theme';
+import { globalStyles } from '@/theme/theme';
 
 interface SaveButtonProps {
     onPress: () => void;
