@@ -8,7 +8,7 @@ import {
 import { Swipeable } from 'react-native-gesture-handler'
 import type { Swipeable as SwipeableType } from 'react-native-gesture-handler'
 import { Ionicons } from '@expo/vector-icons'
-import { format } from 'date-fns'
+import { format, isValid, parseISO } from 'date-fns'
 import StarRating from '../../components/StarRating'
 import DeleteNoteModal from '../../components/DeleteNoteModal'
 import { categoryColors } from '../../utils/categoryColors'
@@ -26,9 +26,13 @@ type Props = {
 const NoteCard = forwardRef<SwipeableType, Props>(
     ({ note, onEdit, onDelete, onPress }, swipeableRef) => {
         const [delVisible, setDelVisible] = useState(false)
-        const date = note.created
-            ? format(new Date(note.created), 'MMM dd')
-            : ''
+        const raw = note.created
+        let date = ''
+        if (raw) {
+            const d = typeof raw === 'string' ? parseISO(raw) : new Date(raw)
+            if (isValid(d)) date = format(d, 'MMM dd')
+        }
+
         const bgColor = note.category
             ? categoryColors[note.category] || '#E0E0E0'
             : '#E0E0E0'
