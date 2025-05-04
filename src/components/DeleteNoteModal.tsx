@@ -1,4 +1,3 @@
-// src/components/DeleteNoteModal.tsx
 import React, { FC, useEffect, useRef } from 'react'
 import {
     Modal,
