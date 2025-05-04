@@ -3,6 +3,11 @@
 
 >  **Remember what you liked – prices, places & products at a glance.**
 
+Memorate is an iOS app that saves you from “Did I already buy this?” moments.
+Built with TypeScript, React Native, Firebase, Cloudinary, and Expo Go.
+
+This repo is source-available: you can read, run, and modify it for personal use — but not redistribute it or upload clones to app stores. See [LICENSE](LICENSE) for details.
+
 ## ✨ Highlights
 
 * **Quick capture** – name, ⭐ rating, price, photo & note in seconds.
@@ -11,11 +16,15 @@
 * **Multi‑photo & crop** – save up to three pics for every item.
 * **100 % offline first** – all data stays on your device; iCloud sync coming soon.
 
+Use-case: snap that salami today, rate it, and next month you’ll instantly know if it was worth a re-buy.
+Handy for the forgetful (hi, that’s me).
+
 Track progress in [Projects](https://github.com/whiony/memorate).
 
 ## 🔒 Privacy
 
-Your notes never leave your phone unless you turn on cloud backup. We don’t collect personal data, ads or tracking.
+Your notes never leave your phone unless you turn on cloud backup. 
+We don’t collect personal data, ads or tracking.
 
 ## 🤝 Contributing
 
@@ -28,7 +37,9 @@ Bug reports & pull requests are welcome. Before opening a large PR, please file 
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+Licensed under the Personal-Use Source-Available [License](LICENSE) (PUSAL).
+This means you can use and modify it privately, but not redistribute it or publish it in app stores.
+
 © 2025 [Yana Bychilova](https://twitter.com/whyDEVoni). All rights reserved.
 
-Made with lemon pepsi and sushi.
+Made with lemon pepsi and sushi. 🍣🥤
