@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { collection, addDoc, getDocs, deleteDoc, updateDoc, query, where } from 'firebase/firestore';
-import { firestore } from '../services/firebaseConfig';
+import { firestore } from '@services/firebaseConfig';
 
 export interface CategoriesContextProps {
     categories: string[];

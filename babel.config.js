@@ -1,4 +1,4 @@
-module.exports = function(api) {
+module.exports = function (api) {
   api.cache(true);
   return {
     presets: ['babel-preset-expo'],
@@ -8,6 +8,24 @@ module.exports = function(api) {
         {
           moduleName: '@env',
           path: '.env',
+        },
+      ],
+      [
+        'module-resolver',
+        {
+          root: ['./src'],
+          alias: {
+            '@features': './src/features',
+            '@ui': './src/ui',
+            '@modals': './src/modals',
+            '@hooks': './src/hooks',
+            '@services': './src/services',
+            '@utils': './src/utils',
+            '@navigation': './src/navigation',
+            '@types': './src/types',
+            '@theme': './src/theme',
+            '@contexts': './src/contexts',
+          },
         },
       ],
     ],

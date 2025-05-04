@@ -21,15 +21,15 @@ import {
     Query,
     DocumentData,
 } from 'firebase/firestore'
-import { firestore } from '../../services/firebaseConfig'
-import { deleteFromCloudinary } from '../../utils/deleteFromCloudinary'
-import { useCategories } from '../../hooks/useCategories'
-import type { Note, RootStackParamList } from '../../navigation/AppNavigator'
-import NoteCard from './NoteCard'
-import CategoryFilter from './CategoryFilter'
+import { firestore } from '@services/firebaseConfig'
+import { deleteFromCloudinary } from '@utils/deleteFromCloudinary'
+import { useCategories } from '@hooks/useCategories'
+import type { Note, RootStackParamList } from '@navigation/AppNavigator'
+import NoteCard from './components/NoteCard/NoteCard'
+import CategoryFilter from './components/CategoryFilter/CategoryFilter'
 import { styles } from './HomeScreen.styles'
-import { globalStyles } from '../../theme/theme'
-import { useSort } from '../../contexts/SortContext'
+import { globalStyles } from '@theme/theme'
+import { useSort } from '@contexts/SortContext'
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
 

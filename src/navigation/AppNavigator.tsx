@@ -1,12 +1,12 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../features/home/HomeScreen';
-import AddNoteScreen from '../features/addNote/AddNoteScreen';
-import { CategoriesProvider } from '../hooks/useCategories';
-import NoteItem from '../features/noteItem/NoteItem';
-import FilterModal from '../components/FilterModal';
-import { SortKey, SortProvider } from '../contexts/SortContext';
+import HomeScreen from '@features/home/HomeScreen';
+import AddNoteScreen from '@features/addNote/AddNoteScreen';
+import { CategoriesProvider } from '@hooks/useCategories';
+import NoteItem from '@features/noteItem/NoteItem';
+import FilterModal from '@modals/FilterModal';
+import { SortKey, SortProvider } from '@contexts/SortContext';
 
 export interface Note {
     id: string;

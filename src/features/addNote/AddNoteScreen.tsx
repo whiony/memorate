@@ -22,23 +22,23 @@ import {
     updateDoc,
     deleteField,
 } from 'firebase/firestore'
-import { firestore } from '../../services/firebaseConfig'
-import { RootStackParamList, Note } from '../../navigation/AppNavigator'
-import { uploadToCloudinary } from '../../utils/uploadToCloudinary'
+import { firestore } from '@services/firebaseConfig'
+import { RootStackParamList, Note } from '@navigation/AppNavigator'
+import { uploadToCloudinary } from '@utils/uploadToCloudinary'
 
-import TitleInput from './TitleInput'
-import ImagePickerComponent from '../../components/ImagePickerComponent'
-import PriceCurrencyInput from './PriceCurrencyInput'
-import CommentInput from './CommentInput'
-import CategorySection from './CategorySection'
-import SaveButton from '../../components/SaveButton'
-import StarRating from '../../components/StarRating'
-import FullscreenLoader from '../../components/FullscreenLoader'
+import TitleInput from './components/TitleInput/TitleInput'
+import ImagePickerComponent from '@ui/ImagePicker/ImagePickerComponent'
+import PriceCurrencyInput from './components/PriceCurrencyInput/PriceCurrencyInput'
+import CommentInput from './components/CommentInput/CommentInput'
+import CategorySection from './components/CategorySection/CategorySection'
+import SaveButton from '@ui/Button/SaveButton'
+import StarRating from '@ui/Rating/StarRating'
+import FullscreenLoader from '@ui/Loader/FullscreenLoader'
 
-import { styles } from './AddNoteScreen.styles'
-import { globalStyles } from '../../theme/theme'
-import { useCategories } from '../../hooks/useCategories'
-import { deleteFromCloudinary } from '../../utils/deleteFromCloudinary'
+import { styles } from '@features/addNote/AddNoteScreen.styles'
+import { globalStyles } from '@theme/theme'
+import { useCategories } from '@hooks/useCategories'
+import { deleteFromCloudinary } from '@utils/deleteFromCloudinary'
 
 type Currency = '€' | '$' | '₴'
 
@@ -227,7 +227,7 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
                             onToggleCurrency={toggleCurrency}
                         />
                         <CommentInput onFocus={(event) => {
-                            scrollRef.current?.scrollToFocusedInput(findNodeHandle(event.target)!)
+                            scrollRef.current?.scrollToFocusedInput(event.nativeEvent.target)
                         }} comment={comment} onChangeComment={setComment} />
                         <CategorySection
                             category={category}
