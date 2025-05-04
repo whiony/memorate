@@ -39,6 +39,7 @@ Bug reports & pull requests are welcome. Before opening a large PR, please file 
 
 ## 📄 License
 
-Unlicensed © 2025 [Yana](https://twitter.com/WhyDevOni)
+This project is licensed under the [MIT License](LICENSE).
+© 2025 [Yana Bychilova](https://twitter.com/WhyDevOni). All rights reserved.
 
 Made with lemon pepsi and sushi.
