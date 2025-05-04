@@ -37,7 +37,10 @@ const FilterModal: React.FC<Props> = ({ route, navigation }) => {
                                 styles.option,
                                 selected === key && styles.optionActive,
                             ]}
-                            onPress={() => setSelected(key)}
+                            onPress={() => {
+                                setSortBy(key)
+                                navigation.goBack()
+                            }}
                         >
                             <Text
                                 style={[
@@ -49,16 +52,6 @@ const FilterModal: React.FC<Props> = ({ route, navigation }) => {
                             </Text>
                         </TouchableOpacity>
                     ))}
-
-                    <TouchableOpacity
-                        style={styles.applyButton}
-                        onPress={() => {
-                            setSortBy(selected)
-                            navigation.goBack()
-                        }}
-                    >
-                        <Text style={styles.applyText}>Apply</Text>
-                    </TouchableOpacity>
                 </View>
             </TouchableWithoutFeedback>
         </Pressable>

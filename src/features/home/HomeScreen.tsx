@@ -32,13 +32,12 @@ import { globalStyles } from '../../theme/theme'
 import { useSort } from '../../contexts/SortContext'
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
-type SortKey = 'price' | 'rating' | 'date'
 
 const HomeScreen: React.FC = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
     const [notes, setNotes] = useState<Note[]>([])
     const [category, setCategory] = useState<'All' | string>('All')
-    const { sortBy, setSortBy } = useSort()
+    const { sortBy } = useSort()
     const { categories } = useCategories()
     const swipeableRefs = useRef<Swipeable[]>([])
 
