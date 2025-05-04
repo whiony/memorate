@@ -16,7 +16,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 type Props = StackScreenProps<RootStackParamList, 'FilterModal'>
 type SortKey = 'price' | 'rating' | 'date'
 
-const FilterModal: React.FC<Props> = ({ route, navigation }) => {
+const FilterModal: React.FC<Props> = ({ navigation }) => {
     const { sortBy, sortOrder, setSort } = useSort()
 
     const labels: Record<SortKey, string> = {
