@@ -11,14 +11,6 @@
 * **Multi‑photo & crop** – save up to three pics for every item.
 * **100 % offline first** – all data stays on your device; iCloud sync coming soon.
 
-
-## 🗺 Roadmap
-
-1. 🔍 Full‑text search
-2. ☁️ iCloud backup
-3. 💸 Pro tier via in‑app purchase (unlimited notes + sync)
-4. 🤖 "You already rated this" reminder
-
 Track progress in [Projects](https://github.com/whiony/memorate).
 
 
