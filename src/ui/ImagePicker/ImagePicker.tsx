@@ -6,15 +6,15 @@ import {
     Text,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { styles } from './ImagePickerComponent.styles'
+import { styles } from './ImagePicker.styles'
 
-interface ImagePickerComponentProps {
+interface ImagePickerProps {
     image: string | null
     onPickImage: () => void
     onRemoveImage: () => void
 }
 
-const ImagePickerComponent: React.FC<ImagePickerComponentProps> = ({
+const ImagePickerComponent: React.FC<ImagePickerProps> = ({
     image,
     onPickImage,
     onRemoveImage,

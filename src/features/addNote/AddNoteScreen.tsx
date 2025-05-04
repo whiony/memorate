@@ -5,7 +5,6 @@ import {
     TouchableOpacity,
     Alert,
     SafeAreaView,
-    findNodeHandle,
 } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {
@@ -27,7 +26,7 @@ import { RootStackParamList, Note } from '@/navigation/AppNavigator'
 import { uploadToCloudinary } from '@/utils/uploadToCloudinary'
 
 import TitleInput from './components/TitleInput/TitleInput'
-import ImagePickerComponent from '@/ui/ImagePicker/ImagePickerComponent'
+import ImagePickerComponent from '@/ui/ImagePicker/ImagePicker'
 import PriceCurrencyInput from './components/PriceCurrencyInput/PriceCurrencyInput'
 import CommentInput from './components/CommentInput/CommentInput'
 import CategorySection from './components/CategorySection/CategorySection'
@@ -35,8 +34,8 @@ import SaveButton from '@/ui/Button/SaveButton'
 import StarRating from '@/ui/Rating/StarRating'
 import FullscreenLoader from '@/ui/Loader/FullscreenLoader'
 
-import { styles } from '@features/addNote/AddNoteScreen.styles'
-import { globalStyles } from '@/theme/theme'
+import { styles } from './AddNoteScreen.styles'
+import { globalStyles } from '@/theme/index'
 import { useCategories } from '@/hooks/useCategories'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
 

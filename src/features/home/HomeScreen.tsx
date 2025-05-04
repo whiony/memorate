@@ -28,7 +28,7 @@ import type { Note, RootStackParamList } from '@/navigation/AppNavigator'
 import NoteCard from './components/NoteCard/NoteCard'
 import CategoryFilter from './components/CategoryFilter/CategoryFilter'
 import { styles } from './HomeScreen.styles'
-import { globalStyles } from '@/theme/theme'
+import { globalStyles } from '@/theme/index'
 import { useSort } from '@/contexts/SortContext'
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
@@ -94,7 +94,7 @@ const HomeScreen: React.FC = () => {
         navigation.navigate('AddNote', { note })
 
     const openDetail = (note: Note) =>
-        navigation.navigate('NoteItem', { note })
+        navigation.navigate('NoteDetails', { note })
 
     return (
         <View

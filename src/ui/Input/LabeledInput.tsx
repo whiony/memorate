@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, TextInput, TextInputProps, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { View, Text, TextInput, TextInputProps, ViewStyle, TextStyle } from 'react-native';
 import { styles } from './LabeledInput.styles';
-import { globalStyles } from '@/theme/theme';
+import { globalStyles } from '@/theme/index';
 
 export interface LabeledInputProps extends TextInputProps {
     label: string;

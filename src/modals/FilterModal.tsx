@@ -8,7 +8,7 @@ import {
     TouchableWithoutFeedback,
 } from 'react-native'
 import type { StackScreenProps } from '@react-navigation/stack'
-import { colors, fonts } from '@/theme/theme'
+import { colors, fonts } from '@/theme/index'
 import { RootStackParamList } from '@/navigation/AppNavigator'
 import { useSort } from '@/contexts/SortContext'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
