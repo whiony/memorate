@@ -91,10 +91,20 @@ const HomeScreen: React.FC = () => {
     }
 
     const openEdit = (note: Note) =>
-        navigation.navigate('AddNote', { note })
+        navigation.navigate('AddNote', {
+            note: {
+                ...note,
+                created: note.created!.toISOString(),
+            },
+        })
 
     const openDetail = (note: Note) =>
-        navigation.navigate('NoteDetails', { note })
+        navigation.navigate('NoteDetails', {
+            note: {
+                ...note,
+                created: note.created!.toISOString(),
+            }
+        })
 
     return (
         <View

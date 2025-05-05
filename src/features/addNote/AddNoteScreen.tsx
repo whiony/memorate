@@ -22,7 +22,7 @@ import {
     deleteField,
 } from 'firebase/firestore'
 import { firestore } from '@/services/firebaseConfig'
-import { RootStackParamList, Note } from '@/navigation/AppNavigator'
+import { RootStackParamList, Note, NavNote } from '@/navigation/AppNavigator'
 import { uploadToCloudinary } from '@/utils/uploadToCloudinary'
 
 import TitleInput from './components/TitleInput/TitleInput'
@@ -51,7 +51,15 @@ const MAX_TITLE_LENGTH = 50;
 
 const AddNoteScreen: React.FC<Props> = ({ route }) => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-    const existingNote = route.params?.note
+    const existingNav = route.params?.note as NavNote | undefined
+
+    const existingNote: Note | undefined = existingNav
+        ? {
+            ...existingNav,
+            created: new Date(existingNav.created),
+        }
+        : undefined
+
 
     const [title, setTitle] = useState(existingNote?.name || '')
     const [comment, setComment] = useState(existingNote?.comment || '')

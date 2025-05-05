@@ -20,11 +20,13 @@ export interface Note {
     currency?: '€' | '$' | '₴';
 }
 
+export type NavNote = Omit<Note, 'created'> & { created: string }
+
 export type RootStackParamList = {
     Home: undefined;
-    AddNote: { note?: Note };
+    AddNote: { note?: NavNote };
     FilterModal: { current: SortKey };
-    NoteDetails: { note: Note }
+    NoteDetails: { note: NavNote }
 };
 
 const Stack = createStackNavigator<RootStackParamList>();

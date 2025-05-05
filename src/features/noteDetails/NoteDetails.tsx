@@ -12,7 +12,7 @@ import type { StackNavigationProp } from '@react-navigation/stack'
 import { Ionicons } from '@expo/vector-icons'
 import { format } from 'date-fns'
 import StarRating from '@/ui/Rating/StarRating'
-import type { RootStackParamList } from '@/navigation/AppNavigator'
+import type { Note, RootStackParamList } from '@/navigation/AppNavigator'
 import { categoryColors } from '@/utils/categoryColors'
 import { styles } from './NoteDetails.styles'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
@@ -33,14 +33,17 @@ interface Props {
 
 const NoteDetails: React.FC<Props> = ({ route }) => {
     const navigation = useNavigation<NoteDetailsNavigationProp>()
-    const { note } = route.params
+    const { note: navNote } = route.params
+    const note: Note = {
+        ...navNote,
+        created: new Date(navNote.created),
+    }
     const [delVisible, setDelVisible] = useState(false)
 
     const date = note.created
-        ? format(new Date(note.created), 'MMMM dd, yyyy')
+        ? format(note.created, 'MMMM dd, yyyy')
         : ''
     const pillColor = categoryColors[note.category] || '#CCC'
-
     const priceDisplay = note.price && note.price > 0
         ? `${note.currency}${formatPrice(note.price)}`
         : '—'
@@ -54,50 +57,43 @@ const NoteDetails: React.FC<Props> = ({ route }) => {
         navigation.goBack()
     }
 
+    const handleEdit = () => {
+        navigation.navigate('AddNote', {
+            note: {
+                ...note,
+                created: note.created!.toISOString(),
+            },
+        })
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={24} color="#000" />
                 </TouchableOpacity>
-                <Text
-                    style={styles.headerTitle}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                >
+                <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">
                     {note.name}
                 </Text>
                 <View style={styles.headerRight}>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('AddNote', { note })}
-                    >
+                    <TouchableOpacity onPress={handleEdit}>
                         <Ionicons name="create-outline" size={24} color="#000" />
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => setDelVisible(true)}
-                        style={styles.headerIcon}
-                    >
+                    <TouchableOpacity onPress={() => setDelVisible(true)} style={styles.headerIcon}>
                         <Ionicons name="trash-outline" size={24} color="#E53935" />
                     </TouchableOpacity>
                 </View>
             </View>
 
-            <ScrollView
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-            >
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 <View style={styles.card}>
-                    {note.image ? (
+                    {note.image && (
                         <Image source={{ uri: note.image }} style={styles.image} />
-                    ) : null}
+                    )}
 
                     <View style={styles.infoRow}>
                         <Text style={styles.label}>Name:</Text>
-                        <Text
-                            style={styles.value}
-                            numberOfLines={2}
-                            ellipsizeMode="tail"
-                        >
+                        <Text style={styles.value} numberOfLines={2} ellipsizeMode="tail">
                             {note.name}
                         </Text>
                     </View>
@@ -123,13 +119,14 @@ const NoteDetails: React.FC<Props> = ({ route }) => {
                             {note.comment || 'No comment'}
                         </Text>
                     </View>
+
                     <View style={styles.infoRow}>
                         <Text style={styles.label}>Category:</Text>
-                        {note.category ? (
+                        {note.category && (
                             <View style={[styles.pill, { backgroundColor: pillColor }]}>
                                 <Text style={styles.pillText}>{note.category}</Text>
                             </View>
-                        ) : null}
+                        )}
                     </View>
                 </View>
             </ScrollView>
