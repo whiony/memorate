@@ -1,5 +1,5 @@
 import React from 'react';
-import LabeledInput from '../../components/LabeledInput';
+import LabeledInput from '@/ui/Input/LabeledInput';
 
 interface TitleInputProps {
     value: string;

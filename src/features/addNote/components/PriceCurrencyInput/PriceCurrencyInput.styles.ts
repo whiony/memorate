@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { borders, colors, globalStyles } from '../../theme/theme';
+import { borders, colors } from '@/theme/index';
 
 export const styles = StyleSheet.create({
     priceInput: {
