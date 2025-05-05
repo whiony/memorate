@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback, useMemo } from 'react'
+import React, { FC, useState, useEffect, useCallback, useMemo } from 'react'
 import {
     View,
     Text,
@@ -17,7 +17,7 @@ import type { RootStackParamList, NavNote, Note } from '@/navigation/AppNavigato
 import { categoryColors } from '@/utils/categoryColors'
 import DeleteNoteModal from '@/modals/DeleteNoteModal'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
-import { deleteDoc, doc } from 'firebase/firestore'
+import { deleteDoc, doc as firestoreDoc, onSnapshot } from 'firebase/firestore'
 import { firestore } from '@/services/firebaseConfig'
 import { formatPrice } from '@/utils/formatPrice'
 import { styles } from './NoteDetails.styles'
@@ -28,14 +28,34 @@ type NoteDetailsNavigationProp = StackNavigationProp<RootStackParamList, 'NoteDe
 const NoteDetails: FC = () => {
     const navigation = useNavigation<NoteDetailsNavigationProp>()
     const route = useRoute<NoteDetailsRouteProp>()
-
     const navNote = route.params.note as NavNote
-    const note: Note = useMemo(
-        () => ({ ...navNote, created: new Date(navNote.created) }),
-        [navNote]
-    )
 
+    const [note, setNote] = useState<Note>({
+        ...navNote,
+        created: new Date(navNote.created),
+    })
     const [delVisible, setDelVisible] = useState(false)
+
+    useEffect(() => {
+        const ref = firestoreDoc(firestore, 'reviews', navNote.id)
+        const unsub = onSnapshot(ref, snap => {
+            const data = snap.data()
+            if (data) {
+                setNote({
+                    id: snap.id,
+                    name: data.name,
+                    comment: data.comment,
+                    rating: data.rating,
+                    image: data.image,
+                    category: data.category,
+                    created: data.created.toDate(),
+                    price: data.price,
+                    currency: data.currency,
+                })
+            }
+        })
+        return () => unsub()
+    }, [navNote.id])
 
     const formattedDate = useMemo(
         () => format(note.created!, 'MMMM dd, yyyy'),
@@ -61,13 +81,11 @@ const NoteDetails: FC = () => {
         if (note.image?.startsWith('https://res.cloudinary.com')) {
             await deleteFromCloudinary(note.image)
         }
-        await deleteDoc(doc(firestore, 'reviews', note.id))
+        await deleteDoc(firestoreDoc(firestore, 'reviews', note.id))
         navigation.goBack()
     }, [note, navigation])
 
-    const openDeleteModal = useCallback(() => {
-        setDelVisible(true)
-    }, [])
+    const openDeleteModal = useCallback(() => setDelVisible(true), [])
 
     return (
         <SafeAreaView style={styles.container}>
@@ -93,9 +111,7 @@ const NoteDetails: FC = () => {
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.card}>
-                    {note.image && (
-                        <Image source={{ uri: note.image }} style={styles.image} />
-                    )}
+                    {note.image && <Image source={{ uri: note.image }} style={styles.image} />}
 
                     <View style={styles.infoRow}>
                         <Text style={styles.label}>Name:</Text>
