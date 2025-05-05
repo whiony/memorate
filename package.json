@@ -1,6 +1,6 @@
 {
   "name": "memorate-app",
-  "version": "0.10.0",
+  "version": "0.12.0",
   "author": "Yana Bychilova",
   "description": "A mobile app that saves you from 'Did I already buy this?' moments",
   "main": "expo/AppEntry.js",
@@ -42,6 +42,7 @@
     "@types/react": "~19.0.10",
     "@types/react-native": "^0.73.0",
     "@types/react-native-vector-icons": "^6.4.18",
+    "babel-plugin-module-resolver": "^5.0.2",
     "typescript": "~5.8.3"
   },
   "private": true

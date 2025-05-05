@@ -1,12 +1,12 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../features/home/HomeScreen';
-import AddNoteScreen from '../features/addNote/AddNoteScreen';
-import { CategoriesProvider } from '../hooks/useCategories';
-import NoteItem from '../features/noteItem/NoteItem';
-import FilterModal from '../components/FilterModal';
-import { SortKey, SortProvider } from '../contexts/SortContext';
+import HomeScreen from '@/features/home/HomeScreen';
+import AddNoteScreen from '@/features/addNote/AddNoteScreen';
+import { CategoriesProvider } from '@/hooks/useCategories';
+import NoteDetails from '@/features/noteDetails/NoteDetails';
+import FilterModal from '@/modals/FilterModal';
+import { SortKey, SortProvider } from '@/contexts/SortContext';
 
 export interface Note {
     id: string;
@@ -24,7 +24,7 @@ export type RootStackParamList = {
     Home: undefined;
     AddNote: { note?: Note };
     FilterModal: { current: SortKey };
-    NoteItem: { note: Note }
+    NoteDetails: { note: Note }
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -55,7 +55,7 @@ const AppNavigator: React.FC = () => {
                                 cardStyle: { backgroundColor: 'transparent' },
                             }}
                         />
-                        <Stack.Screen name="NoteItem" component={NoteItem} options={{ headerShown: false }} />
+                        <Stack.Screen name="NoteDetails" component={NoteDetails} options={{ headerShown: false }} />
                     </Stack.Navigator>
                 </NavigationContainer>
             </SortProvider>

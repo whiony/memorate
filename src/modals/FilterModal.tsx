@@ -8,9 +8,9 @@ import {
     TouchableWithoutFeedback,
 } from 'react-native'
 import type { StackScreenProps } from '@react-navigation/stack'
-import { colors, fonts } from '../theme/theme'
-import { RootStackParamList } from '../navigation/AppNavigator'
-import { useSort } from '../contexts/SortContext'
+import { colors, fonts } from '@/theme/index'
+import { RootStackParamList } from '@/navigation/AppNavigator'
+import { useSort } from '@/contexts/SortContext'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 type Props = StackScreenProps<RootStackParamList, 'FilterModal'>

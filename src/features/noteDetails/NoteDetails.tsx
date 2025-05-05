@@ -11,28 +11,28 @@ import { useNavigation, RouteProp } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack'
 import { Ionicons } from '@expo/vector-icons'
 import { format } from 'date-fns'
-import StarRating from '../../components/StarRating'
-import type { RootStackParamList } from '../../navigation/AppNavigator'
-import { categoryColors } from '../../utils/categoryColors'
-import { styles } from './NoteItem.styles'
-import { deleteFromCloudinary } from '../../utils/deleteFromCloudinary'
+import StarRating from '@/ui/Rating/StarRating'
+import type { RootStackParamList } from '@/navigation/AppNavigator'
+import { categoryColors } from '@/utils/categoryColors'
+import { styles } from './NoteDetails.styles'
+import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
 import { deleteDoc, doc } from 'firebase/firestore'
-import { firestore } from '../../services/firebaseConfig'
-import DeleteNoteModal from '../../components/DeleteNoteModal'
-import { formatPrice } from '../../utils/formatPrice'
+import { firestore } from '@/services/firebaseConfig'
+import DeleteNoteModal from '@/modals/DeleteNoteModal'
+import { formatPrice } from '@/utils/formatPrice'
 
-export type NoteItemNavigationProp = StackNavigationProp<
+export type NoteDetailsNavigationProp = StackNavigationProp<
     RootStackParamList,
-    'NoteItem'
+    'NoteDetails'
 >
-export type NoteItemRouteProp = RouteProp<RootStackParamList, 'NoteItem'>
+export type NoteDetailsRouteProp = RouteProp<RootStackParamList, 'NoteDetails'>
 
 interface Props {
-    route: NoteItemRouteProp
+    route: NoteDetailsRouteProp
 }
 
-const NoteItem: React.FC<Props> = ({ route }) => {
-    const navigation = useNavigation<NoteItemNavigationProp>()
+const NoteDetails: React.FC<Props> = ({ route }) => {
+    const navigation = useNavigation<NoteDetailsNavigationProp>()
     const { note } = route.params
     const [delVisible, setDelVisible] = useState(false)
 
@@ -144,4 +144,4 @@ const NoteItem: React.FC<Props> = ({ route }) => {
     )
 }
 
-export default NoteItem
+export default NoteDetails
