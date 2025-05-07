@@ -1,30 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react'
-import {
-    View,
-    Text,
-    TouchableOpacity,
-    Alert,
-    SafeAreaView,
-} from 'react-native'
+import React, { FC, useEffect, useRef, useState, useCallback } from 'react'
+import { View, Text, TouchableOpacity, Alert, SafeAreaView } from 'react-native'
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
+import type { StackNavigationProp } from '@react-navigation/stack'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import {
-    useNavigation,
-    RouteProp,
-    NavigationProp,
-} from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker'
-import {
-    collection,
-    addDoc,
-    doc,
-    updateDoc,
-    deleteField,
-} from 'firebase/firestore'
+import { collection, addDoc, doc, updateDoc, deleteField } from 'firebase/firestore'
 import { firestore } from '@/services/firebaseConfig'
-import { RootStackParamList, Note } from '@/navigation/AppNavigator'
+import type { RootStackParamList, NavNote, Note } from '@/navigation/AppNavigator'
 import { uploadToCloudinary } from '@/utils/uploadToCloudinary'
-
 import TitleInput from './components/TitleInput/TitleInput'
 import ImagePickerComponent from '@/ui/ImagePicker/ImagePicker'
 import PriceCurrencyInput from './components/PriceCurrencyInput/PriceCurrencyInput'
@@ -35,89 +19,86 @@ import StarRating from '@/ui/Rating/StarRating'
 import FullscreenLoader from '@/ui/Loader/FullscreenLoader'
 
 import { styles } from './AddNoteScreen.styles'
-import { globalStyles } from '@/theme/index'
+import { globalStyles } from '@/theme'
 import { useCategories } from '@/hooks/useCategories'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
 
-type Currency = '€' | '$' | '₴'
+type AddNoteRouteProp = RouteProp<RootStackParamList, 'AddNote'>
+type AddNoteNavigationProp = StackNavigationProp<RootStackParamList, 'AddNote'>
 
 interface Props {
-    route: RouteProp<RootStackParamList, 'AddNote'>
+    route: AddNoteRouteProp
 }
 
 const CLOUD_NAME = process.env.CLOUD_NAME!
 const UPLOAD_PRESET = process.env.UPLOAD_PRESET!
 const MAX_TITLE_LENGTH = 50;
 
-const AddNoteScreen: React.FC<Props> = ({ route }) => {
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-    const existingNote = route.params?.note
+type Currency = '€' | '$' | '₴'
 
-    const [title, setTitle] = useState(existingNote?.name || '')
-    const [comment, setComment] = useState(existingNote?.comment || '')
-    const [rating, setRating] = useState(existingNote?.rating || 0)
+const AddNoteScreen: FC<Props> = () => {
+    const navigation = useNavigation<AddNoteNavigationProp>()
+    const route = useRoute<AddNoteRouteProp>()
+
+    const navNote = route.params?.note as NavNote | undefined
+    const existingNote: Note | undefined = navNote
+        ? { ...navNote, created: new Date(navNote.created) }
+        : undefined
+
+    const [title, setTitle] = useState(existingNote?.name ?? '')
+    const [comment, setComment] = useState(existingNote?.comment ?? '')
+    const [rating, setRating] = useState(existingNote?.rating ?? 0)
     const [price, setPrice] = useState(
-        existingNote?.price != null
-            ? existingNote.price.toString().replace('.', ',')
-            : ''
+        existingNote?.price != null ? existingNote.price.toString().replace('.', ',') : ''
     )
-    const [currency, setCurrency] = useState<Currency>(
-        existingNote?.currency || '€'
-    )
-    const [image, setImage] = useState<string | null>(
-        existingNote?.image || null
-    )
+    const [currency, setCurrency] = useState<Currency>(existingNote?.currency ?? '€')
+    const [image, setImage] = useState<string | null>(existingNote?.image ?? null)
     const [loadingImage, setLoadingImage] = useState(false)
     const [saving, setSaving] = useState(false)
 
-    const [category, setCategory] = useState(
-        existingNote?.category || ''
-    )
+    const { categories, addCategory, loading: addingCategory } = useCategories()
+    const [category, setCategory] = useState(existingNote?.category ?? '')
     const [openDropdown, setOpenDropdown] = useState(false)
     const [showCategoryInput, setShowCategoryInput] = useState(false)
     const [newCategory, setNewCategory] = useState('')
-    const { categories, addCategory, loading: addingCategory } =
-        useCategories()
 
-    const scrollRef = useRef<KeyboardAwareScrollView | null>(null)
+    const scrollRef = useRef<KeyboardAwareScrollView>(null)
 
     useEffect(() => {
         if (!category && categories.length) {
             setCategory(categories[0])
         }
-    }, [categories])
+    }, [categories, category])
 
-    const currencyOptions: Currency[] = ['€', '$', '₴']
-    const toggleCurrency = () => {
-        const idx = currencyOptions.indexOf(currency)
-        setCurrency(currencyOptions[(idx + 1) % currencyOptions.length])
-    }
+    const toggleCurrency = useCallback(() => {
+        const opts: Currency[] = ['€', '$', '₴']
+        const idx = opts.indexOf(currency)
+        setCurrency(opts[(idx + 1) % opts.length])
+    }, [currency])
 
-    const pickImage = async () => {
+    const pickImage = useCallback(async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ['images'],
             allowsEditing: true,
             aspect: [4, 3],
             quality: 0.7,
             base64: true,
         })
         if (!result.canceled) {
-            setImage(
-                `data:image/jpeg;base64,${result.assets[0].base64}`
-            )
+            setImage(`data:image/jpeg;base64,${result.assets[0].base64}`)
         }
-    }
+    }, [])
 
-    const handleAddCategory = async () => {
+    const handleAddCategory = useCallback(async () => {
         if (newCategory.trim()) {
             await addCategory(newCategory.trim())
             setCategory(newCategory.trim())
             setNewCategory('')
         }
         setShowCategoryInput(false)
-    }
+    }, [newCategory, addCategory])
 
-    const handleSave = async () => {
+    const handleSave = useCallback(async () => {
         if (!title.trim()) {
             Alert.alert('Name is required')
             return
@@ -129,18 +110,15 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
 
         try {
             setSaving(true)
-            if (existingNote && existingNote.image && !image) {
+
+            if (existingNote?.image && !image) {
                 await deleteFromCloudinary(existingNote.image)
             }
 
             let imageUrl: string | null = image
             if (image?.startsWith('data:image')) {
                 setLoadingImage(true)
-                imageUrl = await uploadToCloudinary(
-                    image,
-                    CLOUD_NAME,
-                    UPLOAD_PRESET
-                )
+                imageUrl = await uploadToCloudinary(image, CLOUD_NAME, UPLOAD_PRESET)
                 setLoadingImage(false)
             }
 
@@ -152,26 +130,16 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
                 created: new Date(),
             }
             if (price) {
-                const normalized = price.replace(',', '.')
-                payload.price = parseFloat(normalized)
+                payload.price = parseFloat(price.replace(',', '.'))
             }
-            if (currency) payload.currency = currency
-            if (imageUrl) {
-                payload.image = imageUrl
-            } else if (existingNote && existingNote.image && !image) {
-                payload.image = deleteField() as any
-            }
+            payload.currency = currency
+            if (imageUrl) payload.image = imageUrl
+            else if (existingNote?.image && !image) payload.image = deleteField() as any
 
             if (existingNote) {
-                await updateDoc(
-                    doc(firestore, 'reviews', existingNote.id),
-                    payload
-                )
+                await updateDoc(doc(firestore, 'reviews', existingNote.id), payload)
             } else {
-                await addDoc(
-                    collection(firestore, 'reviews'),
-                    payload
-                )
+                await addDoc(collection(firestore, 'reviews'), payload)
             }
 
             Alert.alert(
@@ -179,84 +147,85 @@ const AddNoteScreen: React.FC<Props> = ({ route }) => {
                 existingNote ? 'Note updated!' : 'Note saved!',
                 [{ text: 'OK', onPress: () => navigation.goBack() }]
             )
-        } catch (e) {
-            console.error('Save failed', e)
+        } catch (error) {
+            console.error('Save failed', error)
             Alert.alert('Error', 'Save failed. Try again.')
         } finally {
             setSaving(false)
         }
-    }
+    }, [title, comment, rating, category, price, currency, image, existingNote, navigation])
 
-    const handleTitleChange = (t: string) => {
-        setTitle(t.length <= MAX_TITLE_LENGTH ? t : t.substr(0, MAX_TITLE_LENGTH));
-    };
+    const handleTitleChange = useCallback((text: string) => {
+        setTitle(text.slice(0, MAX_TITLE_LENGTH))
+    }, [])
+
+    const handleCommentFocus = useCallback((event: { nativeEvent: { target: Object } }) => {
+        scrollRef.current?.scrollToFocusedInput(event.nativeEvent.target)
+    }, [])
 
     return (
-        <>
-            <SafeAreaView >
-                <View style={styles.headerContainer}>
-                    <TouchableOpacity
-                        onPress={() => navigation.goBack()}
-                    >
-                        <Ionicons name="arrow-back" size={24} color="#000" />
-                    </TouchableOpacity>
-                    <Text style={styles.headerTitle}>
-                        {existingNote ? 'Edit Note' : 'New Note'}
-                    </Text>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('Home')}
-                    >
-                        <Ionicons name="home-outline" size={24} color="#000" />
-                    </TouchableOpacity>
+        <SafeAreaView >
+            <View style={styles.headerContainer}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Ionicons name="arrow-back" size={24} color="#000" />
+                </TouchableOpacity>
+
+                <Text style={styles.headerTitle}>
+                    {existingNote ? 'Edit Note' : 'New Note'}
+                </Text>
+
+                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                    <Ionicons name="home-outline" size={24} color="#000" />
+                </TouchableOpacity>
+            </View>
+
+            <KeyboardAwareScrollView
+                ref={scrollRef}
+                enableAutomaticScroll
+            >
+                <View style={[globalStyles.screenBackground, styles.screen]}>
+                    <TitleInput value={title} onChange={handleTitleChange} />
+                    <ImagePickerComponent
+                        image={image}
+                        onPickImage={pickImage}
+                        onRemoveImage={() => setImage(null)}
+                    />
+                    <StarRating rating={rating} onChange={setRating} />
+                    <PriceCurrencyInput
+                        price={price}
+                        onChangePrice={setPrice}
+                        currency={currency}
+                        onToggleCurrency={toggleCurrency}
+                    />
+                    <CommentInput
+                        comment={comment}
+                        onChangeComment={setComment}
+                        onFocus={handleCommentFocus}
+                    />
+                    <CategorySection
+                        category={category}
+                        setCategory={setCategory}
+                        categories={categories}
+                        openDropdown={openDropdown}
+                        setOpenDropdown={setOpenDropdown}
+                        showCategoryInput={showCategoryInput}
+                        setShowCategoryInput={setShowCategoryInput}
+                        newCategory={newCategory}
+                        setNewCategory={setNewCategory}
+                        handleAddCategory={handleAddCategory}
+                        loading={addingCategory}
+                    />
+
+                    <SaveButton
+                        onPress={handleSave}
+                        title={existingNote ? 'Update' : 'Save'}
+                        disabled={!title.trim() || rating <= 0 || saving || loadingImage}
+                    />
+
+                    {(saving || loadingImage) && <FullscreenLoader />}
                 </View>
-
-                <KeyboardAwareScrollView ref={ref => { scrollRef.current = ref }} enableAutomaticScroll>
-                    <View style={[globalStyles.screenBackground, styles.screen]}>
-                        <TitleInput value={title} onChange={handleTitleChange} />
-                        <ImagePickerComponent
-                            image={image}
-                            onPickImage={pickImage}
-                            onRemoveImage={() => setImage(null)}
-                        />
-                        <StarRating rating={rating} onChange={setRating} />
-                        <PriceCurrencyInput
-                            price={price}
-                            onChangePrice={setPrice}
-                            currency={currency}
-                            onToggleCurrency={toggleCurrency}
-                        />
-                        <CommentInput onFocus={(event) => {
-                            scrollRef.current?.scrollToFocusedInput(event.nativeEvent.target)
-                        }} comment={comment} onChangeComment={setComment} />
-                        <CategorySection
-                            category={category}
-                            setCategory={setCategory}
-                            categories={categories}
-                            openDropdown={openDropdown}
-                            setOpenDropdown={setOpenDropdown}
-                            showCategoryInput={showCategoryInput}
-                            setShowCategoryInput={setShowCategoryInput}
-                            newCategory={newCategory}
-                            setNewCategory={setNewCategory}
-                            handleAddCategory={handleAddCategory}
-                            loading={addingCategory}
-                        />
-                        <SaveButton
-                            onPress={handleSave}
-                            title={existingNote ? 'Update' : 'Save'}
-                            disabled={
-                                !title.trim() ||
-                                rating <= 0 ||
-                                saving ||
-                                loadingImage
-                            }
-                        />
-
-                        {(saving || loadingImage) && <FullscreenLoader />}
-                    </View>
-                </KeyboardAwareScrollView>
-            </SafeAreaView>
-        </>
+            </KeyboardAwareScrollView>
+        </SafeAreaView>
     )
 }
 

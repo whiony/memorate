@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FC, useState, useEffect, useCallback, useMemo } from 'react'
 import {
     View,
     Text,
@@ -7,76 +7,100 @@ import {
     ScrollView,
     SafeAreaView,
 } from 'react-native'
-import { useNavigation, RouteProp } from '@react-navigation/native'
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack'
 import { Ionicons } from '@expo/vector-icons'
 import { format } from 'date-fns'
+
 import StarRating from '@/ui/Rating/StarRating'
-import type { RootStackParamList } from '@/navigation/AppNavigator'
+import type { RootStackParamList, NavNote, Note } from '@/navigation/AppNavigator'
 import { categoryColors } from '@/utils/categoryColors'
-import { styles } from './NoteDetails.styles'
-import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
-import { deleteDoc, doc } from 'firebase/firestore'
-import { firestore } from '@/services/firebaseConfig'
 import DeleteNoteModal from '@/modals/DeleteNoteModal'
+import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
+import { deleteDoc, doc as firestoreDoc, onSnapshot } from 'firebase/firestore'
+import { firestore } from '@/services/firebaseConfig'
 import { formatPrice } from '@/utils/formatPrice'
+import { styles } from './NoteDetails.styles'
 
-export type NoteDetailsNavigationProp = StackNavigationProp<
-    RootStackParamList,
-    'NoteDetails'
->
-export type NoteDetailsRouteProp = RouteProp<RootStackParamList, 'NoteDetails'>
+type NoteDetailsRouteProp = RouteProp<RootStackParamList, 'NoteDetails'>
+type NoteDetailsNavigationProp = StackNavigationProp<RootStackParamList, 'NoteDetails'>
 
-interface Props {
-    route: NoteDetailsRouteProp
-}
-
-const NoteDetails: React.FC<Props> = ({ route }) => {
+const NoteDetails: FC = () => {
     const navigation = useNavigation<NoteDetailsNavigationProp>()
-    const { note } = route.params
+    const route = useRoute<NoteDetailsRouteProp>()
+    const navNote = route.params.note as NavNote
+
+    const [note, setNote] = useState<Note>({
+        ...navNote,
+        created: new Date(navNote.created),
+    })
     const [delVisible, setDelVisible] = useState(false)
 
-    const date = note.created
-        ? format(new Date(note.created), 'MMMM dd, yyyy')
-        : ''
-    const pillColor = categoryColors[note.category] || '#CCC'
+    useEffect(() => {
+        const ref = firestoreDoc(firestore, 'reviews', navNote.id)
+        const unsub = onSnapshot(ref, snap => {
+            const data = snap.data()
+            if (data) {
+                setNote({
+                    id: snap.id,
+                    name: data.name,
+                    comment: data.comment,
+                    rating: data.rating,
+                    image: data.image,
+                    category: data.category,
+                    created: data.created.toDate(),
+                    price: data.price,
+                    currency: data.currency,
+                })
+            }
+        })
+        return () => unsub()
+    }, [navNote.id])
 
+    const formattedDate = useMemo(
+        () => format(note.created!, 'MMMM dd, yyyy'),
+        [note.created]
+    )
+    const pillColor = categoryColors[note.category] ?? '#CCC'
     const priceDisplay = note.price && note.price > 0
         ? `${note.currency}${formatPrice(note.price)}`
         : '—'
 
-    const onConfirmDelete = async () => {
+    const handleGoBack = useCallback(() => {
+        navigation.goBack()
+    }, [navigation])
+
+    const handleEdit = useCallback(() => {
+        navigation.navigate('AddNote', {
+            note: { ...note, created: note.created!.toISOString() },
+        })
+    }, [navigation, note])
+
+    const handleDelete = useCallback(async () => {
         setDelVisible(false)
         if (note.image?.startsWith('https://res.cloudinary.com')) {
             await deleteFromCloudinary(note.image)
         }
-        await deleteDoc(doc(firestore, 'reviews', note.id))
+        await deleteDoc(firestoreDoc(firestore, 'reviews', note.id))
         navigation.goBack()
-    }
+    }, [note, navigation])
+
+    const openDeleteModal = useCallback(() => setDelVisible(true), [])
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
+                <TouchableOpacity onPress={handleGoBack}>
                     <Ionicons name="arrow-back" size={24} color="#000" />
                 </TouchableOpacity>
-                <Text
-                    style={styles.headerTitle}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                >
+                <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">
                     {note.name}
                 </Text>
                 <View style={styles.headerRight}>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('AddNote', { note })}
-                    >
+                    <TouchableOpacity onPress={handleEdit}>
                         <Ionicons name="create-outline" size={24} color="#000" />
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => setDelVisible(true)}
-                        style={styles.headerIcon}
-                    >
+                    <TouchableOpacity onPress={openDeleteModal} style={styles.headerIcon}>
                         <Ionicons name="trash-outline" size={24} color="#E53935" />
                     </TouchableOpacity>
                 </View>
@@ -87,24 +111,18 @@ const NoteDetails: React.FC<Props> = ({ route }) => {
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.card}>
-                    {note.image ? (
-                        <Image source={{ uri: note.image }} style={styles.image} />
-                    ) : null}
+                    {note.image && <Image source={{ uri: note.image }} style={styles.image} />}
 
                     <View style={styles.infoRow}>
                         <Text style={styles.label}>Name:</Text>
-                        <Text
-                            style={styles.value}
-                            numberOfLines={2}
-                            ellipsizeMode="tail"
-                        >
+                        <Text style={styles.value} numberOfLines={2} ellipsizeMode="tail">
                             {note.name}
                         </Text>
                     </View>
 
                     <View style={styles.infoRow}>
                         <Text style={styles.label}>Date:</Text>
-                        <Text style={styles.value}>{date}</Text>
+                        <Text style={styles.value}>{formattedDate}</Text>
                     </View>
 
                     <View style={styles.infoRow}>
@@ -123,13 +141,14 @@ const NoteDetails: React.FC<Props> = ({ route }) => {
                             {note.comment || 'No comment'}
                         </Text>
                     </View>
+
                     <View style={styles.infoRow}>
                         <Text style={styles.label}>Category:</Text>
-                        {note.category ? (
+                        {note.category && (
                             <View style={[styles.pill, { backgroundColor: pillColor }]}>
                                 <Text style={styles.pillText}>{note.category}</Text>
                             </View>
-                        ) : null}
+                        )}
                     </View>
                 </View>
             </ScrollView>
@@ -137,8 +156,8 @@ const NoteDetails: React.FC<Props> = ({ route }) => {
             <DeleteNoteModal
                 visible={delVisible}
                 noteName={note.name}
-                onCancel={() => setDelVisible(false)}
-                onConfirm={onConfirmDelete}
+                onCancel={handleGoBack}
+                onConfirm={handleDelete}
             />
         </SafeAreaView>
     )
