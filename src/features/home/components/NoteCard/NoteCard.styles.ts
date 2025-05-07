@@ -90,33 +90,40 @@ export const styles = StyleSheet.create({
     },
 
     date: {
+        fontFamily: 'Montserrat-Regular',
+        fontSize: 13,
+        color: '#666',
+        letterSpacing: 0.3,
+
         position: 'absolute',
+        top: '45%',
         left: 16,
-        fontSize: 14,
-        color: '#000',
-        top: '50%',
     },
 
     centerStars: {
         position: 'absolute',
+        top: '40%',
         left: 0,
         right: 0,
-        top: '45%',
         alignItems: 'center',
     },
 
     price: {
         position: 'absolute',
+        top: '43%',
         right: 16,
-        fontSize: 14,
-        top: '50%',
+
+        fontFamily: 'Montserrat-Regular',
+        fontSize: 15,
+        color: '#444',
+        letterSpacing: 0.3,
     },
 
     pricePlaceholder: {
         position: 'absolute',
         right: 16,
         width: 40,
-        top: '50%',
+        top: '45%',
     },
 
     actions: {
