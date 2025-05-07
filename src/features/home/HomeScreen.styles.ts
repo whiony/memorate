@@ -53,4 +53,15 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 6,
     },
+    glassButton: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 50,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.2)',
+    },
 });

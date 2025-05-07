@@ -31,6 +31,7 @@ import { styles } from './HomeScreen.styles'
 import { colors } from '@/theme/index'
 import { useSort } from '@/contexts/SortContext'
 import { LinearGradient } from 'expo-linear-gradient'
+import { BlurView } from 'expo-blur'
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
 
@@ -158,20 +159,16 @@ const HomeScreen: React.FC = () => {
                     contentContainerStyle={styles.listContent}
                 />
 
-                <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={() => navigation.navigate('AddNote', {})}
-                >
-                    <Text style={styles.addButtonText}>+</Text>
+                <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddNote', {})}>
+                    <BlurView intensity={30} tint="light" style={styles.glassButton}>
+                        <Text style={styles.addButtonText}>+</Text>
+                    </BlurView>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                    style={styles.filterButton}
-                    onPress={() =>
-                        navigation.navigate('FilterModal', { current: sortBy })
-                    }
-                >
-                    <MaterialIcons name="sort" size={24} color="#fff" />
+                <TouchableOpacity style={styles.filterButton} onPress={() => navigation.navigate('FilterModal', { current: sortBy })}>
+                    <BlurView intensity={30} tint="light" style={styles.glassButton}>
+                        <MaterialIcons name="sort" size={24} color="#fff" />
+                    </BlurView>
                 </TouchableOpacity>
             </View>
         </LinearGradient>
