@@ -8,16 +8,8 @@ export const styles = StyleSheet.create({
     starContainer: {
         flexDirection: 'row',
     },
-    star: {
-        fontSize: 30,
-        marginHorizontal: 4,
-    },
     cardStarContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-    },
-    cardStar: {
-        fontSize: 18,
-        marginHorizontal: 2,
     },
 })
