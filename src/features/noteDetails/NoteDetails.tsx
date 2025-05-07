@@ -21,6 +21,9 @@ import { firestore } from '@/services/firebaseConfig'
 import { formatPrice } from '@/utils/formatPrice'
 import { styles } from './NoteDetails.styles'
 import { useCategories } from '@/hooks/useCategories'
+import { BlurView } from 'expo-blur'
+import { LinearGradient } from 'expo-linear-gradient'
+import { StyleSheet } from 'react-native'
 
 type NoteDetailsRouteProp = RouteProp<RootStackParamList, 'NoteDetails'>
 type NoteDetailsNavigationProp = StackNavigationProp<RootStackParamList, 'NoteDetails'>
@@ -89,13 +92,17 @@ const NoteDetails: FC = () => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={handleGoBack}>
-                    <Ionicons name="arrow-back" size={24} color="#000" />
-                </TouchableOpacity>
+                <View style={styles.side}>
+                    <TouchableOpacity onPress={handleGoBack}>
+                        <Ionicons name="arrow-back" size={24} color="#000" />
+                    </TouchableOpacity>
+                </View>
+
                 <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">
-                    {note.name}
+                    Note Details
                 </Text>
-                <View style={styles.headerRight}>
+
+                <View style={styles.side}>
                     <TouchableOpacity onPress={handleEdit}>
                         <Ionicons name="create-outline" size={24} color="#000" />
                     </TouchableOpacity>
@@ -105,52 +112,57 @@ const NoteDetails: FC = () => {
                 </View>
             </View>
 
-            <ScrollView
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-            >
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 <View style={styles.card}>
-                    {note.image && <Image source={{ uri: note.image }} style={styles.image} />}
 
-                    <View style={styles.infoRow}>
-                        <Text style={styles.label}>Name:</Text>
-                        <Text style={styles.value} numberOfLines={2} ellipsizeMode="tail">
-                            {note.name}
-                        </Text>
-                    </View>
-
-                    <View style={styles.infoRow}>
-                        <Text style={styles.label}>Date:</Text>
-                        <Text style={styles.value}>{formattedDate}</Text>
-                    </View>
-
-                    <View style={styles.infoRow}>
-                        <Text style={styles.label}>Price:</Text>
-                        <Text style={styles.value}>{priceDisplay}</Text>
-                    </View>
-
-                    <View style={styles.ratingContainer}>
-                        <Text style={styles.label}>Rating:</Text>
-                        <StarRating rating={note.rating} disabled cardList />
-                    </View>
-
-                    <View style={styles.commentContainer}>
-                        <Text style={styles.label}>Comment:</Text>
-                        <Text style={styles.commentText}>
-                            {note.comment || 'No comment'}
-                        </Text>
-                    </View>
-
-                    <View style={styles.infoRow}>
-                        <Text style={styles.label}>Category:</Text>
-                        {note.category && (
-                            <View style={[styles.pill, { backgroundColor: pillColor }]}>
-                                <Text style={styles.pillText}>{note.category}</Text>
+                    {note.image ? (
+                        <View style={styles.imageWrapper}>
+                            <Image source={{ uri: note.image }} style={styles.image} />
+                            <View style={styles.textOnImage}>
+                                <BlurView intensity={30} tint="light" style={styles.blurOverlay}>
+                                    <LinearGradient
+                                        colors={['rgba(180,180,180,0.2)', 'rgba(255,255,255,0.05)']}
+                                        style={StyleSheet.absoluteFillObject}
+                                    />
+                                    {note.category && (
+                                        <View style={[styles.categoryPill, { backgroundColor: pillColor }]}>
+                                            <Text style={styles.categoryPillText}>{note.category}</Text>
+                                        </View>
+                                    )}
+                                    <Text style={styles.titleOnImage}>{note.name}</Text>
+                                </BlurView>
                             </View>
+                        </View>
+                    ) : (
+                        <View style={styles.noImageHeader}>
+                            {note.category && (
+                                <View style={[styles.categoryPill, { backgroundColor: pillColor }]}>
+                                    <Text style={styles.categoryPillText}>{note.category}</Text>
+                                </View>
+                            )}
+                            <Text style={styles.titleNoImage}>{note.name}</Text>
+                        </View>
+                    )}
+
+                    <View style={styles.body}>
+                        <View style={styles.inlineRow}>
+                            <StarRating rating={note.rating} disabled cardList />
+                            <Text style={styles.ratingText}>{note.rating.toFixed(1)}/5.0</Text>
+                        </View>
+
+                        {note.price && note.price > 0 && (
+                            <Text style={styles.price}>{priceDisplay}</Text>
                         )}
+
+                        {!!note.comment && (
+                            <Text style={styles.comment}>{note.comment}</Text>
+                        )}
+
+                        <Text style={styles.date}>Added on {formattedDate}</Text>
                     </View>
                 </View>
             </ScrollView>
+
 
             <DeleteNoteModal
                 visible={delVisible}
