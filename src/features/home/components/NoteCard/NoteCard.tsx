@@ -12,6 +12,9 @@ import { useCategories } from '@/hooks/useCategories'
 import type { Note } from '@/navigation/AppNavigator'
 import { styles } from './NoteCard.styles'
 import { formatPrice } from '@/utils/formatPrice'
+import { BlurView } from 'expo-blur'
+import { LinearGradient } from 'expo-linear-gradient'
+import { StyleSheet } from 'react-native';
 
 type Props = {
     note: Note
@@ -81,44 +84,53 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                         onPress(note)
                     }}
                 >
-                    <View style={[styles.card, { backgroundColor: bgColor }]}>
-                        <View style={styles.mainRow}>
-                            {note.image && (
-                                <View style={styles.imageWrapper}>
-                                    <Image
-                                        source={{ uri: note.image }}
-                                        style={styles.image}
-                                        resizeMode="cover"
-                                    />
+                    <View style={styles.cardWrapper}>
+                        <BlurView intensity={100} tint="light" style={styles.cardBackground}>
+                            <LinearGradient
+                                colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.05)']}
+                                style={StyleSheet.absoluteFillObject}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                            />
+                        </BlurView>
+
+                        <View style={styles.cardContent}>
+                            <View style={styles.mainRow}>
+                                {note.image && (
+                                    <View style={styles.imageWrapper}>
+                                        <Image source={{ uri: note.image }} style={styles.image} resizeMode="cover" />
+                                    </View>
+                                )}
+                                <View style={styles.mainContent}>
+                                    <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+                                        {note.name}
+                                    </Text>
+                                    <Text style={styles.comment} numberOfLines={3}>
+                                        {note.comment}
+                                    </Text>
                                 </View>
-                            )}
-                            <View style={styles.mainContent}>
-                                <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
-                                    {note.name}
-                                </Text>
-                                <Text style={styles.comment} numberOfLines={3}>
-                                    {note.comment}
-                                </Text>
                             </View>
-                        </View>
-                        <View style={styles.divider} />
-                        <View style={styles.footer}>
-                            <Text style={styles.date}>{date}</Text>
-                            <View style={styles.centerStars}>
-                                <StarRating rating={note.rating} disabled cardList />
+
+                            <View style={styles.divider} />
+                            <View style={styles.footer}>
+                                <Text style={styles.date}>{date}</Text>
+                                <View style={styles.centerStars}>
+                                    <StarRating rating={note.rating} disabled cardList />
+                                </View>
+                                {priceDisplay ? (
+                                    <Text style={styles.price}>
+                                        {note.currency}
+                                        {priceDisplay}
+                                    </Text>
+                                ) : (
+                                    <View style={styles.pricePlaceholder} />
+                                )}
                             </View>
-                            {priceDisplay ? (
-                                <Text style={styles.price}>
-                                    {note.currency}
-                                    {priceDisplay}
-                                </Text>
-                            ) : (
-                                <View style={styles.pricePlaceholder} />
-                            )}
                         </View>
                     </View>
                 </TouchableOpacity>
-            </Swipeable>
+
+            </Swipeable >
 
             <DeleteNoteModal
                 visible={delVisible}

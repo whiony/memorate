@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native'
 
 export const styles = StyleSheet.create({
     section: {
@@ -11,13 +11,6 @@ export const styles = StyleSheet.create({
     star: {
         fontSize: 30,
         marginHorizontal: 4,
-        color: '#aaa',
-    },
-    starFilled: {
-        color: '#FFD700',
-        textShadowColor: '#000',
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 2,
     },
     cardStarContainer: {
         flexDirection: 'row',
@@ -27,4 +20,4 @@ export const styles = StyleSheet.create({
         fontSize: 18,
         marginHorizontal: 2,
     },
-});
+})

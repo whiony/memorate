@@ -28,8 +28,9 @@ import type { Note, RootStackParamList } from '@/navigation/AppNavigator'
 import NoteCard from './components/NoteCard/NoteCard'
 import CategoryFilter from './components/CategoryFilter/CategoryFilter'
 import { styles } from './HomeScreen.styles'
-import { colors, globalStyles } from '@/theme/index'
+import { colors } from '@/theme/index'
 import { useSort } from '@/contexts/SortContext'
+import { LinearGradient } from 'expo-linear-gradient'
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
 
@@ -112,61 +113,68 @@ const HomeScreen: React.FC = () => {
         })
 
     return (
-        <View
-            style={[
-                globalStyles.screenBackground,
-                { flex: 1, paddingHorizontal: 16 },
-            ]}
+        <LinearGradient
+            colors={['#FFE29F', '#FFA99F', '#FF719A', '#A18CD1']}
+            style={{ flex: 1 }}
+            start={{ x: 0.2, y: 0 }}
+            end={{ x: 1, y: 1 }}
         >
-            <Text style={styles.header}>Memorate</Text>
+            <View
+                style={[
+                    { flex: 1, paddingHorizontal: 16 },
+                ]}
+            >
+                <Text style={styles.header}>Memorate</Text>
 
-            <View style={styles.categoryContainer}>
-                <CategoryFilter
-                    categories={allCats}
-                    selected={category}
-                    onSelect={setCategory}
+                <View style={styles.categoryContainer}>
+                    <CategoryFilter
+                        categories={allCats}
+                        selected={category}
+                        onSelect={setCategory}
+                    />
+                </View>
+
+                <FlatList
+                    data={sortedNotes}
+                    keyExtractor={item => item.id}
+                    onScroll={closeAll}
+                    onTouchStart={closeAll}
+                    showsVerticalScrollIndicator={false}
+                    renderItem={({ item, index }) => (
+                        <TouchableWithoutFeedback onPress={() => openDetail(item)}>
+                            <View>
+                                <NoteCard
+                                    ref={ref => {
+                                        swipeableRefs.current[index] = ref!
+                                    }}
+                                    note={item}
+                                    onEdit={openEdit}
+                                    onDelete={handleDelete}
+                                    onPress={openDetail}
+                                />
+                            </View>
+                        </TouchableWithoutFeedback>
+                    )}
+                    contentContainerStyle={styles.listContent}
                 />
+
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => navigation.navigate('AddNote', {})}
+                >
+                    <Text style={styles.addButtonText}>+</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.filterButton}
+                    onPress={() =>
+                        navigation.navigate('FilterModal', { current: sortBy })
+                    }
+                >
+                    <MaterialIcons name="sort" size={24} color="#fff" />
+                </TouchableOpacity>
             </View>
-
-            <FlatList
-                data={sortedNotes}
-                keyExtractor={item => item.id}
-                onScroll={closeAll}
-                onTouchStart={closeAll}
-                renderItem={({ item, index }) => (
-                    <TouchableWithoutFeedback onPress={() => openDetail(item)}>
-                        <View>
-                            <NoteCard
-                                ref={ref => {
-                                    swipeableRefs.current[index] = ref!
-                                }}
-                                note={item}
-                                onEdit={openEdit}
-                                onDelete={handleDelete}
-                                onPress={openDetail}
-                            />
-                        </View>
-                    </TouchableWithoutFeedback>
-                )}
-                contentContainerStyle={styles.listContent}
-            />
-
-            <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => navigation.navigate('AddNote', {})}
-            >
-                <Text style={styles.addButtonText}>+</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                style={styles.filterButton}
-                onPress={() =>
-                    navigation.navigate('FilterModal', { current: sortBy })
-                }
-            >
-                <MaterialIcons name="sort" size={24} color="#fff" />
-            </TouchableOpacity>
-        </View>
+        </LinearGradient>
     )
 }
 
