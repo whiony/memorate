@@ -34,14 +34,13 @@ export const styles = StyleSheet.create({
         paddingBottom: 24,
     },
     pill: {
-        alignSelf: 'flex-start',
+        alignSelf: 'center',
         paddingHorizontal: 12,
         paddingVertical: 4,
         borderRadius: 12,
     },
     pillText: {
-        color: '#fff',
-        fontWeight: '600',
+        color: '#000',
     },
     card: {
         backgroundColor: '#fff',
@@ -60,6 +59,7 @@ export const styles = StyleSheet.create({
     },
     infoRow: {
         flexDirection: 'row',
+        alignItems: 'center',
         marginBottom: 12,
     },
     label: {
