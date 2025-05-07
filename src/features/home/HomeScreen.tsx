@@ -23,12 +23,12 @@ import {
 } from 'firebase/firestore'
 import { firestore } from '@/services/firebaseConfig'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
-import { useCategories } from '@/hooks/useCategories'
+import { Category, useCategories } from '@/hooks/useCategories'
 import type { Note, RootStackParamList } from '@/navigation/AppNavigator'
 import NoteCard from './components/NoteCard/NoteCard'
 import CategoryFilter from './components/CategoryFilter/CategoryFilter'
 import { styles } from './HomeScreen.styles'
-import { globalStyles } from '@/theme/index'
+import { colors, globalStyles } from '@/theme/index'
 import { useSort } from '@/contexts/SortContext'
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
@@ -38,8 +38,13 @@ const HomeScreen: React.FC = () => {
     const [notes, setNotes] = useState<Note[]>([])
     const [category, setCategory] = useState<'All' | string>('All')
     const { sortBy, sortOrder } = useSort()
-    const { categories } = useCategories()
+    const { categories: loadedCats } = useCategories()
     const swipeableRefs = useRef<Swipeable[]>([])
+
+    const allCats: Category[] = [
+        { name: 'All', color: colors.primary },
+        ...loadedCats
+    ]
 
     useEffect(() => {
         let base: Query<DocumentData> = collection(firestore, 'reviews')
@@ -117,7 +122,7 @@ const HomeScreen: React.FC = () => {
 
             <View style={styles.categoryContainer}>
                 <CategoryFilter
-                    categories={['All', ...categories]}
+                    categories={allCats}
                     selected={category}
                     onSelect={setCategory}
                 />

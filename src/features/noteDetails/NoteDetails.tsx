@@ -14,13 +14,13 @@ import { format } from 'date-fns'
 
 import StarRating from '@/ui/Rating/StarRating'
 import type { RootStackParamList, NavNote, Note } from '@/navigation/AppNavigator'
-import { categoryColors } from '@/utils/categoryColors'
 import DeleteNoteModal from '@/modals/DeleteNoteModal'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
 import { deleteDoc, doc as firestoreDoc, onSnapshot } from 'firebase/firestore'
 import { firestore } from '@/services/firebaseConfig'
 import { formatPrice } from '@/utils/formatPrice'
 import { styles } from './NoteDetails.styles'
+import { useCategories } from '@/hooks/useCategories'
 
 type NoteDetailsRouteProp = RouteProp<RootStackParamList, 'NoteDetails'>
 type NoteDetailsNavigationProp = StackNavigationProp<RootStackParamList, 'NoteDetails'>
@@ -35,6 +35,7 @@ const NoteDetails: FC = () => {
         created: new Date(navNote.created),
     })
     const [delVisible, setDelVisible] = useState(false)
+    const { categories } = useCategories()
 
     useEffect(() => {
         const ref = firestoreDoc(firestore, 'reviews', navNote.id)
@@ -59,23 +60,22 @@ const NoteDetails: FC = () => {
 
     const formattedDate = useMemo(
         () => format(note.created!, 'MMMM dd, yyyy'),
-        [note.created]
+        [note.created],
     )
-    const pillColor = categoryColors[note.category] ?? '#CCC'
+
+    const catObj = categories.find(c => c.name === note.category)
+    const pillColor = catObj?.color ?? '#CCC'
+
     const priceDisplay = note.price && note.price > 0
         ? `${note.currency}${formatPrice(note.price)}`
         : '—'
 
-    const handleGoBack = useCallback(() => {
-        navigation.goBack()
-    }, [navigation])
-
+    const handleGoBack = useCallback(() => navigation.goBack(), [navigation])
     const handleEdit = useCallback(() => {
         navigation.navigate('AddNote', {
             note: { ...note, created: note.created!.toISOString() },
         })
     }, [navigation, note])
-
     const handleDelete = useCallback(async () => {
         setDelVisible(false)
         if (note.image?.startsWith('https://res.cloudinary.com')) {
@@ -84,7 +84,6 @@ const NoteDetails: FC = () => {
         await deleteDoc(firestoreDoc(firestore, 'reviews', note.id))
         navigation.goBack()
     }, [note, navigation])
-
     const openDeleteModal = useCallback(() => setDelVisible(true), [])
 
     return (

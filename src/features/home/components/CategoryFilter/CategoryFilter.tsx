@@ -1,62 +1,97 @@
-import React, { useState } from 'react';
-import { ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { categoryColors } from '@/utils/categoryColors';
-import { useCategories } from '@/hooks/useCategories';
-import ActionCategoryModal from '@/modals/ActionCategoryModal';
-import RenameCategoryModal from '@/modals/RenameCategoryModal';
-import DeleteCategoryModal from '@/modals/DeleteCategoryModal';
+import React, { useState } from 'react'
+import {
+    ScrollView,
+    TouchableOpacity,
+    Text,
+    StyleSheet,
+} from 'react-native'
+import type { Category } from '@/hooks/useCategories'
+import { useCategories } from '@/hooks/useCategories'
+import ActionCategoryModal from '@/modals/ActionCategoryModal'
+import RenameCategoryModal from '@/modals/RenameCategoryModal'
+import DeleteCategoryModal from '@/modals/DeleteCategoryModal'
 
 interface Props {
-    categories: string[];
-    selected: string;
-    onSelect: (cat: string) => void;
+    categories: Category[]
+    selected: string
+    onSelect: (cat: string) => void
 }
 
-const CategoryFilter: React.FC<Props> = ({ categories, selected, onSelect }) => {
-    const { renameCategory, deleteCategory } = useCategories();
-    const [actionVisible, setActionVisible] = useState(false);
-    const [renameVisible, setRenameVisible] = useState(false);
-    const [deleteVisible, setDeleteVisible] = useState(false);
-    const [activeCat, setActiveCat] = useState('');
+const CategoryFilter: React.FC<Props> = ({
+    categories,
+    selected,
+    onSelect,
+}) => {
+    const { renameCategory, deleteCategory } = useCategories()
 
-    const handleLong = (cat: string) => {
-        if (cat === 'All') return;
-        setActiveCat(cat);
-        setActionVisible(true);
-    };
+    const [actionVisible, setActionVisible] = useState(false)
+    const [renameVisible, setRenameVisible] = useState(false)
+    const [deleteVisible, setDeleteVisible] = useState(false)
+    const [activeCat, setActiveCat] = useState('')
 
-    const onRename = () => { setActionVisible(false); setRenameVisible(true); };
-    const onDelete = () => { setActionVisible(false); setDeleteVisible(true); };
+    const handleLong = (catName: string) => {
+        if (catName === 'All') return
+        setActiveCat(catName)
+        setActionVisible(true)
+    }
+
+    const onRename = () => {
+        setActionVisible(false)
+        setRenameVisible(true)
+    }
+    const onDelete = () => {
+        setActionVisible(false)
+        setDeleteVisible(true)
+    }
 
     const confirmRename = async (newName: string) => {
-        setRenameVisible(false);
+        setRenameVisible(false)
         if (newName && newName !== activeCat) {
-            await renameCategory(activeCat, newName);
-            onSelect(newName);
+            await renameCategory(activeCat, newName)
+            onSelect(newName)
         }
-    };
+    }
 
     const confirmDelete = async () => {
-        setDeleteVisible(false);
-        await deleteCategory(activeCat);
-        onSelect('All');
-    };
+        setDeleteVisible(false)
+        await deleteCategory(activeCat)
+        onSelect('All')
+    }
 
     return (
         <>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} >
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.list}
+            >
                 {categories.map(cat => {
-                    const isSel = cat === selected;
-                    const bg = categoryColors[cat] || '#aaa';
+                    const isSel = cat.name === selected
+
                     return (
                         <TouchableOpacity
-                            key={cat}
-                            onPress={() => onSelect(cat)}
-                            onLongPress={() => handleLong(cat)}
-                            style={[styles.pill, { backgroundColor: bg, opacity: isSel ? 1 : 0.7 }]}>
-                            <Text style={styles.text}>{cat}</Text>
+                            key={cat.name}
+                            onPress={() => onSelect(cat.name)}
+                            onLongPress={() => handleLong(cat.name)}
+                            style={[
+                                styles.pill,
+                                {
+                                    backgroundColor: isSel ? '#fff' : cat.color,
+                                    borderColor: isSel ? cat.color : 'transparent',
+                                    borderWidth: 2,
+                                },
+                            ]}
+                        >
+                            <Text
+                                style={[
+                                    styles.text,
+                                    { color: isSel ? cat.color : '#000' },
+                                ]}
+                            >
+                                {cat.name}
+                            </Text>
                         </TouchableOpacity>
-                    );
+                    )
                 })}
             </ScrollView>
 
@@ -80,12 +115,25 @@ const CategoryFilter: React.FC<Props> = ({ categories, selected, onSelect }) => 
                 onConfirm={confirmDelete}
             />
         </>
-    );
-};
+    )
+}
 
 const styles = StyleSheet.create({
-    pill: { height: 36, borderRadius: 18, justifyContent: 'center', paddingHorizontal: 40, marginRight: 8 },
-    text: { color: '#000', fontSize: 14 },
-});
+    list: {
+        paddingHorizontal: 8,
+        alignItems: 'center',
+    },
+    pill: {
+        height: 36,
+        borderRadius: 18,
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        marginRight: 8,
+    },
+    text: {
+        fontSize: 14,
+        fontWeight: '500',
+    },
+})
 
-export default CategoryFilter;
+export default CategoryFilter

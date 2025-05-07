@@ -22,6 +22,7 @@ import { styles } from './AddNoteScreen.styles'
 import { globalStyles } from '@/theme'
 import { useCategories } from '@/hooks/useCategories'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
+import { categoryColorOptions } from '@/utils/categoryColors'
 
 type AddNoteRouteProp = RouteProp<RootStackParamList, 'AddNote'>
 type AddNoteNavigationProp = StackNavigationProp<RootStackParamList, 'AddNote'>
@@ -57,18 +58,20 @@ const AddNoteScreen: FC<Props> = () => {
     const [saving, setSaving] = useState(false)
 
     const { categories, addCategory, loading: addingCategory } = useCategories()
+    const categoryNames = categories.map(c => c.name)
     const [category, setCategory] = useState(existingNote?.category ?? '')
     const [openDropdown, setOpenDropdown] = useState(false)
     const [showCategoryInput, setShowCategoryInput] = useState(false)
     const [newCategory, setNewCategory] = useState('')
+    const [newCategoryColor, setNewCategoryColor] = useState<string>(categoryColorOptions[0])
 
     const scrollRef = useRef<KeyboardAwareScrollView>(null)
 
     useEffect(() => {
-        if (!category && categories.length) {
-            setCategory(categories[0])
+        if (!category && categoryNames.length) {
+            setCategory(categoryNames[0])
         }
-    }, [categories, category])
+    }, [categoryNames, category])
 
     const toggleCurrency = useCallback(() => {
         const opts: Currency[] = ['€', '$', '₴']
@@ -91,12 +94,15 @@ const AddNoteScreen: FC<Props> = () => {
 
     const handleAddCategory = useCallback(async () => {
         if (newCategory.trim()) {
-            await addCategory(newCategory.trim())
+            setShowCategoryInput(false)
+            await addCategory(newCategory.trim(), newCategoryColor)
             setCategory(newCategory.trim())
             setNewCategory('')
+            setNewCategoryColor(categoryColorOptions[0])
+        } else {
+            setShowCategoryInput(false)
         }
-        setShowCategoryInput(false)
-    }, [newCategory, addCategory])
+    }, [newCategory, newCategoryColor, addCategory])
 
     const handleSave = useCallback(async () => {
         if (!title.trim()) {
@@ -164,25 +170,20 @@ const AddNoteScreen: FC<Props> = () => {
     }, [])
 
     return (
-        <SafeAreaView >
+        <SafeAreaView>
             <View style={styles.headerContainer}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={24} color="#000" />
                 </TouchableOpacity>
-
                 <Text style={styles.headerTitle}>
                     {existingNote ? 'Edit Note' : 'New Note'}
                 </Text>
-
                 <TouchableOpacity onPress={() => navigation.navigate('Home')}>
                     <Ionicons name="home-outline" size={24} color="#000" />
                 </TouchableOpacity>
             </View>
 
-            <KeyboardAwareScrollView
-                ref={scrollRef}
-                enableAutomaticScroll
-            >
+            <KeyboardAwareScrollView ref={scrollRef} enableAutomaticScroll>
                 <View style={[globalStyles.screenBackground, styles.screen]}>
                     <TitleInput value={title} onChange={handleTitleChange} />
                     <ImagePickerComponent
@@ -205,23 +206,23 @@ const AddNoteScreen: FC<Props> = () => {
                     <CategorySection
                         category={category}
                         setCategory={setCategory}
-                        categories={categories}
+                        categories={categoryNames}
                         openDropdown={openDropdown}
                         setOpenDropdown={setOpenDropdown}
                         showCategoryInput={showCategoryInput}
                         setShowCategoryInput={setShowCategoryInput}
                         newCategory={newCategory}
                         setNewCategory={setNewCategory}
+                        newCategoryColor={newCategoryColor}
+                        setNewCategoryColor={setNewCategoryColor}
                         handleAddCategory={handleAddCategory}
                         loading={addingCategory}
                     />
-
                     <SaveButton
                         onPress={handleSave}
                         title={existingNote ? 'Update' : 'Save'}
                         disabled={!title.trim() || rating <= 0 || saving || loadingImage}
                     />
-
                     {(saving || loadingImage) && <FullscreenLoader />}
                 </View>
             </KeyboardAwareScrollView>
@@ -230,3 +231,4 @@ const AddNoteScreen: FC<Props> = () => {
 }
 
 export default AddNoteScreen
+
