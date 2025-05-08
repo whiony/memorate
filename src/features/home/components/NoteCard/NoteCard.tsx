@@ -1,6 +1,6 @@
 import React, { forwardRef, useState } from 'react'
 import {
-    View, Text, Image, TouchableOpacity,
+    View, Text, Image, TouchableOpacity, StyleSheet
 } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import type { Swipeable as SwipeableType } from 'react-native-gesture-handler'
@@ -14,7 +14,6 @@ import { styles } from './NoteCard.styles'
 import { formatPrice } from '@/utils/formatPrice'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
-import { StyleSheet } from 'react-native';
 
 type Props = {
     note: Note
@@ -55,32 +54,52 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
         <View style={styles.actions}>
             <TouchableOpacity
                 onPress={() => {
-                    closeSwipe()
-                    onEdit(note)
+                    closeSwipe();
+                    onEdit(note);
                 }}
-                style={[styles.actionButton, styles.editAction]}
+                style={styles.actionButton}
             >
-                <BlurView intensity={30} tint="light" style={styles.glassButton}>
-                    <Ionicons name="create-outline" size={25} color="#fff" />
-                </BlurView>
+                <View style={styles.absoluteFill}>
+                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
+                        <LinearGradient
+                            colors={['rgba(250,198,99,0.12)', 'rgba(250,198,99,0.05)']}
+                            style={styles.gradientOverlay}
+                        />
+                        <View style={styles.glassBorder} />
+                        <Ionicons name="create-outline" size={25} color="#fff" style={styles.editIcon} />
+                    </BlurView>
+                </View>
             </TouchableOpacity>
+
             <TouchableOpacity
                 onPress={() => {
-                    closeSwipe()
-                    setDelVisible(true)
+                    closeSwipe();
+                    setDelVisible(true);
                 }}
-                style={[styles.actionButton, styles.deleteAction]}
+                style={styles.actionButton}
             >
-                <BlurView intensity={30} tint="light" style={styles.glassButton}>
-                    <Ionicons name="trash-outline" size={25} color="#fff" />
-                </BlurView>
+                <View style={styles.absoluteFill}>
+                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
+                        <LinearGradient
+                            colors={['rgba(239,83,80,0.12)', 'rgba(239,83,80,0.05)']}
+                            style={styles.gradientOverlay}
+                        />
+                        <View style={styles.glassBorder} />
+                        <Ionicons name="trash-outline" size={25} color="#fff" />
+                    </BlurView>
+                </View>
             </TouchableOpacity>
+
         </View>
     )
 
     return (
         <>
             <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
+                <LinearGradient
+                    colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
+                    style={[StyleSheet.absoluteFillObject, { borderRadius: 20 }]}
+                />
                 <TouchableOpacity
                     activeOpacity={0.9}
                     onPress={() => {
@@ -92,7 +111,7 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                         <BlurView intensity={100} tint="light" style={styles.cardBackground}>
                             <LinearGradient
                                 colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.05)']}
-                                style={StyleSheet.absoluteFillObject}
+                                style={[StyleSheet.absoluteFillObject]}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}
                             />

@@ -25,11 +25,10 @@ export const styles = StyleSheet.create({
         backgroundColor: colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
-        elevation: 8,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
     },
     addButtonText: {
         fontSize: 40,
@@ -47,11 +46,10 @@ export const styles = StyleSheet.create({
         backgroundColor: colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
-        elevation: 8,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
     },
     glassButton: {
         width: '100%',
@@ -60,8 +58,34 @@ export const styles = StyleSheet.create({
         overflow: 'hidden',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    },
+
+    coloredGlass: {
+        backgroundColor: 'transparent',
+        borderColor: 'rgba(255, 111, 97, 0.4)',
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.2)',
+    },
+
+    absoluteFill: {
+        ...StyleSheet.absoluteFillObject,
+    },
+
+    gradientOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        borderRadius: 50,
+        zIndex: -1,
+    },
+
+    glassBorder: {
+        ...StyleSheet.absoluteFillObject,
+        borderRadius: 50,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: 'transparent',
+        shadowColor: '#fff',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+        zIndex: 1,
     },
 });

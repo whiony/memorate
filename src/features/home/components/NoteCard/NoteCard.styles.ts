@@ -136,8 +136,8 @@ export const styles = StyleSheet.create({
     },
 
     actionButton: {
-        width: 67,
-        height: 65,
+        width: 66,
+        height: 66,
         borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
@@ -177,4 +177,28 @@ export const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.2)',
     },
+
+    absoluteFill: {
+        ...StyleSheet.absoluteFillObject,
+    },
+
+    gradientOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        borderRadius: 50,
+        zIndex: -1,
+    },
+
+    glassBorder: {
+        ...StyleSheet.absoluteFillObject,
+        borderRadius: 50,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: 'transparent',
+        shadowColor: '#fff',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+        zIndex: 1,
+    },
+
 });

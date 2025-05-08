@@ -160,15 +160,29 @@ const HomeScreen: React.FC = () => {
                 />
 
                 <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddNote', {})}>
-                    <BlurView intensity={30} tint="light" style={styles.glassButton}>
-                        <Text style={styles.addButtonText}>+</Text>
-                    </BlurView>
+                    <View style={styles.absoluteFill}>
+                        <BlurView intensity={70} tint="light" style={styles.glassButton}>
+                            <LinearGradient
+                                colors={['rgba(255,111,97,0.12)', 'rgba(255,111,97,0.05)']}
+                                style={styles.gradientOverlay}
+                            />
+                            <View style={styles.glassBorder} />
+                            <Text style={styles.addButtonText}>+</Text>
+                        </BlurView>
+                    </View>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.filterButton} onPress={() => navigation.navigate('FilterModal', { current: sortBy })}>
-                    <BlurView intensity={30} tint="light" style={styles.glassButton}>
-                        <MaterialIcons name="sort" size={24} color="#fff" />
-                    </BlurView>
+                    <View style={styles.absoluteFill}>
+                        <BlurView intensity={70} tint="light" style={styles.glassButton}>
+                            <LinearGradient
+                                colors={['rgba(255,111,97,0.12)', 'rgba(255,111,97,0.05)']}
+                                style={styles.gradientOverlay}
+                            />
+                            <View style={styles.glassBorder} />
+                            <MaterialIcons name="sort" size={24} color="#fff" />
+                        </BlurView>
+                    </View>
                 </TouchableOpacity>
             </View>
         </LinearGradient>

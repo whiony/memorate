@@ -1,15 +1,20 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {
     ScrollView,
     TouchableOpacity,
     Text,
     StyleSheet,
+    Animated,
 } from 'react-native'
 import type { Category } from '@/hooks/useCategories'
 import { useCategories } from '@/hooks/useCategories'
 import ActionCategoryModal from '@/modals/ActionCategoryModal'
 import RenameCategoryModal from '@/modals/RenameCategoryModal'
 import DeleteCategoryModal from '@/modals/DeleteCategoryModal'
+import { BlurView } from 'expo-blur'
+import { LinearGradient } from 'expo-linear-gradient'
+
+const AnimatedBlur = Animated.createAnimatedComponent(BlurView)
 
 interface Props {
     categories: Category[]
@@ -28,6 +33,8 @@ const CategoryFilter: React.FC<Props> = ({
     const [renameVisible, setRenameVisible] = useState(false)
     const [deleteVisible, setDeleteVisible] = useState(false)
     const [activeCat, setActiveCat] = useState('')
+
+    const scale = useRef(new Animated.Value(1)).current
 
     const handleLong = (catName: string) => {
         if (catName === 'All') return
@@ -68,29 +75,51 @@ const CategoryFilter: React.FC<Props> = ({
                 {categories.map(cat => {
                     const isSel = cat.name === selected
 
+                    const background = isSel
+                        ? 'rgba(255,255,255,0.25)'
+                        : `${cat.color}66`
+
                     return (
-                        <TouchableOpacity
+                        <Animated.View
                             key={cat.name}
-                            onPress={() => onSelect(cat.name)}
-                            onLongPress={() => handleLong(cat.name)}
                             style={[
-                                styles.pill,
-                                {
-                                    backgroundColor: isSel ? '#fff' : cat.color,
-                                    borderColor: isSel ? cat.color : 'transparent',
-                                    borderWidth: 2,
-                                },
+                                styles.pillWrapper,
+                                isSel && { transform: [{ scale: 1.04 }] },
                             ]}
                         >
-                            <Text
+                            <AnimatedBlur
+                                intensity={100}
+                                tint="light"
                                 style={[
-                                    styles.text,
-                                    { color: isSel ? cat.color : '#000' },
+                                    styles.pill,
+                                    {
+                                        backgroundColor: background,
+                                        borderWidth: isSel ? 1 : 0,
+                                        borderColor: 'rgba(255,255,255,0.5)',
+                                    },
                                 ]}
                             >
-                                {cat.name}
-                            </Text>
-                        </TouchableOpacity>
+                                <LinearGradient
+                                    colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
+                                    style={StyleSheet.absoluteFill}
+                                />
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        Animated.sequence([
+                                            Animated.spring(scale, { toValue: 1.04, useNativeDriver: true }),
+                                            Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
+                                        ]).start()
+                                        onSelect(cat.name)
+                                    }}
+                                    onLongPress={() => handleLong(cat.name)}
+                                    style={styles.touchable}
+                                >
+                                    <Text style={[styles.text, isSel && styles.selectedText]}>
+                                        {cat.name}
+                                    </Text>
+                                </TouchableOpacity>
+                            </AnimatedBlur>
+                        </Animated.View>
                     )
                 })}
             </ScrollView>
@@ -122,18 +151,38 @@ const styles = StyleSheet.create({
     list: {
         paddingHorizontal: 8,
         alignItems: 'center',
+        flexDirection: 'row',
+    },
+    pillWrapper: {
+        borderRadius: 18,
+        marginRight: 8,
+        overflow: 'hidden',
     },
     pill: {
         height: 36,
         borderRadius: 18,
+        paddingHorizontal: 20,
         justifyContent: 'center',
-        paddingHorizontal: 40,
-        marginRight: 8,
+        alignItems: 'center',
+    },
+    touchable: {
+        paddingHorizontal: 20,
+        paddingVertical: 6,
+        borderRadius: 18,
     },
     text: {
         fontSize: 14,
         fontWeight: '500',
+        color: '#000',
+    },
+    selectedText: {
+        fontWeight: '700',
+        color: '#000',
+        textShadowColor: 'rgba(255,255,255,0.6)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 3,
     },
 })
+
 
 export default CategoryFilter
