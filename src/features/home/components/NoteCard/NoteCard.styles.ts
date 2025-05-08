@@ -145,7 +145,7 @@ export const styles = StyleSheet.create({
     },
 
     editAction: {
-        backgroundColor: '#FFE066',
+        backgroundColor: '#fac663',
     },
 
     editIcon: {
@@ -164,5 +164,17 @@ export const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255,0.15)',
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.2)',
+    },
+
+    glassButton: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 50,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.2)',
     },
 });

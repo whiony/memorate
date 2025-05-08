@@ -60,7 +60,9 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                 }}
                 style={[styles.actionButton, styles.editAction]}
             >
-                <Ionicons name="create-outline" size={25} color="#fff" />
+                <BlurView intensity={30} tint="light" style={styles.glassButton}>
+                    <Ionicons name="create-outline" size={25} color="#fff" />
+                </BlurView>
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => {
@@ -69,7 +71,9 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                 }}
                 style={[styles.actionButton, styles.deleteAction]}
             >
-                <Ionicons name="trash-outline" size={25} color="#fff" />
+                <BlurView intensity={30} tint="light" style={styles.glassButton}>
+                    <Ionicons name="trash-outline" size={25} color="#fff" />
+                </BlurView>
             </TouchableOpacity>
         </View>
     )
