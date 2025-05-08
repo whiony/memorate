@@ -160,29 +160,17 @@ const HomeScreen: React.FC = () => {
                 />
 
                 <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddNote', {})}>
-                    <View style={styles.absoluteFill}>
-                        <BlurView intensity={70} tint="light" style={styles.glassButton}>
-                            <LinearGradient
-                                colors={['rgba(255,111,97,0.12)', 'rgba(255,111,97,0.05)']}
-                                style={styles.gradientOverlay}
-                            />
-                            <View style={styles.glassBorder} />
-                            <Text style={styles.addButtonText}>+</Text>
-                        </BlurView>
-                    </View>
+                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
+                        <View style={styles.glassBorderOverlay} />
+                        <Text style={styles.addButtonText}>+</Text>
+                    </BlurView>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.filterButton} onPress={() => navigation.navigate('FilterModal', { current: sortBy })}>
-                    <View style={styles.absoluteFill}>
-                        <BlurView intensity={70} tint="light" style={styles.glassButton}>
-                            <LinearGradient
-                                colors={['rgba(255,111,97,0.12)', 'rgba(255,111,97,0.05)']}
-                                style={styles.gradientOverlay}
-                            />
-                            <View style={styles.glassBorder} />
-                            <MaterialIcons name="sort" size={24} color="#fff" />
-                        </BlurView>
-                    </View>
+                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
+                        <View style={styles.glassBorderOverlay} />
+                        <MaterialIcons name="sort" size={24} color="#fff" />
+                    </BlurView>
                 </TouchableOpacity>
             </View>
         </LinearGradient>

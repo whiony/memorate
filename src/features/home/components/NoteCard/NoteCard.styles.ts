@@ -116,7 +116,7 @@ export const styles = StyleSheet.create({
         fontFamily: 'Montserrat-Regular',
         fontSize: 15,
         color: '#444',
-        letterSpacing: 0.3,
+        letterSpacing: 0.5,
     },
 
     pricePlaceholder: {
@@ -174,7 +174,6 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.2)',
     },
 
@@ -190,15 +189,14 @@ export const styles = StyleSheet.create({
 
     glassBorder: {
         ...StyleSheet.absoluteFillObject,
-        borderRadius: 50,
+        borderRadius: 9999,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.2)',
-        backgroundColor: 'transparent',
+        borderColor: 'rgba(255,255,255,0.4)',
+
         shadowColor: '#fff',
         shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-        zIndex: 1,
+        shadowOpacity: 0.08,
+        shadowRadius: 10,
     },
 
 });

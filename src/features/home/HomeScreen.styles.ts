@@ -14,78 +14,62 @@ export const styles = StyleSheet.create({
     listContent: {
         paddingBottom: 100,
     },
+
     addButton: {
         position: 'absolute',
         bottom: 50,
         left: '53%',
         transform: [{ translateX: -32 }],
-        width: 72,
+        width: 70,
         height: 70,
-        borderRadius: 50,
-        backgroundColor: colors.primary,
-        justifyContent: 'center',
-        alignItems: 'center',
+        borderRadius: 36,
+        overflow: 'hidden',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.05,
-        shadowRadius: 5,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 5,
     },
+
     addButtonText: {
         fontSize: 40,
         color: '#fff',
         marginTop: -5,
         fontFamily: fonts.mainFont,
     },
+
     filterButton: {
         position: 'absolute',
         bottom: 50,
         left: 16,
         width: 48,
         height: 48,
-        borderRadius: 25,
-        backgroundColor: colors.primary,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.05,
-        shadowRadius: 5,
-    },
-    glassButton: {
-        width: '100%',
-        height: '100%',
-        borderRadius: 50,
+        borderRadius: 24,
         overflow: 'hidden',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 5,
+    },
+
+    glassButton: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.08)',
+        borderRadius: 9999,
     },
 
-    coloredGlass: {
-        backgroundColor: 'transparent',
-        borderColor: 'rgba(255, 111, 97, 0.4)',
-        borderWidth: 1,
-    },
-
-    absoluteFill: {
+    glassBorderOverlay: {
         ...StyleSheet.absoluteFillObject,
-    },
+        borderRadius: 9999,
+        borderWidth: 1.2,
+        borderColor: 'rgba(255,255,255,0.4)',
 
-    gradientOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        borderRadius: 50,
-        zIndex: -1,
-    },
-
-    glassBorder: {
-        ...StyleSheet.absoluteFillObject,
-        borderRadius: 50,
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.2)',
-        backgroundColor: 'transparent',
         shadowColor: '#fff',
         shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-        zIndex: 1,
+        shadowOpacity: 0.08,
+        shadowRadius: 10,
     },
 });
