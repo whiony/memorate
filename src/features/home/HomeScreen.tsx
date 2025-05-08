@@ -5,6 +5,7 @@ import {
     TouchableOpacity,
     Text,
     TouchableWithoutFeedback,
+    StyleSheet
 } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
@@ -159,7 +160,12 @@ const HomeScreen: React.FC = () => {
                     contentContainerStyle={styles.listContent}
                 />
 
+
                 <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddNote', {})}>
+                    <LinearGradient
+                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0)']}
+                        style={StyleSheet.absoluteFill}
+                    />
                     <BlurView intensity={70} tint="light" style={styles.glassButton}>
                         <View style={styles.glassBorderOverlay} />
                         <Text style={styles.addButtonText}>+</Text>
@@ -167,6 +173,10 @@ const HomeScreen: React.FC = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.filterButton} onPress={() => navigation.navigate('FilterModal', { current: sortBy })}>
+                    <LinearGradient
+                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0)']}
+                        style={StyleSheet.absoluteFill}
+                    />
                     <BlurView intensity={70} tint="light" style={styles.glassButton}>
                         <View style={styles.glassBorderOverlay} />
                         <MaterialIcons name="sort" size={24} color="#fff" />

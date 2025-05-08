@@ -1,6 +1,6 @@
 {
   "name": "memorate-app",
-  "version": "0.12.2",
+  "version": "0.13.0",
   "author": "Yana Bychilova",
   "description": "A mobile app that saves you from 'Did I already buy this?' moments",
   "main": "expo/AppEntry.js",
