@@ -6,7 +6,6 @@ const { width } = Dimensions.get('window')
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.screenBackground,
     },
 
     header: {
@@ -15,7 +14,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 16,
         borderBottomWidth: 1,
-        borderColor: '#dbdada',
+        borderColor: 'rgba(255, 255, 255, 0.25)',
     },
 
     side: {
@@ -43,13 +42,20 @@ export const styles = StyleSheet.create({
     },
 
     card: {
-        backgroundColor: '#fff',
         borderRadius: 16,
         overflow: 'hidden',
         shadowColor: '#000',
         shadowOpacity: 0.05,
         shadowRadius: 10,
         elevation: 3,
+    },
+
+    cardBackground: {
+        ...StyleSheet.absoluteFillObject,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)',
+        backgroundColor: 'rgba(255,255,255,0.05)',
     },
 
     imageWrapper: {
