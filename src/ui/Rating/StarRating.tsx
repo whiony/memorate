@@ -91,7 +91,6 @@ const StarRating: React.FC<Props> = ({
                         key={`${i}-${i <= rating}`}
                         onPress={() => onChange?.(i)}
                         disabled={disabled}
-                        style={{ marginHorizontal: 1 }}
                     >
                         <Star
                             filled={i <= rating}

@@ -76,7 +76,7 @@ const CategoryFilter: React.FC<Props> = ({
                     const isSel = cat.name === selected
 
                     const background = isSel
-                        ? 'rgba(255,255,255,0.25)'
+                        ? 'rgba(255,255,255,0.4)'
                         : `${cat.color}66`
 
                     return (
@@ -100,7 +100,7 @@ const CategoryFilter: React.FC<Props> = ({
                                 ]}
                             >
                                 <LinearGradient
-                                    colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
+                                    colors={['rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
                                     style={StyleSheet.absoluteFill}
                                 />
                                 <TouchableOpacity

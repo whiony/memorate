@@ -97,7 +97,7 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
         <>
             <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
                 <LinearGradient
-                    colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
+                    colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)']}
                     style={[StyleSheet.absoluteFillObject, { borderRadius: 20 }]}
                 />
                 <TouchableOpacity
