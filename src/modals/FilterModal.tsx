@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import {
     View,
-    Text,
     TouchableOpacity,
     StyleSheet,
     Pressable,
@@ -17,6 +16,13 @@ import { useSort } from '@/contexts/SortContext'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
+import {
+    useFadeInUp,
+    useAnimatedValue,
+    animateTo,
+    animateParallel,
+    interpolateColor,
+} from '@/hooks/useAnimations'
 
 type Props = StackScreenProps<RootStackParamList, 'FilterModal'>
 type SortKey = 'price' | 'rating' | 'date'
@@ -30,53 +36,24 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
         date: 'Date',
     }
 
-    const dropdownAnim = useRef(new Animated.Value(0)).current
-    const arrowRotationAnim = useRef(new Animated.Value(sortOrder === 'asc' ? 0 : 1)).current
+    const dropdownAnim = useFadeInUp()
+    const arrowRotationAnim = useAnimatedValue(sortOrder === 'asc' ? 0 : 1)
 
     const activeAnim = useRef({
-        price: new Animated.Value(sortBy === 'price' ? 1 : 0),
-        rating: new Animated.Value(sortBy === 'rating' ? 1 : 0),
-        date: new Animated.Value(sortBy === 'date' ? 1 : 0),
+        price: useAnimatedValue(sortBy === 'price' ? 1 : 0),
+        rating: useAnimatedValue(sortBy === 'rating' ? 1 : 0),
+        date: useAnimatedValue(sortBy === 'date' ? 1 : 0),
     }).current
 
     useEffect(() => {
-        Animated.timing(dropdownAnim, {
-            toValue: 1,
-            duration: 400,
-            easing: Easing.out(Easing.ease),
-            useNativeDriver: true,
-        }).start()
-    }, [])
-
-    useEffect(() => {
-        Animated.timing(arrowRotationAnim, {
-            toValue: sortOrder === 'asc' ? 0 : 1,
-            duration: 200,
-            easing: Easing.out(Easing.ease),
-            useNativeDriver: false,
-        }).start()
+        animateTo(arrowRotationAnim, sortOrder === 'asc' ? 0 : 1).start()
     }, [sortOrder])
 
     return (
         <Pressable style={styles.backdrop} onPress={() => navigation.goBack()}>
             <View style={{ flex: 1 }}>
                 <TouchableWithoutFeedback>
-                    <Animated.View
-                        style={[
-                            styles.dropdown,
-                            {
-                                opacity: dropdownAnim,
-                                transform: [
-                                    {
-                                        translateY: dropdownAnim.interpolate({
-                                            inputRange: [0, 1],
-                                            outputRange: [20, 0],
-                                        }),
-                                    },
-                                ],
-                            },
-                        ]}
-                    >
+                    <Animated.View style={[styles.dropdown, dropdownAnim]}>
                         <BlurView intensity={100} tint="light" style={StyleSheet.absoluteFill}>
                             <LinearGradient
                                 colors={[
@@ -94,43 +71,21 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
 
                         {(['price', 'rating', 'date'] as SortKey[]).map((key) => {
                             const isActive = sortBy === key
-
-                            const colorAnim = activeAnim[key].interpolate({
-                                inputRange: [0, 1],
-                                outputRange: ['#000', '#fff'],
-                            })
-
-                            const iconOpacity = activeAnim[key].interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [0, 1],
-                            })
-
-                            const iconTranslateY = activeAnim[key].interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [4, 0],
-                            })
+                            const colorAnim = interpolateColor(activeAnim[key], '#000', '#fff')
+                            const iconOpacity = activeAnim[key].interpolate({ inputRange: [0, 1], outputRange: [0, 1] })
+                            const iconTranslateY = activeAnim[key].interpolate({ inputRange: [0, 1], outputRange: [4, 0] })
 
                             return (
                                 <TouchableOpacity
                                     key={key}
                                     onPress={() => {
-                                        if (key === sortBy) {
+                                        if (isActive) {
                                             setSort(key)
                                         } else {
-                                            Animated.parallel([
-                                                Animated.timing(activeAnim[sortBy], {
-                                                    toValue: 0,
-                                                    duration: 200,
-                                                    useNativeDriver: false,
-                                                }),
-                                                Animated.timing(activeAnim[key], {
-                                                    toValue: 1,
-                                                    duration: 200,
-                                                    useNativeDriver: false,
-                                                }),
-                                            ]).start(() => {
-                                                setSort(key)
-                                            })
+                                            animateParallel([
+                                                animateTo(activeAnim[sortBy], 0),
+                                                animateTo(activeAnim[key], 1),
+                                            ], () => setSort(key))
                                         }
                                     }}
                                 >
@@ -140,7 +95,7 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
                                             {
                                                 backgroundColor: activeAnim[key].interpolate({
                                                     inputRange: [0, 1],
-                                                    outputRange: ['transparent', 'rgba(255,255,255,0.15)'],
+                                                    outputRange: ['transparent', 'rgba(255,255,255,0.25)'],
                                                 }),
                                                 transform: [
                                                     {
@@ -158,7 +113,17 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
                                             },
                                         ]}
                                     >
-                                        <Animated.Text style={[styles.optionText, { color: colorAnim }]}>
+                                        <Animated.Text
+                                            style={[
+                                                styles.optionText,
+                                                {
+                                                    color: colorAnim,
+                                                    textShadowColor: 'rgba(255, 255, 255, 0.2)',
+                                                    textShadowOffset: { width: 0, height: 0 },
+                                                    textShadowRadius: 4,
+                                                },
+                                            ]}
+                                        >
                                             {labels[key]}
                                         </Animated.Text>
 
@@ -230,54 +195,20 @@ const styles = StyleSheet.create({
     },
 
     optionActive: {
-        ...Platform.select({
-            web: {
-                backdropFilter: 'blur(8px)',
-            },
-        }),
-        backgroundColor: 'rgba(255, 255, 255, 0.15)',
-        borderColor: 'rgba(255, 255, 255, 0.3)',
+        backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        borderColor: 'rgba(255, 255, 255, 0.4)',
         borderWidth: 1,
-        shadowColor: '#fff',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.15,
-        shadowRadius: 6,
+        ...(Platform.OS === 'ios' && {
+            shadowColor: 'rgba(255,255,255,0.4)',
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 0.5,
+            shadowRadius: 6,
+        }),
     },
 
     optionText: {
         fontSize: 14,
         fontFamily: fonts.mainFont,
         color: colors.text,
-    },
-
-    optionTextActive: {
-        color: colors.buttonText,
-    },
-
-    applyButton: {
-        marginTop: 6,
-        paddingVertical: 8,
-        borderRadius: 6,
-        backgroundColor: colors.primary,
-        alignItems: 'center',
-    },
-
-    applyText: {
-        fontSize: 14,
-        color: colors.buttonText,
-        fontFamily: fonts.mainFont,
-    },
-
-    modalBackground: {
-        ...StyleSheet.absoluteFillObject,
-        borderRadius: 20,
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.3)',
-        overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 6,
     },
 })
