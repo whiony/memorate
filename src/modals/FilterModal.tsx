@@ -7,7 +7,6 @@ import {
     TouchableWithoutFeedback,
     Platform,
     Animated,
-    Easing,
 } from 'react-native'
 import type { StackScreenProps } from '@react-navigation/stack'
 import { colors, fonts } from '@/theme/index'
@@ -57,11 +56,11 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
                         <BlurView intensity={100} tint="light" style={StyleSheet.absoluteFill}>
                             <LinearGradient
                                 colors={[
-                                    'rgba(255,255,255,1)',
-                                    'rgba(255,255,255,.6)',
-                                    'rgba(255,255,255,0)',
                                     'rgba(255,255,255,0.2)',
                                     'rgba(255,255,255,0)',
+                                    'rgba(255,255,255,0.5)',
+                                    'rgba(255,255,255,0)',
+                                    'rgba(255,255,255,0.2)',
                                 ]}
                                 style={StyleSheet.absoluteFill}
                                 start={{ x: 0, y: 0 }}
@@ -95,7 +94,7 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
                                             {
                                                 backgroundColor: activeAnim[key].interpolate({
                                                     inputRange: [0, 1],
-                                                    outputRange: ['transparent', 'rgba(255,255,255,0.25)'],
+                                                    outputRange: ['transparent', 'rgba(255,255,255,0.15)'],
                                                 }),
                                                 transform: [
                                                     {
@@ -118,7 +117,7 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
                                                 styles.optionText,
                                                 {
                                                     color: colorAnim,
-                                                    textShadowColor: 'rgba(255, 255, 255, 0.2)',
+                                                    textShadowColor: 'rgba(255, 255, 255, 0.7)',
                                                     textShadowOffset: { width: 0, height: 0 },
                                                     textShadowRadius: 4,
                                                 },
@@ -192,18 +191,6 @@ const styles = StyleSheet.create({
         padding: 8,
         borderRadius: 6,
         marginBottom: 4,
-    },
-
-    optionActive: {
-        backgroundColor: 'rgba(255, 255, 255, 0.25)',
-        borderColor: 'rgba(255, 255, 255, 0.4)',
-        borderWidth: 1,
-        ...(Platform.OS === 'ios' && {
-            shadowColor: 'rgba(255,255,255,0.4)',
-            shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 0.5,
-            shadowRadius: 6,
-        }),
     },
 
     optionText: {
