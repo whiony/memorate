@@ -21,7 +21,7 @@ const PriceCurrencyInput: React.FC<PriceCurrencyInputProps> = ({
         const parts = cleaned.split(/[.,]/)
         parts[0] = parts[0].slice(0, 7)
         if (parts[1] !== undefined) {
-            parts[1] = parts[1].slice(0, 1)
+            parts[1] = parts[1].slice(0, 2)
             cleaned = `${parts[0]},${parts[1]}`
         } else {
             cleaned = parts[0]

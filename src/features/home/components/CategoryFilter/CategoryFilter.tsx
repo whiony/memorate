@@ -5,6 +5,7 @@ import {
     Text,
     StyleSheet,
     Animated,
+    View,
 } from 'react-native'
 import type { Category } from '@/hooks/useCategories'
 import { useCategories } from '@/hooks/useCategories'
@@ -99,8 +100,15 @@ const CategoryFilter: React.FC<Props> = ({
                                     },
                                 ]}
                             >
+                                {isSel && (
+                                    <View style={styles.solidGlassBorder} />
+                                )}
                                 <LinearGradient
-                                    colors={['rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
+                                    colors={
+                                        isSel
+                                            ? ['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)']
+                                            : ['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.0)']
+                                    }
                                     style={StyleSheet.absoluteFill}
                                 />
                                 <TouchableOpacity
@@ -176,12 +184,18 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     selectedText: {
-        fontWeight: '700',
         color: '#000',
         textShadowColor: 'rgba(255,255,255,0.6)',
         textShadowOffset: { width: 0, height: 1 },
         textShadowRadius: 3,
     },
+    solidGlassBorder: {
+        ...StyleSheet.absoluteFillObject,
+        borderRadius: 18,
+        borderWidth: 1.3,
+        borderColor: 'rgba(255,255,255,0.35)',
+        zIndex: 2,
+    }
 })
 
 

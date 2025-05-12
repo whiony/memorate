@@ -163,7 +163,7 @@ const HomeScreen: React.FC = () => {
 
                 <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddNote', {})}>
                     <LinearGradient
-                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0)']}
+                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
                         style={StyleSheet.absoluteFill}
                     />
                     <BlurView intensity={70} tint="light" style={styles.glassButton}>
@@ -174,7 +174,7 @@ const HomeScreen: React.FC = () => {
 
                 <TouchableOpacity style={styles.filterButton} onPress={() => navigation.navigate('FilterModal', { current: sortBy })}>
                     <LinearGradient
-                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0)']}
+                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
                         style={StyleSheet.absoluteFill}
                     />
                     <BlurView intensity={70} tint="light" style={styles.glassButton}>
