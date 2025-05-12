@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import {
     View,
     Text,
@@ -6,6 +6,9 @@ import {
     StyleSheet,
     Pressable,
     TouchableWithoutFeedback,
+    Platform,
+    Animated,
+    Easing,
 } from 'react-native'
 import type { StackScreenProps } from '@react-navigation/stack'
 import { colors, fonts } from '@/theme/index'
@@ -27,51 +30,167 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
         date: 'Date',
     }
 
+    const dropdownAnim = useRef(new Animated.Value(0)).current
+    const arrowRotationAnim = useRef(new Animated.Value(sortOrder === 'asc' ? 0 : 1)).current
+
+    const activeAnim = useRef({
+        price: new Animated.Value(sortBy === 'price' ? 1 : 0),
+        rating: new Animated.Value(sortBy === 'rating' ? 1 : 0),
+        date: new Animated.Value(sortBy === 'date' ? 1 : 0),
+    }).current
+
+    useEffect(() => {
+        Animated.timing(dropdownAnim, {
+            toValue: 1,
+            duration: 400,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+        }).start()
+    }, [])
+
+    useEffect(() => {
+        Animated.timing(arrowRotationAnim, {
+            toValue: sortOrder === 'asc' ? 0 : 1,
+            duration: 200,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: false,
+        }).start()
+    }, [sortOrder])
+
     return (
         <Pressable style={styles.backdrop} onPress={() => navigation.goBack()}>
             <View style={{ flex: 1 }}>
                 <TouchableWithoutFeedback>
-                    <BlurView intensity={100} tint="light" style={styles.dropdown}>
-                        <LinearGradient
-                            colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
-                            style={StyleSheet.absoluteFillObject}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                        />
-
-                        {(['price', 'rating', 'date'] as SortKey[]).map((key) => (
-                            <TouchableOpacity
-                                key={key}
-                                style={[
-                                    styles.option,
-                                    sortBy === key && styles.optionActive,
+                    <Animated.View
+                        style={[
+                            styles.dropdown,
+                            {
+                                opacity: dropdownAnim,
+                                transform: [
+                                    {
+                                        translateY: dropdownAnim.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [20, 0],
+                                        }),
+                                    },
+                                ],
+                            },
+                        ]}
+                    >
+                        <BlurView intensity={100} tint="light" style={StyleSheet.absoluteFill}>
+                            <LinearGradient
+                                colors={[
+                                    'rgba(255,255,255,1)',
+                                    'rgba(255,255,255,.6)',
+                                    'rgba(255,255,255,0)',
+                                    'rgba(255,255,255,0.2)',
+                                    'rgba(255,255,255,0)',
                                 ]}
-                                onPress={() => {
-                                    setSort(key)
-                                }}
-                            >
-                                <Text
-                                    style={[
-                                        styles.optionText,
-                                        sortBy === key && styles.optionTextActive,
-                                    ]}
+                                style={StyleSheet.absoluteFill}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                            />
+                        </BlurView>
+
+                        {(['price', 'rating', 'date'] as SortKey[]).map((key) => {
+                            const isActive = sortBy === key
+
+                            const colorAnim = activeAnim[key].interpolate({
+                                inputRange: [0, 1],
+                                outputRange: ['#000', '#fff'],
+                            })
+
+                            const iconOpacity = activeAnim[key].interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [0, 1],
+                            })
+
+                            const iconTranslateY = activeAnim[key].interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [4, 0],
+                            })
+
+                            return (
+                                <TouchableOpacity
+                                    key={key}
+                                    onPress={() => {
+                                        if (key === sortBy) {
+                                            setSort(key)
+                                        } else {
+                                            Animated.parallel([
+                                                Animated.timing(activeAnim[sortBy], {
+                                                    toValue: 0,
+                                                    duration: 200,
+                                                    useNativeDriver: false,
+                                                }),
+                                                Animated.timing(activeAnim[key], {
+                                                    toValue: 1,
+                                                    duration: 200,
+                                                    useNativeDriver: false,
+                                                }),
+                                            ]).start(() => {
+                                                setSort(key)
+                                            })
+                                        }
+                                    }}
                                 >
-                                    {labels[key]}
-                                </Text>
-                                {sortBy === key && (
-                                    <MaterialIcons
-                                        name={sortOrder === 'asc' ? 'arrow-upward' : 'arrow-downward'}
-                                        size={16}
-                                        color={'#fff'}
-                                    />
-                                )}
-                            </TouchableOpacity>
-                        ))}
-                    </BlurView>
+                                    <Animated.View
+                                        style={[
+                                            styles.option,
+                                            {
+                                                backgroundColor: activeAnim[key].interpolate({
+                                                    inputRange: [0, 1],
+                                                    outputRange: ['transparent', 'rgba(255,255,255,0.15)'],
+                                                }),
+                                                transform: [
+                                                    {
+                                                        scale: activeAnim[key].interpolate({
+                                                            inputRange: [0, 1],
+                                                            outputRange: [1, 1.05],
+                                                        }),
+                                                    },
+                                                ],
+                                                borderColor: activeAnim[key].interpolate({
+                                                    inputRange: [0, 1],
+                                                    outputRange: ['transparent', 'rgba(255,255,255,0.3)'],
+                                                }),
+                                                borderWidth: 1,
+                                            },
+                                        ]}
+                                    >
+                                        <Animated.Text style={[styles.optionText, { color: colorAnim }]}>
+                                            {labels[key]}
+                                        </Animated.Text>
+
+                                        <Animated.View
+                                            style={{
+                                                marginLeft: 8,
+                                                opacity: iconOpacity,
+                                                transform: [
+                                                    { translateY: iconTranslateY },
+                                                    {
+                                                        rotate: arrowRotationAnim.interpolate({
+                                                            inputRange: [0, 1],
+                                                            outputRange: ['0deg', '180deg'],
+                                                        }),
+                                                    },
+                                                ],
+                                            }}
+                                        >
+                                            <MaterialIcons
+                                                name="arrow-upward"
+                                                size={16}
+                                                color="#fff"
+                                            />
+                                        </Animated.View>
+                                    </Animated.View>
+                                </TouchableOpacity>
+                            )
+                        })}
+                    </Animated.View>
                 </TouchableWithoutFeedback>
             </View>
         </Pressable>
-
     )
 }
 
@@ -111,6 +230,11 @@ const styles = StyleSheet.create({
     },
 
     optionActive: {
+        ...Platform.select({
+            web: {
+                backdropFilter: 'blur(8px)',
+            },
+        }),
         backgroundColor: 'rgba(255, 255, 255, 0.15)',
         borderColor: 'rgba(255, 255, 255, 0.3)',
         borderWidth: 1,
