@@ -5,7 +5,6 @@ import {
     StyleSheet,
     Pressable,
     TouchableWithoutFeedback,
-    Platform,
     Animated,
 } from 'react-native'
 import type { StackScreenProps } from '@react-navigation/stack'
@@ -58,7 +57,7 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
                                 colors={[
                                     'rgba(255,255,255,0.2)',
                                     'rgba(255,255,255,0)',
-                                    'rgba(255,255,255,0.5)',
+                                    'rgba(255,255,255,0.4)',
                                     'rgba(255,255,255,0)',
                                     'rgba(255,255,255,0.2)',
                                 ]}

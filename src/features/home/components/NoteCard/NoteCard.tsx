@@ -8,7 +8,6 @@ import { Ionicons } from '@expo/vector-icons'
 import { format, isValid, parseISO } from 'date-fns'
 import StarRating from '@/ui/Rating/StarRating'
 import DeleteNoteModal from '@/modals/DeleteNoteModal'
-import { useCategories } from '@/hooks/useCategories'
 import type { Note } from '@/navigation/AppNavigator'
 import { styles } from './NoteCard.styles'
 import { formatPrice } from '@/utils/formatPrice'
@@ -29,7 +28,6 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
     const swipeableRef = ref as React.RefObject<SwipeableType>
 
     const [delVisible, setDelVisible] = useState(false)
-    const { categories } = useCategories()
 
     let date = ''
     if (note.created) {
@@ -39,9 +37,6 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                 : new Date(note.created)
         if (isValid(d)) date = format(d, 'MMM dd')
     }
-
-    const catObj = categories.find(c => c.name === note.category)
-    const bgColor = catObj?.color ?? '#E0E0E0'
 
     const priceDisplay =
         note.price && note.price > 0 ? formatPrice(note.price) : ''
@@ -152,7 +147,6 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                         </View>
                     </View>
                 </TouchableOpacity>
-
             </Swipeable >
 
             <DeleteNoteModal
