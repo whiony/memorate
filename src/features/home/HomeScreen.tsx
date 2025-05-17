@@ -33,6 +33,7 @@ import { colors } from '@/theme/index'
 import { useSort } from '@/contexts/SortContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { BlurView } from 'expo-blur'
+import { Ionicons } from '@expo/vector-icons'
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
 
@@ -168,7 +169,7 @@ const HomeScreen: React.FC = () => {
                     />
                     <BlurView intensity={70} tint="light" style={styles.glassButton}>
                         <View style={styles.glassBorderOverlay} />
-                        <Text style={styles.addButtonText}>+</Text>
+                        <Ionicons name="add-outline" size={32} color="#fff" />
                     </BlurView>
                 </TouchableOpacity>
 
@@ -180,6 +181,17 @@ const HomeScreen: React.FC = () => {
                     <BlurView intensity={70} tint="light" style={styles.glassButton}>
                         <View style={styles.glassBorderOverlay} />
                         <MaterialIcons name="sort" size={24} color="#fff" />
+                    </BlurView>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.settingsButton} >
+                    <LinearGradient
+                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
+                        style={StyleSheet.absoluteFill}
+                    />
+                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
+                        <View style={styles.glassBorderOverlay} />
+                        <Ionicons name="settings-outline" size={24} color="#fff" />
                     </BlurView>
                 </TouchableOpacity>
             </View>

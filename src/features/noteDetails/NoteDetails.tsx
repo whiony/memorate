@@ -100,7 +100,7 @@ const NoteDetails: FC = () => {
                 <View style={styles.header}>
                     <View style={styles.side}>
                         <TouchableOpacity onPress={handleGoBack}>
-                            <Ionicons name="arrow-back" size={24} color="#000" />
+                            <Ionicons name="chevron-back" size={24} color="#000" />
                         </TouchableOpacity>
                     </View>
 
@@ -113,7 +113,7 @@ const NoteDetails: FC = () => {
                             <Ionicons name="create-outline" size={24} color="#000" />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={openDeleteModal} style={styles.headerIcon}>
-                            <Ionicons name="trash-outline" size={24} color="#E53935" />
+                            <Ionicons name="trash-bin-outline" size={24} color="#E53935" />
                         </TouchableOpacity>
                     </View>
                 </View>

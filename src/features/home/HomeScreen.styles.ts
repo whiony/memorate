@@ -31,17 +31,25 @@ export const styles = StyleSheet.create({
         elevation: 5,
     },
 
-    addButtonText: {
-        fontSize: 40,
-        color: '#fff',
-        marginTop: -5,
-        fontFamily: fonts.mainFont,
-    },
-
     filterButton: {
         position: 'absolute',
         bottom: 50,
-        left: 16,
+        left: 50,
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        overflow: 'hidden',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 5,
+    },
+
+    settingsButton: {
+        position: 'absolute',
+        bottom: 50,
+        right: 50,
         width: 48,
         height: 48,
         borderRadius: 24,
