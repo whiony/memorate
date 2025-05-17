@@ -18,6 +18,6 @@ export function formatPrice(value: number): string {
     // Under 1,000 — up to 1 decimal, comma‑separated
     const s = value % 1 === 0
         ? String(value)
-        : value.toFixed(1).replace('.', ',')
+        : value.toFixed(1)
     return s
 }

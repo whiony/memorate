@@ -2,8 +2,7 @@ import { StyleSheet } from 'react-native';
 import { colors, fonts } from '@/theme/index';
 
 export const styles = StyleSheet.create({
-    section: {
-    },
+    section: {},
     categoryRow: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -39,5 +38,22 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         fontFamily: fonts.mainFont,
+    },
+    colorPickerContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginTop: 8,
+        marginBottom: 8,
+    },
+    colorOption: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        marginRight: 8,
+        marginBottom: 8,
+    },
+    selectedColorOption: {
+        borderWidth: 2,
+        borderColor: colors.primary,
     },
 });

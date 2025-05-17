@@ -5,6 +5,7 @@ import {
     TouchableOpacity,
     Text,
     TouchableWithoutFeedback,
+    StyleSheet
 } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
@@ -23,13 +24,16 @@ import {
 } from 'firebase/firestore'
 import { firestore } from '@/services/firebaseConfig'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
-import { useCategories } from '@/hooks/useCategories'
+import { Category, useCategories } from '@/hooks/useCategories'
 import type { Note, RootStackParamList } from '@/navigation/AppNavigator'
 import NoteCard from './components/NoteCard/NoteCard'
 import CategoryFilter from './components/CategoryFilter/CategoryFilter'
 import { styles } from './HomeScreen.styles'
-import { globalStyles } from '@/theme/index'
+import { colors } from '@/theme/index'
 import { useSort } from '@/contexts/SortContext'
+import { LinearGradient } from 'expo-linear-gradient'
+import { BlurView } from 'expo-blur'
+import { Ionicons } from '@expo/vector-icons'
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
 
@@ -38,8 +42,13 @@ const HomeScreen: React.FC = () => {
     const [notes, setNotes] = useState<Note[]>([])
     const [category, setCategory] = useState<'All' | string>('All')
     const { sortBy, sortOrder } = useSort()
-    const { categories } = useCategories()
+    const { categories: loadedCats } = useCategories()
     const swipeableRefs = useRef<Swipeable[]>([])
+
+    const allCats: Category[] = [
+        { name: 'All', color: colors.primary },
+        ...loadedCats
+    ]
 
     useEffect(() => {
         let base: Query<DocumentData> = collection(firestore, 'reviews')
@@ -107,61 +116,86 @@ const HomeScreen: React.FC = () => {
         })
 
     return (
-        <View
-            style={[
-                globalStyles.screenBackground,
-                { flex: 1, paddingHorizontal: 16 },
-            ]}
+        <LinearGradient
+            colors={['#FFE29F', '#FFA99F', '#FF719A', '#A18CD1']}
+            style={{ flex: 1 }}
+            start={{ x: 0.2, y: 0 }}
+            end={{ x: 1, y: 1 }}
         >
-            <Text style={styles.header}>Memorate</Text>
+            <View
+                style={[
+                    { flex: 1, paddingHorizontal: 16 },
+                ]}
+            >
+                <Text style={styles.header}>Memorate</Text>
 
-            <View style={styles.categoryContainer}>
-                <CategoryFilter
-                    categories={['All', ...categories]}
-                    selected={category}
-                    onSelect={setCategory}
+                <View style={styles.categoryContainer}>
+                    <CategoryFilter
+                        categories={allCats}
+                        selected={category}
+                        onSelect={setCategory}
+                    />
+                </View>
+
+                <FlatList
+                    data={sortedNotes}
+                    keyExtractor={item => item.id}
+                    onScroll={closeAll}
+                    onTouchStart={closeAll}
+                    showsVerticalScrollIndicator={false}
+                    renderItem={({ item, index }) => (
+                        <TouchableWithoutFeedback onPress={() => openDetail(item)}>
+                            <View>
+                                <NoteCard
+                                    ref={ref => {
+                                        swipeableRefs.current[index] = ref!
+                                    }}
+                                    note={item}
+                                    onEdit={openEdit}
+                                    onDelete={handleDelete}
+                                    onPress={openDetail}
+                                />
+                            </View>
+                        </TouchableWithoutFeedback>
+                    )}
+                    contentContainerStyle={styles.listContent}
                 />
+
+
+                <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddNote', {})}>
+                    <LinearGradient
+                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
+                        style={StyleSheet.absoluteFill}
+                    />
+                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
+                        <View style={styles.glassBorderOverlay} />
+                        <Ionicons name="add-outline" size={32} color="#fff" />
+                    </BlurView>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.filterButton} onPress={() => navigation.navigate('FilterModal', { current: sortBy })}>
+                    <LinearGradient
+                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
+                        style={StyleSheet.absoluteFill}
+                    />
+                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
+                        <View style={styles.glassBorderOverlay} />
+                        <MaterialIcons name="sort" size={24} color="#fff" />
+                    </BlurView>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.settingsButton} >
+                    <LinearGradient
+                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
+                        style={StyleSheet.absoluteFill}
+                    />
+                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
+                        <View style={styles.glassBorderOverlay} />
+                        <Ionicons name="settings-outline" size={24} color="#fff" />
+                    </BlurView>
+                </TouchableOpacity>
             </View>
-
-            <FlatList
-                data={sortedNotes}
-                keyExtractor={item => item.id}
-                onScroll={closeAll}
-                onTouchStart={closeAll}
-                renderItem={({ item, index }) => (
-                    <TouchableWithoutFeedback onPress={() => openDetail(item)}>
-                        <View>
-                            <NoteCard
-                                ref={ref => {
-                                    swipeableRefs.current[index] = ref!
-                                }}
-                                note={item}
-                                onEdit={openEdit}
-                                onDelete={handleDelete}
-                                onPress={openDetail}
-                            />
-                        </View>
-                    </TouchableWithoutFeedback>
-                )}
-                contentContainerStyle={styles.listContent}
-            />
-
-            <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => navigation.navigate('AddNote', {})}
-            >
-                <Text style={styles.addButtonText}>+</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                style={styles.filterButton}
-                onPress={() =>
-                    navigation.navigate('FilterModal', { current: sortBy })
-                }
-            >
-                <MaterialIcons name="sort" size={24} color="#fff" />
-            </TouchableOpacity>
-        </View>
+        </LinearGradient>
     )
 }
 

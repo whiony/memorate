@@ -1,88 +1,161 @@
 import { StyleSheet, Dimensions } from 'react-native'
 import { colors } from '@/theme/index'
+
 const { width } = Dimensions.get('window')
 
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.screenBackground,
     },
+
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: 16,
         borderBottomWidth: 1,
-        borderColor: '#dbdada',
+        borderColor: 'rgba(255, 255, 255, 0.2)',
     },
+
+    side: {
+        width: 80,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+
     headerTitle: {
-        flex: 1,
         fontSize: 20,
         fontWeight: 'bold',
         color: colors.text,
-        marginHorizontal: 14,
+        textAlign: 'center',
     },
-    headerRight: {
-        flexDirection: 'row',
-    },
+
     headerIcon: {
         marginLeft: 16,
     },
+
     scrollContent: {
         paddingHorizontal: 16,
-        paddingTop: 8,
-        paddingBottom: 24,
+        paddingTop: 16,
+        paddingBottom: 32,
     },
-    pill: {
-        alignSelf: 'flex-start',
-        paddingHorizontal: 12,
-        paddingVertical: 4,
-        borderRadius: 12,
-    },
-    pillText: {
-        color: '#fff',
-        fontWeight: '600',
-    },
+
     card: {
-        backgroundColor: '#fff',
         borderRadius: 16,
-        padding: 16,
+        overflow: 'hidden',
         shadowColor: '#000',
         shadowOpacity: 0.05,
         shadowRadius: 10,
         elevation: 3,
     },
+
+    cardBackground: {
+        ...StyleSheet.absoluteFillObject,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)',
+        backgroundColor: 'rgba(255,255,255,0.05)',
+    },
+
+    imageWrapper: {
+        position: 'relative',
+        width: width - 32,
+        height: width - 32,
+        alignSelf: 'center',
+    },
+
     image: {
-        width: width - 64,
-        height: width - 64,
-        borderRadius: 12,
-        marginBottom: 16,
+        width: '100%',
+        height: '100%',
     },
-    infoRow: {
-        flexDirection: 'row',
-        marginBottom: 12,
+
+    textOnImage: {
+        position: 'absolute',
+        bottom: 16,
+        left: 16,
+        right: 16,
     },
-    label: {
-        width: 80,
+
+    titleOnImage: {
+        fontSize: 22,
         fontWeight: '600',
-        color: colors.text,
+        color: '#fff',
+        textShadowColor: 'rgba(0,0,0,0.3)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 4,
     },
-    value: {
-        flex: 1,
-        color: colors.text,
+
+    noImageHeader: {
+        padding: 16,
     },
-    ratingContainer: {
+
+    titleNoImage: {
+        fontSize: 22,
+        fontWeight: '700',
+        color: '#000',
+        marginTop: 8,
+    },
+
+    blurOverlay: {
+        borderRadius: 16,
+        padding: 12,
+        overflow: 'hidden',
+        backgroundColor: 'rgba(0,0,0,0.2)',
+    },
+
+    categoryPill: {
+        alignSelf: 'flex-start',
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 12,
+        marginBottom: 8,
+        textShadowColor: 'rgba(0,0,0,1)',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 6,
+    },
+
+    categoryPillText: {
+        color: '#000',
+        fontSize: 12,
+        fontWeight: '500',
+    },
+
+    body: {
+        paddingHorizontal: 20,
+        paddingVertical: 16,
+    },
+
+    inlineRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 12,
+        gap: 8,
+        marginBottom: 16,
     },
-    commentContainer: {
-        marginTop: 8,
-        marginBottom: 12,
-    },
-    commentText: {
-        marginTop: 4,
-        lineHeight: 20,
+
+    ratingText: {
         color: colors.text,
+        fontSize: 14,
+    },
+
+    price: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: colors.text,
+        marginBottom: 16,
+    },
+
+    comment: {
+        color: colors.text,
+        fontSize: 15,
+        lineHeight: 22,
+        marginBottom: 20,
+    },
+
+    date: {
+        fontSize: 13,
+        color: '#66a7b0',
+        marginBottom: 20,
     },
 })

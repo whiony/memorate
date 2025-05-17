@@ -1,62 +1,134 @@
-import React, { useState } from 'react';
-import { ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { categoryColors } from '@/utils/categoryColors';
-import { useCategories } from '@/hooks/useCategories';
-import ActionCategoryModal from '@/modals/ActionCategoryModal';
-import RenameCategoryModal from '@/modals/RenameCategoryModal';
-import DeleteCategoryModal from '@/modals/DeleteCategoryModal';
+import React, { useRef, useState } from 'react'
+import {
+    ScrollView,
+    TouchableOpacity,
+    Text,
+    StyleSheet,
+    Animated,
+    View,
+} from 'react-native'
+import type { Category } from '@/hooks/useCategories'
+import { useCategories } from '@/hooks/useCategories'
+import ActionCategoryModal from '@/modals/ActionCategoryModal'
+import RenameCategoryModal from '@/modals/RenameCategoryModal'
+import DeleteCategoryModal from '@/modals/DeleteCategoryModal'
+import { BlurView } from 'expo-blur'
+import { LinearGradient } from 'expo-linear-gradient'
+
+const AnimatedBlur = Animated.createAnimatedComponent(BlurView)
 
 interface Props {
-    categories: string[];
-    selected: string;
-    onSelect: (cat: string) => void;
+    categories: Category[]
+    selected: string
+    onSelect: (cat: string) => void
 }
 
-const CategoryFilter: React.FC<Props> = ({ categories, selected, onSelect }) => {
-    const { renameCategory, deleteCategory } = useCategories();
-    const [actionVisible, setActionVisible] = useState(false);
-    const [renameVisible, setRenameVisible] = useState(false);
-    const [deleteVisible, setDeleteVisible] = useState(false);
-    const [activeCat, setActiveCat] = useState('');
+const CategoryFilter: React.FC<Props> = ({
+    categories,
+    selected,
+    onSelect,
+}) => {
+    const { renameCategory, deleteCategory } = useCategories()
 
-    const handleLong = (cat: string) => {
-        if (cat === 'All') return;
-        setActiveCat(cat);
-        setActionVisible(true);
-    };
+    const [actionVisible, setActionVisible] = useState(false)
+    const [renameVisible, setRenameVisible] = useState(false)
+    const [deleteVisible, setDeleteVisible] = useState(false)
+    const [activeCat, setActiveCat] = useState('')
 
-    const onRename = () => { setActionVisible(false); setRenameVisible(true); };
-    const onDelete = () => { setActionVisible(false); setDeleteVisible(true); };
+    const scale = useRef(new Animated.Value(1)).current
+
+    const handleLong = (catName: string) => {
+        if (catName === 'All') return
+        setActiveCat(catName)
+        setActionVisible(true)
+    }
+
+    const onRename = () => {
+        setActionVisible(false)
+        setRenameVisible(true)
+    }
+    const onDelete = () => {
+        setActionVisible(false)
+        setDeleteVisible(true)
+    }
 
     const confirmRename = async (newName: string) => {
-        setRenameVisible(false);
+        setRenameVisible(false)
         if (newName && newName !== activeCat) {
-            await renameCategory(activeCat, newName);
-            onSelect(newName);
+            await renameCategory(activeCat, newName)
+            onSelect(newName)
         }
-    };
+    }
 
     const confirmDelete = async () => {
-        setDeleteVisible(false);
-        await deleteCategory(activeCat);
-        onSelect('All');
-    };
+        setDeleteVisible(false)
+        await deleteCategory(activeCat)
+        onSelect('All')
+    }
 
     return (
         <>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} >
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.list}
+            >
                 {categories.map(cat => {
-                    const isSel = cat === selected;
-                    const bg = categoryColors[cat] || '#aaa';
+                    const isSel = cat.name === selected
+
+                    const background = isSel
+                        ? 'rgba(255,255,255,0.4)'
+                        : `${cat.color}66`
+
                     return (
-                        <TouchableOpacity
-                            key={cat}
-                            onPress={() => onSelect(cat)}
-                            onLongPress={() => handleLong(cat)}
-                            style={[styles.pill, { backgroundColor: bg, opacity: isSel ? 1 : 0.7 }]}>
-                            <Text style={styles.text}>{cat}</Text>
-                        </TouchableOpacity>
-                    );
+                        <Animated.View
+                            key={cat.name}
+                            style={[
+                                styles.pillWrapper,
+                                isSel && { transform: [{ scale: 1.04 }] },
+                            ]}
+                        >
+                            <AnimatedBlur
+                                intensity={100}
+                                tint="light"
+                                style={[
+                                    styles.pill,
+                                    {
+                                        backgroundColor: background,
+                                        borderWidth: isSel ? 1 : 0,
+                                        borderColor: 'rgba(255,255,255,0.5)',
+                                    },
+                                ]}
+                            >
+                                {isSel && (
+                                    <View style={styles.solidGlassBorder} />
+                                )}
+                                <LinearGradient
+                                    colors={
+                                        isSel
+                                            ? ['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)']
+                                            : ['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.0)']
+                                    }
+                                    style={StyleSheet.absoluteFill}
+                                />
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        Animated.sequence([
+                                            Animated.spring(scale, { toValue: 1.04, useNativeDriver: true }),
+                                            Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
+                                        ]).start()
+                                        onSelect(cat.name)
+                                    }}
+                                    onLongPress={() => handleLong(cat.name)}
+                                    style={styles.touchable}
+                                >
+                                    <Text style={[styles.text, isSel && styles.selectedText]}>
+                                        {cat.name}
+                                    </Text>
+                                </TouchableOpacity>
+                            </AnimatedBlur>
+                        </Animated.View>
+                    )
                 })}
             </ScrollView>
 
@@ -80,12 +152,51 @@ const CategoryFilter: React.FC<Props> = ({ categories, selected, onSelect }) => 
                 onConfirm={confirmDelete}
             />
         </>
-    );
-};
+    )
+}
 
 const styles = StyleSheet.create({
-    pill: { height: 36, borderRadius: 18, justifyContent: 'center', paddingHorizontal: 40, marginRight: 8 },
-    text: { color: '#000', fontSize: 14 },
-});
+    list: {
+        paddingHorizontal: 8,
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
+    pillWrapper: {
+        borderRadius: 18,
+        marginRight: 8,
+        overflow: 'hidden',
+    },
+    pill: {
+        height: 36,
+        borderRadius: 18,
+        paddingHorizontal: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    touchable: {
+        paddingHorizontal: 20,
+        paddingVertical: 6,
+        borderRadius: 18,
+    },
+    text: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#000',
+    },
+    selectedText: {
+        color: '#000',
+        textShadowColor: 'rgba(255,255,255,0.6)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 3,
+    },
+    solidGlassBorder: {
+        ...StyleSheet.absoluteFillObject,
+        borderRadius: 18,
+        borderWidth: 1.3,
+        borderColor: 'rgba(255,255,255,0.35)',
+        zIndex: 2,
+    }
+})
 
-export default CategoryFilter;
+
+export default CategoryFilter

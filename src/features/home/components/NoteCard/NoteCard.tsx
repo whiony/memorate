@@ -1,9 +1,6 @@
 import React, { forwardRef, useState } from 'react'
 import {
-    View,
-    Text,
-    Image,
-    TouchableOpacity,
+    View, Text, Image, TouchableOpacity, StyleSheet
 } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import type { Swipeable as SwipeableType } from 'react-native-gesture-handler'
@@ -11,10 +8,11 @@ import { Ionicons } from '@expo/vector-icons'
 import { format, isValid, parseISO } from 'date-fns'
 import StarRating from '@/ui/Rating/StarRating'
 import DeleteNoteModal from '@/modals/DeleteNoteModal'
-import { categoryColors } from '@/utils/categoryColors'
 import type { Note } from '@/navigation/AppNavigator'
 import { styles } from './NoteCard.styles'
 import { formatPrice } from '@/utils/formatPrice'
+import { BlurView } from 'expo-blur'
+import { LinearGradient } from 'expo-linear-gradient'
 
 type Props = {
     note: Note
@@ -23,111 +21,145 @@ type Props = {
     onPress: (n: Note) => void
 }
 
-const NoteCard = forwardRef<SwipeableType, Props>(
-    ({ note, onEdit, onDelete, onPress }, swipeableRef) => {
-        const [delVisible, setDelVisible] = useState(false)
-        const raw = note.created
-        let date = ''
-        if (raw) {
-            const d = typeof raw === 'string' ? parseISO(raw) : new Date(raw)
-            if (isValid(d)) date = format(d, 'MMM dd')
-        }
+const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
+    { note, onEdit, onDelete, onPress },
+    ref,
+) {
+    const swipeableRef = ref as React.RefObject<SwipeableType>
 
-        const bgColor = note.category
-            ? categoryColors[note.category] || '#E0E0E0'
-            : '#E0E0E0'
+    const [delVisible, setDelVisible] = useState(false)
 
-        const priceDisplay = note.price && note.price > 0
-            ? formatPrice(note.price)
-            : ''
+    let date = ''
+    if (note.created) {
+        const d =
+            typeof note.created === 'string'
+                ? parseISO(note.created)
+                : new Date(note.created)
+        if (isValid(d)) date = format(d, 'MMM dd')
+    }
 
-        const renderRightActions = () => (
-            <View style={styles.actions}>
+    const priceDisplay =
+        note.price && note.price > 0 ? formatPrice(note.price) : ''
+
+    const closeSwipe = () => {
+        swipeableRef.current?.close()
+    }
+
+    const renderRightActions = () => (
+        <View style={styles.actions}>
+            <TouchableOpacity
+                onPress={() => {
+                    closeSwipe();
+                    onEdit(note);
+                }}
+                style={styles.actionButton}
+            >
+                <View style={styles.absoluteFill}>
+                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
+                        <LinearGradient
+                            colors={['rgba(250,198,99,0.12)', 'rgba(250,198,99,0.05)']}
+                            style={styles.gradientOverlay}
+                        />
+                        <View style={styles.glassBorder} />
+                        <Ionicons name="create-outline" size={25} color="#fff" style={styles.editIcon} />
+                    </BlurView>
+                </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                onPress={() => {
+                    closeSwipe();
+                    setDelVisible(true);
+                }}
+                style={styles.actionButton}
+            >
+                <View style={styles.absoluteFill}>
+                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
+                        <LinearGradient
+                            colors={['rgba(239,83,80,0.12)', 'rgba(239,83,80,0.05)']}
+                            style={styles.gradientOverlay}
+                        />
+                        <View style={styles.glassBorder} />
+                        <Ionicons name="trash-outline" size={25} color="#fff" />
+                    </BlurView>
+                </View>
+            </TouchableOpacity>
+
+        </View>
+    )
+
+    return (
+        <>
+            <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
+                <LinearGradient
+                    colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)']}
+                    style={[StyleSheet.absoluteFillObject, { borderRadius: 20 }]}
+                />
                 <TouchableOpacity
+                    activeOpacity={0.9}
                     onPress={() => {
-                        ; (swipeableRef as React.RefObject<SwipeableType>).current?.close()
-                        onEdit(note)
+                        closeSwipe()
+                        onPress(note)
                     }}
-                    style={[styles.actionButton, styles.editAction]}
                 >
-                    <Ionicons name="create-outline" size={25} color="#fff" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => {
-                        ; (swipeableRef as React.RefObject<SwipeableType>).current?.close()
-                        setDelVisible(true)
-                    }}
-                    style={[styles.actionButton, styles.deleteAction]}
-                >
-                    <Ionicons name="trash-outline" size={25} color="#fff" />
-                </TouchableOpacity>
-            </View>
-        )
+                    <View style={styles.cardWrapper}>
+                        <BlurView intensity={100} tint="light" style={styles.cardBackground}>
+                            <LinearGradient
+                                colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.05)']}
+                                style={[StyleSheet.absoluteFillObject]}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                            />
+                        </BlurView>
 
-        return (
-            <>
-                <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
-                    <TouchableOpacity
-                        activeOpacity={0.9}
-                        onPress={() => {
-                            ; (swipeableRef as React.RefObject<SwipeableType>).current?.close()
-                            onPress(note)
-                        }}
-                    >
-                        <View style={[styles.card, { backgroundColor: bgColor }]}>
+                        <View style={styles.cardContent}>
                             <View style={styles.mainRow}>
                                 {note.image && (
                                     <View style={styles.imageWrapper}>
-                                        <Image
-                                            source={{ uri: note.image }}
-                                            style={styles.image}
-                                            resizeMode="cover"
-                                        />
+                                        <Image source={{ uri: note.image }} style={styles.image} resizeMode="cover" />
                                     </View>
                                 )}
                                 <View style={styles.mainContent}>
-                                    <Text
-                                        style={styles.title}
-                                        numberOfLines={1}
-                                        ellipsizeMode="tail"
-                                    >
+                                    <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
                                         {note.name}
                                     </Text>
-                                    <Text numberOfLines={3} style={styles.comment}>
+                                    <Text style={styles.comment} numberOfLines={3}>
                                         {note.comment}
                                     </Text>
                                 </View>
                             </View>
+
                             <View style={styles.divider} />
                             <View style={styles.footer}>
                                 <Text style={styles.date}>{date}</Text>
                                 <View style={styles.centerStars}>
                                     <StarRating rating={note.rating} disabled cardList />
                                 </View>
-                                {note.price && note.price > 0 ? (
+                                {priceDisplay ? (
                                     <Text style={styles.price}>
-                                        {note.currency}{priceDisplay}
+                                        {note.currency}
+                                        {priceDisplay}
                                     </Text>
                                 ) : (
                                     <View style={styles.pricePlaceholder} />
                                 )}
                             </View>
                         </View>
-                    </TouchableOpacity>
-                </Swipeable>
+                    </View>
+                </TouchableOpacity>
+            </Swipeable >
 
-                <DeleteNoteModal
-                    visible={delVisible}
-                    noteName={note.name}
-                    onCancel={() => setDelVisible(false)}
-                    onConfirm={() => {
-                        setDelVisible(false)
-                        onDelete(note.id)
-                    }}
-                />
-            </>
-        )
-    }
-)
+            <DeleteNoteModal
+                visible={delVisible}
+                noteName={note.name}
+                onCancel={() => setDelVisible(false)}
+                onConfirm={() => {
+                    setDelVisible(false)
+                    onDelete(note.id)
+                }}
+            />
+        </>
+    )
+})
 
 export default NoteCard

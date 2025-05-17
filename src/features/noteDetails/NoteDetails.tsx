@@ -14,13 +14,16 @@ import { format } from 'date-fns'
 
 import StarRating from '@/ui/Rating/StarRating'
 import type { RootStackParamList, NavNote, Note } from '@/navigation/AppNavigator'
-import { categoryColors } from '@/utils/categoryColors'
 import DeleteNoteModal from '@/modals/DeleteNoteModal'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
 import { deleteDoc, doc as firestoreDoc, onSnapshot } from 'firebase/firestore'
 import { firestore } from '@/services/firebaseConfig'
 import { formatPrice } from '@/utils/formatPrice'
 import { styles } from './NoteDetails.styles'
+import { useCategories } from '@/hooks/useCategories'
+import { BlurView } from 'expo-blur'
+import { LinearGradient } from 'expo-linear-gradient'
+import { StyleSheet } from 'react-native'
 
 type NoteDetailsRouteProp = RouteProp<RootStackParamList, 'NoteDetails'>
 type NoteDetailsNavigationProp = StackNavigationProp<RootStackParamList, 'NoteDetails'>
@@ -35,6 +38,7 @@ const NoteDetails: FC = () => {
         created: new Date(navNote.created),
     })
     const [delVisible, setDelVisible] = useState(false)
+    const { categories } = useCategories()
 
     useEffect(() => {
         const ref = firestoreDoc(firestore, 'reviews', navNote.id)
@@ -59,23 +63,22 @@ const NoteDetails: FC = () => {
 
     const formattedDate = useMemo(
         () => format(note.created!, 'MMMM dd, yyyy'),
-        [note.created]
+        [note.created],
     )
-    const pillColor = categoryColors[note.category] ?? '#CCC'
+
+    const catObj = categories.find(c => c.name === note.category)
+    const pillColor = catObj?.color ?? '#CCC'
+
     const priceDisplay = note.price && note.price > 0
         ? `${note.currency}${formatPrice(note.price)}`
         : '—'
 
-    const handleGoBack = useCallback(() => {
-        navigation.goBack()
-    }, [navigation])
-
+    const handleGoBack = useCallback(() => navigation.goBack(), [navigation])
     const handleEdit = useCallback(() => {
         navigation.navigate('AddNote', {
             note: { ...note, created: note.created!.toISOString() },
         })
     }, [navigation, note])
-
     const handleDelete = useCallback(async () => {
         setDelVisible(false)
         if (note.image?.startsWith('https://res.cloudinary.com')) {
@@ -84,82 +87,106 @@ const NoteDetails: FC = () => {
         await deleteDoc(firestoreDoc(firestore, 'reviews', note.id))
         navigation.goBack()
     }, [note, navigation])
-
     const openDeleteModal = useCallback(() => setDelVisible(true), [])
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={handleGoBack}>
-                    <Ionicons name="arrow-back" size={24} color="#000" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">
-                    {note.name}
-                </Text>
-                <View style={styles.headerRight}>
-                    <TouchableOpacity onPress={handleEdit}>
-                        <Ionicons name="create-outline" size={24} color="#000" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={openDeleteModal} style={styles.headerIcon}>
-                        <Ionicons name="trash-outline" size={24} color="#E53935" />
-                    </TouchableOpacity>
+        <LinearGradient
+            colors={['#FFE29F', '#FFA99F', '#FF719A', '#A18CD1']}
+            start={{ x: 0.2, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ flex: 1 }}
+        >
+            <SafeAreaView style={styles.container}>
+                <View style={styles.header}>
+                    <View style={styles.side}>
+                        <TouchableOpacity onPress={handleGoBack}>
+                            <Ionicons name="chevron-back" size={24} color="#000" />
+                        </TouchableOpacity>
+                    </View>
+
+                    <Text style={styles.headerTitle} ellipsizeMode="tail">
+                        Note Details
+                    </Text>
+
+                    <View style={styles.side}>
+                        <TouchableOpacity onPress={handleEdit}>
+                            <Ionicons name="create-outline" size={24} color="#000" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={openDeleteModal} style={styles.headerIcon}>
+                            <Ionicons name="trash-bin-outline" size={24} color="#E53935" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
 
-            <ScrollView
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-            >
-                <View style={styles.card}>
-                    {note.image && <Image source={{ uri: note.image }} style={styles.image} />}
+                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                    <View style={styles.card}>
 
-                    <View style={styles.infoRow}>
-                        <Text style={styles.label}>Name:</Text>
-                        <Text style={styles.value} numberOfLines={2} ellipsizeMode="tail">
-                            {note.name}
-                        </Text>
-                    </View>
+                        <BlurView intensity={100} tint="light" style={styles.cardBackground}>
+                            <LinearGradient
+                                colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.7)']}
+                                style={StyleSheet.absoluteFillObject}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                            />
+                        </BlurView>
 
-                    <View style={styles.infoRow}>
-                        <Text style={styles.label}>Date:</Text>
-                        <Text style={styles.value}>{formattedDate}</Text>
-                    </View>
-
-                    <View style={styles.infoRow}>
-                        <Text style={styles.label}>Price:</Text>
-                        <Text style={styles.value}>{priceDisplay}</Text>
-                    </View>
-
-                    <View style={styles.ratingContainer}>
-                        <Text style={styles.label}>Rating:</Text>
-                        <StarRating rating={note.rating} disabled cardList />
-                    </View>
-
-                    <View style={styles.commentContainer}>
-                        <Text style={styles.label}>Comment:</Text>
-                        <Text style={styles.commentText}>
-                            {note.comment || 'No comment'}
-                        </Text>
-                    </View>
-
-                    <View style={styles.infoRow}>
-                        <Text style={styles.label}>Category:</Text>
-                        {note.category && (
-                            <View style={[styles.pill, { backgroundColor: pillColor }]}>
-                                <Text style={styles.pillText}>{note.category}</Text>
+                        {note.image ? (
+                            <View style={styles.imageWrapper}>
+                                <Image source={{ uri: note.image }} style={styles.image} />
+                                <View style={styles.textOnImage}>
+                                    <BlurView intensity={30} tint="light" style={styles.blurOverlay}>
+                                        <LinearGradient
+                                            colors={['rgba(180,180,180,0.2)', 'rgba(255,255,255,0.05)']}
+                                            style={StyleSheet.absoluteFillObject}
+                                        />
+                                        {note.category && (
+                                            <View style={[styles.categoryPill, { backgroundColor: pillColor }]}>
+                                                <Text style={styles.categoryPillText}>{note.category}</Text>
+                                            </View>
+                                        )}
+                                        <Text style={styles.titleOnImage}>{note.name}</Text>
+                                    </BlurView>
+                                </View>
+                            </View>
+                        ) : (
+                            <View style={styles.noImageHeader}>
+                                {note.category && (
+                                    <View style={[styles.categoryPill, { backgroundColor: pillColor }]}>
+                                        <Text style={styles.categoryPillText}>{note.category}</Text>
+                                    </View>
+                                )}
+                                <Text style={styles.titleNoImage}>{note.name}</Text>
                             </View>
                         )}
-                    </View>
-                </View>
-            </ScrollView>
 
-            <DeleteNoteModal
-                visible={delVisible}
-                noteName={note.name}
-                onCancel={handleGoBack}
-                onConfirm={handleDelete}
-            />
-        </SafeAreaView>
+                        <View style={styles.body}>
+                            <View style={styles.inlineRow}>
+                                <StarRating rating={note.rating} disabled cardList />
+                                <Text style={styles.ratingText}>{note.rating.toFixed(1)}/5.0</Text>
+                            </View>
+
+                            {note.price && note.price > 0 && (
+                                <Text style={styles.price}>{priceDisplay}</Text>
+                            )}
+
+                            {!!note.comment && (
+                                <Text style={styles.comment}>{note.comment}</Text>
+                            )}
+
+                            <Text style={styles.date}>Added on {formattedDate}</Text>
+                        </View>
+                    </View>
+                </ScrollView>
+
+
+                <DeleteNoteModal
+                    visible={delVisible}
+                    noteName={note.name}
+                    onCancel={handleGoBack}
+                    onConfirm={handleDelete}
+                />
+            </SafeAreaView>
+        </LinearGradient>
     )
 }
 
