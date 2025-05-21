@@ -162,38 +162,33 @@ const HomeScreen: React.FC = () => {
                 />
 
 
-                <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddNote', {})}>
-                    <LinearGradient
-                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
-                        style={StyleSheet.absoluteFill}
-                    />
-                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
-                        <View style={styles.glassBorderOverlay} />
-                        <Ionicons name="add-outline" size={32} color="#fff" />
-                    </BlurView>
-                </TouchableOpacity>
+                <View style={styles.tabBarContainer}>
+                    <View style={styles.tabBarBackgroundWrapper}>
+                        <BlurView intensity={70} tint="light" style={styles.tabBarBackground}>
+                            <LinearGradient
+                                colors={['rgba(255,255,255,0.25)', 'rgba(255,255,255,0.1)']}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                                style={StyleSheet.absoluteFill}
+                            />
+                        </BlurView>
+                    </View>
 
-                <TouchableOpacity style={styles.filterButton} onPress={() => navigation.navigate('FilterModal', { current: sortBy })}>
-                    <LinearGradient
-                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
-                        style={StyleSheet.absoluteFill}
-                    />
-                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
-                        <View style={styles.glassBorderOverlay} />
+                    <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('FilterModal', { current: sortBy })}>
                         <MaterialIcons name="sort" size={24} color="#fff" />
-                    </BlurView>
-                </TouchableOpacity>
+                    </TouchableOpacity>
 
-                <TouchableOpacity style={styles.settingsButton} >
-                    <LinearGradient
-                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,.6)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
-                        style={StyleSheet.absoluteFill}
-                    />
-                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
-                        <View style={styles.glassBorderOverlay} />
+                    <TouchableOpacity style={styles.floatingAddButton} onPress={() => navigation.navigate('AddNote', {})}>
+                        <BlurView intensity={100} tint="light" style={styles.floatingButtonGlass}>
+                            <Ionicons name="add-outline" size={28} color="#fff" />
+                        </BlurView>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={[styles.iconButton, styles.rightIcon]}>
                         <Ionicons name="settings-outline" size={24} color="#fff" />
-                    </BlurView>
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                </View>
+
             </View>
         </LinearGradient>
     )

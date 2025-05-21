@@ -1,58 +1,46 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-    card: {
-        borderRadius: 20,
-        marginBottom: 14,
-        overflow: 'visible',
-        padding: 4,
-    },
-
     cardWrapper: {
-        borderRadius: 20,
+        borderRadius: 16,
         marginBottom: 14,
         overflow: 'hidden',
         position: 'relative',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+        elevation: 4,
     },
 
     cardBackground: {
         ...StyleSheet.absoluteFillObject,
-        borderRadius: 20,
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.3)',
+        borderRadius: 16,
         overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 6,
-    },
-
-    cardOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        borderRadius: 20,
-        backgroundColor: 'transparent',
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.4)',
     },
 
     cardContent: {
-        position: 'relative',
+        padding: 12,
         zIndex: 1,
-        padding: 4,
     },
 
     mainRow: {
         flexDirection: 'row',
-        paddingVertical: 16,
-        paddingHorizontal: 16,
+        alignItems: 'flex-start',
     },
 
     imageWrapper: {
-        width: 96,
-        height: 96,
+        width: 84,
+        height: 84,
         borderRadius: 12,
-        backgroundColor: '#fff',
-        marginRight: 12,
         overflow: 'hidden',
+        marginRight: 12,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)',
     },
 
     image: {
@@ -62,19 +50,32 @@ export const styles = StyleSheet.create({
 
     mainContent: {
         flex: 1,
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
     },
 
     title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
+        fontSize: 16,
+        fontWeight: '600',
+        marginBottom: 4,
+        color: '#111',
     },
 
     comment: {
+        fontSize: 13,
+        color: '#222',
+        marginBottom: 8,
+    },
+
+    footerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+
+    price: {
         fontSize: 14,
-        color: '#000',
-        lineHeight: 15,
+        fontWeight: '500',
+        color: '#111',
     },
 
     divider: {
@@ -108,24 +109,6 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
-    price: {
-        position: 'absolute',
-        top: '43%',
-        right: 16,
-
-        fontFamily: 'Montserrat-Regular',
-        fontSize: 15,
-        color: '#444',
-        letterSpacing: 0.5,
-    },
-
-    pricePlaceholder: {
-        position: 'absolute',
-        right: 16,
-        width: 40,
-        top: '45%',
-    },
-
     actions: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -154,16 +137,6 @@ export const styles = StyleSheet.create({
 
     deleteAction: {
         backgroundColor: '#EF5350',
-    },
-
-    starsGlass: {
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 16,
-        overflow: 'hidden',
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.2)',
     },
 
     glassButton: {
@@ -198,5 +171,4 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.08,
         shadowRadius: 10,
     },
-
 });

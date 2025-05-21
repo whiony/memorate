@@ -41,23 +41,6 @@ export const styles = StyleSheet.create({
         paddingBottom: 32,
     },
 
-    card: {
-        borderRadius: 16,
-        overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-        elevation: 3,
-    },
-
-    cardBackground: {
-        ...StyleSheet.absoluteFillObject,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.3)',
-        backgroundColor: 'rgba(255,255,255,0.05)',
-    },
-
     imageWrapper: {
         position: 'relative',
         width: width - 32,
@@ -70,92 +53,82 @@ export const styles = StyleSheet.create({
         height: '100%',
     },
 
-    textOnImage: {
-        position: 'absolute',
-        bottom: 16,
-        left: 16,
-        right: 16,
-    },
-
-    titleOnImage: {
-        fontSize: 22,
-        fontWeight: '600',
-        color: '#fff',
-        textShadowColor: 'rgba(0,0,0,0.3)',
-        textShadowOffset: { width: 0, height: 1 },
-        textShadowRadius: 4,
-    },
-
-    noImageHeader: {
-        padding: 16,
-    },
-
-    titleNoImage: {
-        fontSize: 22,
-        fontWeight: '700',
-        color: '#000',
-        marginTop: 8,
-    },
-
-    blurOverlay: {
-        borderRadius: 16,
-        padding: 12,
+    noteCard: {
+        borderRadius: 28,
         overflow: 'hidden',
-        backgroundColor: 'rgba(0,0,0,0.2)',
+        marginBottom: 32,
+        backgroundColor: 'transparent',
+    },
+
+    noteImage: {
+        width: '100%',
+        height: 280,
+    },
+
+    noteBody: {
+        paddingTop: 16,
+        paddingBottom: 24,
+        paddingHorizontal: 20,
+        borderBottomLeftRadius: 28,
+        borderBottomRightRadius: 28,
+        overflow: 'hidden',
+    },
+
+    noteContent: {
+        position: 'relative',
+        zIndex: 2,
     },
 
     categoryPill: {
         alignSelf: 'flex-start',
-        backgroundColor: 'rgba(0,0,0,0.6)',
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 12,
-        marginBottom: 8,
-        textShadowColor: 'rgba(0,0,0,1)',
-        textShadowOffset: { width: 2, height: 2 },
-        textShadowRadius: 6,
+        marginBottom: 12,
     },
 
     categoryPillText: {
-        color: '#000',
+        color: '#333',
         fontSize: 12,
         fontWeight: '500',
     },
 
-    body: {
-        paddingHorizontal: 20,
-        paddingVertical: 16,
+    title: {
+        fontSize: 22,
+        fontWeight: '700',
+        color: '#000',
+        marginBottom: 12,
     },
 
     inlineRow: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
-        marginBottom: 16,
+        marginBottom: 12,
     },
 
     ratingText: {
-        color: colors.text,
         fontSize: 14,
+        color: '#555',
     },
 
     price: {
         fontSize: 18,
-        fontWeight: 'bold',
-        color: colors.text,
-        marginBottom: 16,
+        fontWeight: '600',
+        color: '#000',
+        marginBottom: 12,
     },
 
     comment: {
-        color: colors.text,
+        color: '#444',
         fontSize: 15,
         lineHeight: 22,
-        marginBottom: 20,
+        marginBottom: 16,
     },
 
     date: {
         fontSize: 13,
-        color: '#66a7b0',
-        marginBottom: 20,
+        color: '#000',
+        opacity: 0.5,
     },
 })

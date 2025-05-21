@@ -1,6 +1,8 @@
-import React, { forwardRef, useState } from 'react'
+import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import {
-    View, Text, Image, TouchableOpacity, StyleSheet
+    View, Text, Image, TouchableOpacity, StyleSheet,
+    Animated,
+    Easing
 } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import type { Swipeable as SwipeableType } from 'react-native-gesture-handler'
@@ -88,6 +90,26 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
         </View>
     )
 
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const translateYAnim = useRef(new Animated.Value(20)).current;
+
+    useEffect(() => {
+        Animated.parallel([
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 300,
+                easing: Easing.out(Easing.ease),
+                useNativeDriver: true,
+            }),
+            Animated.timing(translateYAnim, {
+                toValue: 0,
+                duration: 300,
+                easing: Easing.out(Easing.ease),
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, []);
+
     return (
         <>
             <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
@@ -98,15 +120,15 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                 <TouchableOpacity
                     activeOpacity={0.9}
                     onPress={() => {
-                        closeSwipe()
-                        onPress(note)
+                        closeSwipe();
+                        onPress(note);
                     }}
                 >
-                    <View style={styles.cardWrapper}>
+                    <Animated.View style={[styles.cardWrapper, { opacity: fadeAnim, transform: [{ translateY: translateYAnim }] }]}>
                         <BlurView intensity={100} tint="light" style={styles.cardBackground}>
                             <LinearGradient
-                                colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.05)']}
-                                style={[StyleSheet.absoluteFillObject]}
+                                colors={['rgba(255,255,255,0.25)', 'rgba(255,255,255,0.05)']}
+                                style={StyleSheet.absoluteFillObject}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}
                             />
@@ -120,32 +142,26 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                                     </View>
                                 )}
                                 <View style={styles.mainContent}>
-                                    <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+                                    <Text style={styles.title} numberOfLines={1}>
                                         {note.name}
                                     </Text>
-                                    <Text style={styles.comment} numberOfLines={3}>
+                                    <Text style={styles.comment} numberOfLines={2}>
                                         {note.comment}
                                     </Text>
-                                </View>
-                            </View>
 
-                            <View style={styles.divider} />
-                            <View style={styles.footer}>
-                                <Text style={styles.date}>{date}</Text>
-                                <View style={styles.centerStars}>
-                                    <StarRating rating={note.rating} disabled cardList />
+                                    <View style={styles.footerRow}>
+                                        <StarRating rating={note.rating} disabled cardList />
+                                        {!!priceDisplay && (
+                                            <Text style={styles.price}>
+                                                {note.currency}{priceDisplay}
+                                            </Text>
+                                        )}
+                                    </View>
                                 </View>
-                                {priceDisplay ? (
-                                    <Text style={styles.price}>
-                                        {note.currency}
-                                        {priceDisplay}
-                                    </Text>
-                                ) : (
-                                    <View style={styles.pricePlaceholder} />
-                                )}
                             </View>
                         </View>
-                    </View>
+
+                    </Animated.View>
                 </TouchableOpacity>
             </Swipeable >
 

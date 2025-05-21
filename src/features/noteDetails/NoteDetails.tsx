@@ -118,66 +118,40 @@ const NoteDetails: FC = () => {
                     </View>
                 </View>
 
-                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                    <View style={styles.card}>
-
-                        <BlurView intensity={100} tint="light" style={styles.cardBackground}>
-                            <LinearGradient
-                                colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.7)']}
-                                style={StyleSheet.absoluteFillObject}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 1 }}
-                            />
-                        </BlurView>
-
-                        {note.image ? (
+                <ScrollView contentContainerStyle={styles.scrollContent}>
+                    <View style={styles.noteCard}>
+                        {note.image && (
                             <View style={styles.imageWrapper}>
                                 <Image source={{ uri: note.image }} style={styles.image} />
-                                <View style={styles.textOnImage}>
-                                    <BlurView intensity={30} tint="light" style={styles.blurOverlay}>
-                                        <LinearGradient
-                                            colors={['rgba(180,180,180,0.2)', 'rgba(255,255,255,0.05)']}
-                                            style={StyleSheet.absoluteFillObject}
-                                        />
-                                        {note.category && (
-                                            <View style={[styles.categoryPill, { backgroundColor: pillColor }]}>
-                                                <Text style={styles.categoryPillText}>{note.category}</Text>
-                                            </View>
-                                        )}
-                                        <Text style={styles.titleOnImage}>{note.name}</Text>
-                                    </BlurView>
-                                </View>
-                            </View>
-                        ) : (
-                            <View style={styles.noImageHeader}>
-                                {note.category && (
-                                    <View style={[styles.categoryPill, { backgroundColor: pillColor }]}>
-                                        <Text style={styles.categoryPillText}>{note.category}</Text>
-                                    </View>
-                                )}
-                                <Text style={styles.titleNoImage}>{note.name}</Text>
                             </View>
                         )}
 
-                        <View style={styles.body}>
-                            <View style={styles.inlineRow}>
-                                <StarRating rating={note.rating} disabled cardList />
-                                <Text style={styles.ratingText}>{note.rating.toFixed(1)}/5.0</Text>
+                        <BlurView intensity={100} tint="light" style={styles.noteBody}>
+                            <LinearGradient
+                                colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.1)']}
+                                style={StyleSheet.absoluteFill}
+                            />
+
+                            <View style={styles.noteContent}>
+                                <View style={[styles.categoryPill, { backgroundColor: pillColor }]}>
+                                    <Text style={styles.categoryPillText}>{note.category}</Text>
+                                </View>
+
+                                <Text style={styles.title}>{note.name}</Text>
+
+                                <View style={styles.inlineRow}>
+                                    <StarRating rating={note.rating} disabled cardList />
+                                    <Text style={styles.ratingText}>{note.rating.toFixed(1)}</Text>
+                                </View>
+
+                                {!!note.price && <Text style={styles.price}>{priceDisplay}</Text>}
+                                {!!note.comment && <Text style={styles.comment}>{note.comment}</Text>}
+
+                                <Text style={styles.date}>Added on {formattedDate}</Text>
                             </View>
-
-                            {note.price && note.price > 0 && (
-                                <Text style={styles.price}>{priceDisplay}</Text>
-                            )}
-
-                            {!!note.comment && (
-                                <Text style={styles.comment}>{note.comment}</Text>
-                            )}
-
-                            <Text style={styles.date}>Added on {formattedDate}</Text>
-                        </View>
+                        </BlurView>
                     </View>
                 </ScrollView>
-
 
                 <DeleteNoteModal
                     visible={delVisible}

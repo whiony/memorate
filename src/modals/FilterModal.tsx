@@ -167,8 +167,8 @@ const styles = StyleSheet.create({
 
     dropdown: {
         position: 'absolute',
-        bottom: 110,
-        left: 16,
+        bottom: 100,
+        left: 50,
         width: 140,
         borderRadius: 16,
         overflow: 'hidden',
