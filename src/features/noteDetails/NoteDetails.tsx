@@ -6,6 +6,8 @@ import {
     TouchableOpacity,
     ScrollView,
     SafeAreaView,
+    Modal,
+    Pressable,
 } from 'react-native'
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack'
@@ -39,6 +41,9 @@ const NoteDetails: FC = () => {
     })
     const [delVisible, setDelVisible] = useState(false)
     const { categories } = useCategories()
+
+    const [menuVisible, setMenuVisible] = useState(false)
+    const toggleMenu = () => setMenuVisible(v => !v)
 
     useEffect(() => {
         const ref = firestoreDoc(firestore, 'reviews', navNote.id)
@@ -98,7 +103,7 @@ const NoteDetails: FC = () => {
         >
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
-                    <View style={styles.side}>
+                    <View style={[styles.side, styles.sideLeft]}>
                         <TouchableOpacity onPress={handleGoBack}>
                             <Ionicons name="chevron-back" size={24} color="#000" />
                         </TouchableOpacity>
@@ -108,14 +113,44 @@ const NoteDetails: FC = () => {
                         Note Details
                     </Text>
 
-                    <View style={styles.side}>
-                        <TouchableOpacity onPress={handleEdit}>
-                            <Ionicons name="create-outline" size={24} color="#000" />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={openDeleteModal} style={styles.headerIcon}>
-                            <Ionicons name="trash-bin-outline" size={24} color="#E53935" />
+                    <View style={[styles.side, styles.sideRight]}>
+                        <TouchableOpacity
+                            onPress={() => setMenuVisible(true)}
+                            style={styles.menuButton}
+                            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                        >
+                            <Ionicons name="ellipsis-vertical" size={22} color="#000" />
                         </TouchableOpacity>
                     </View>
+
+                    <Modal
+                        visible={menuVisible}
+                        transparent
+                        animationType="fade"
+                        onRequestClose={() => setMenuVisible(false)}
+                    >
+                        <Pressable
+                            style={StyleSheet.absoluteFill}
+                            onPress={() => setMenuVisible(false)}
+                        >
+                            <View style={styles.popupWrapper}>
+                                <View style={styles.popupMenu}>
+                                    <TouchableOpacity style={styles.menuItem} onPress={() => {
+                                        setMenuVisible(false)
+                                        handleEdit()
+                                    }}>
+                                        <Text style={styles.menuText}>Edit</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.menuItem} onPress={() => {
+                                        setMenuVisible(false)
+                                        openDeleteModal()
+                                    }}>
+                                        <Text style={[styles.menuText, { color: '#E53935' }]}>Delete</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Pressable>
+                    </Modal>
                 </View>
 
                 <ScrollView contentContainerStyle={styles.scrollContent}>

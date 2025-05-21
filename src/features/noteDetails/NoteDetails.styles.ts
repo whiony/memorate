@@ -12,16 +12,21 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: 16,
-        borderBottomWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.2)',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
     },
 
     side: {
-        width: 80,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        width: 60,
+        justifyContent: 'center',
+    },
+
+    sideLeft: {
+        alignItems: 'flex-start',
+    },
+
+    sideRight: {
+        alignItems: 'flex-end',
     },
 
     headerTitle: {
@@ -130,5 +135,37 @@ export const styles = StyleSheet.create({
         fontSize: 13,
         color: '#000',
         opacity: 0.5,
+    },
+
+    popupWrapper: {
+        position: 'absolute',
+        top: 110,
+        right: 16,
+        zIndex: 999,
+    },
+
+    popupMenu: {
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 5,
+        minWidth: 120,
+    },
+
+    menuItem: {
+        paddingVertical: 10,
+    },
+
+    menuText: {
+        fontSize: 16,
+        color: '#111',
+    },
+
+    menuButton: {
+        padding: 8,
     },
 })
