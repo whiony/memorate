@@ -102,7 +102,6 @@ export const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: '700',
         color: '#000',
-        marginBottom: 12,
     },
 
     inlineRow: {
@@ -121,7 +120,6 @@ export const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '600',
         color: '#000',
-        marginBottom: 12,
     },
 
     comment: {
@@ -133,8 +131,7 @@ export const styles = StyleSheet.create({
 
     date: {
         fontSize: 13,
-        color: '#000',
-        opacity: 0.5,
+        color: '#666',
     },
 
     popupWrapper: {

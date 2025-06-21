@@ -26,6 +26,7 @@ import { useCategories } from '@/hooks/useCategories'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 import { StyleSheet } from 'react-native'
+import CategoryFilter from '../home/components/CategoryFilter/CategoryFilter'
 
 type NoteDetailsRouteProp = RouteProp<RootStackParamList, 'NoteDetails'>
 type NoteDetailsNavigationProp = StackNavigationProp<RootStackParamList, 'NoteDetails'>
@@ -163,23 +164,51 @@ const NoteDetails: FC = () => {
 
                         <BlurView intensity={100} tint="light" style={styles.noteBody}>
                             <LinearGradient
-                                colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.1)']}
+                                colors={['rgba(255,255,255,0.7)', 'rgba(255,255,255,0.5)', 'rgba(255,255,255,0.3)']}
                                 style={StyleSheet.absoluteFill}
                             />
 
                             <View style={styles.noteContent}>
-                                <View style={[styles.categoryPill, { backgroundColor: pillColor }]}>
-                                    <Text style={styles.categoryPillText}>{note.category}</Text>
-                                </View>
+                                {catObj && (
+                                    <View style={{
+                                        alignSelf: 'flex-start',
+                                        marginBottom: 12,
+                                        borderRadius: 18,
+                                        overflow: 'hidden',
+                                    }}>
+                                        <BlurView
+                                            intensity={100}
+                                            tint="light"
+                                            style={{
+                                                paddingHorizontal: 20,
+                                                paddingVertical: 6,
+                                                backgroundColor: `${pillColor}66`,
+                                                borderRadius: 18,
+                                                borderWidth: 1,
+                                                borderColor: 'rgba(255,255,255,0.5)',
+                                            }}
+                                        >
+                                            <LinearGradient
+                                                colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)']}
+                                                style={StyleSheet.absoluteFill}
+                                            />
+                                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#000' }}>
+                                                {note.category}
+                                            </Text>
+                                        </BlurView>
+                                    </View>
+                                )}
 
-                                <Text style={styles.title}>{note.name}</Text>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                                    <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">{note.name}</Text>
+                                    {!!note.price && <Text style={styles.price}>{priceDisplay}</Text>}
+                                </View>
 
                                 <View style={styles.inlineRow}>
                                     <StarRating rating={note.rating} disabled cardList />
                                     <Text style={styles.ratingText}>{note.rating.toFixed(1)}</Text>
                                 </View>
 
-                                {!!note.price && <Text style={styles.price}>{priceDisplay}</Text>}
                                 {!!note.comment && <Text style={styles.comment}>{note.comment}</Text>}
 
                                 <Text style={styles.date}>Added on {formattedDate}</Text>
