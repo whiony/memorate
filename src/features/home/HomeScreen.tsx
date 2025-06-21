@@ -15,7 +15,6 @@ import {
     collection,
     query,
     where,
-    orderBy,
     onSnapshot,
     deleteDoc,
     doc,
@@ -29,7 +28,6 @@ import type { Note, RootStackParamList } from '@/navigation/AppNavigator'
 import NoteCard from './components/NoteCard/NoteCard'
 import CategoryFilter from './components/CategoryFilter/CategoryFilter'
 import { styles } from './HomeScreen.styles'
-import { colors } from '@/theme/index'
 import { useSort } from '@/contexts/SortContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { BlurView } from 'expo-blur'
@@ -46,32 +44,45 @@ const HomeScreen: React.FC = () => {
     const swipeableRefs = useRef<Swipeable[]>([])
 
     const allCats: Category[] = [
-        { name: 'All', color: colors.primary },
+        { name: 'All' },
         ...loadedCats
     ]
 
     useEffect(() => {
         let base: Query<DocumentData> = collection(firestore, 'reviews')
-        if (category !== 'All') {
-            base = query(base, where('category', '==', category))
-        }
-        const q = query(base, orderBy('created', 'desc'))
 
-        const unsubscribe = onSnapshot(q, snap => {
+        if (category !== 'All') {
+            base = query(base, where('tags', 'array-contains', category))
+        }
+
+        const q = query(base)
+
+        const unsub = onSnapshot(q, snap => {
             const loaded = snap.docs.map(d => {
                 const data = d.data()
+
+                const created = data.created?.toDate
+                    ? data.created.toDate()
+                    : new Date(data.created as any)
+
+                const edited = data.edited?.toDate
+                    ? data.edited.toDate()
+                    : data.edited
+                        ? new Date(data.edited)
+                        : undefined
+
                 return {
                     id: d.id,
                     ...data,
-                    created: data.created?.toDate
-                        ? data.created.toDate()
-                        : new Date(data.created as any),
+                    created,
+                    edited,
+                    tags: data.tags ?? (data.category ? [data.category] : []),
                 } as Note
             })
             setNotes(loaded)
         })
 
-        return unsubscribe
+        return unsub
     }, [category])
 
     const closeAll = () => swipeableRefs.current.forEach(r => r?.close())
@@ -83,9 +94,9 @@ const HomeScreen: React.FC = () => {
                 case 'price': return dir * ((a.price || 0) - (b.price || 0))
                 case 'rating': return dir * (b.rating - a.rating)
                 case 'date': {
-                    const ta = new Date(a.created!).getTime()
-                    const tb = new Date(b.created!).getTime()
-                    return dir * (tb - ta)
+                    const getTime = (n: Note) =>
+                        (n.edited ?? n.created)?.getTime() ?? 0
+                    return dir * (getTime(b) - getTime(a))
                 }
             }
         })
@@ -104,6 +115,7 @@ const HomeScreen: React.FC = () => {
             note: {
                 ...note,
                 created: note.created!.toISOString(),
+                edited: note.edited?.toISOString(),
             },
         })
 
@@ -112,6 +124,7 @@ const HomeScreen: React.FC = () => {
             note: {
                 ...note,
                 created: note.created!.toISOString(),
+                edited: note.edited?.toISOString(),
             }
         })
 

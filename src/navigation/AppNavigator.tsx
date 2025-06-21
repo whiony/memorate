@@ -16,13 +16,15 @@ export interface Note {
     comment: string
     rating: number
     image?: string
-    category: string
+    tags: string[];
     created?: Date
+    edited?: Date
     price?: number
     currency?: '€' | '$' | '₴'
+    category?: string;
 }
 
-export type NavNote = Omit<Note, 'created'> & { created: string }
+export type NavNote = Omit<Note, 'created' | 'edited'> & { created: string, edited?: string }
 
 export type RootStackParamList = {
     Home: undefined

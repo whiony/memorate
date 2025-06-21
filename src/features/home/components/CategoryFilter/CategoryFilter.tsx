@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import {
     ScrollView,
     TouchableOpacity,
@@ -34,8 +34,6 @@ const CategoryFilter: React.FC<Props> = ({
     const [renameVisible, setRenameVisible] = useState(false)
     const [deleteVisible, setDeleteVisible] = useState(false)
     const [activeCat, setActiveCat] = useState('')
-
-    const scale = useRef(new Animated.Value(1)).current
 
     const handleLong = (catName: string) => {
         if (catName === 'All') return
@@ -76,16 +74,13 @@ const CategoryFilter: React.FC<Props> = ({
                 {categories.map(cat => {
                     const isSel = cat.name === selected
 
-                    const background = isSel
-                        ? 'rgba(255,255,255,0.4)'
-                        : `${cat.color}66`
+                    const background = 'rgba(255,255,255,0.4)'
 
                     return (
                         <Animated.View
                             key={cat.name}
                             style={[
                                 styles.pillWrapper,
-                                isSel && { transform: [{ scale: 1.04 }] },
                             ]}
                         >
                             <AnimatedBlur
@@ -113,10 +108,6 @@ const CategoryFilter: React.FC<Props> = ({
                                 />
                                 <TouchableOpacity
                                     onPress={() => {
-                                        Animated.sequence([
-                                            Animated.spring(scale, { toValue: 1.04, useNativeDriver: true }),
-                                            Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
-                                        ]).start()
                                         onSelect(cat.name)
                                     }}
                                     onLongPress={() => handleLong(cat.name)}

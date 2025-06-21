@@ -22,11 +22,9 @@ import { deleteDoc, doc as firestoreDoc, onSnapshot } from 'firebase/firestore'
 import { firestore } from '@/services/firebaseConfig'
 import { formatPrice } from '@/utils/formatPrice'
 import { styles } from './NoteDetails.styles'
-import { useCategories } from '@/hooks/useCategories'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 import { StyleSheet } from 'react-native'
-import CategoryFilter from '../home/components/CategoryFilter/CategoryFilter'
 
 type NoteDetailsRouteProp = RouteProp<RootStackParamList, 'NoteDetails'>
 type NoteDetailsNavigationProp = StackNavigationProp<RootStackParamList, 'NoteDetails'>
@@ -39,12 +37,11 @@ const NoteDetails: FC = () => {
     const [note, setNote] = useState<Note>({
         ...navNote,
         created: new Date(navNote.created),
+        edited: navNote.edited ? new Date(navNote.edited) : undefined,
     })
     const [delVisible, setDelVisible] = useState(false)
-    const { categories } = useCategories()
 
     const [menuVisible, setMenuVisible] = useState(false)
-    const toggleMenu = () => setMenuVisible(v => !v)
 
     useEffect(() => {
         const ref = firestoreDoc(firestore, 'reviews', navNote.id)
@@ -57,8 +54,9 @@ const NoteDetails: FC = () => {
                     comment: data.comment,
                     rating: data.rating,
                     image: data.image,
-                    category: data.category,
+                    tags: data.tags ?? (data.category ? [data.category] : []),
                     created: data.created.toDate(),
+                    edited: data.created.toDate(),
                     price: data.price,
                     currency: data.currency,
                 })
@@ -72,19 +70,23 @@ const NoteDetails: FC = () => {
         [note.created],
     )
 
-    const catObj = categories.find(c => c.name === note.category)
-    const pillColor = catObj?.color ?? '#CCC'
-
     const priceDisplay = note.price && note.price > 0
         ? `${note.currency}${formatPrice(note.price)}`
         : '—'
 
     const handleGoBack = useCallback(() => navigation.goBack(), [navigation])
     const handleEdit = useCallback(() => {
+        if (!note.created) return
+
         navigation.navigate('AddNote', {
-            note: { ...note, created: note.created!.toISOString() },
+            note: {
+                ...note,
+                created: note.created.toISOString(),
+                edited: note.edited?.toISOString(),
+            },
         })
     }, [navigation, note])
+
     const handleDelete = useCallback(async () => {
         setDelVisible(false)
         if (note.image?.startsWith('https://res.cloudinary.com')) {
@@ -169,35 +171,24 @@ const NoteDetails: FC = () => {
                             />
 
                             <View style={styles.noteContent}>
-                                {catObj && (
-                                    <View style={{
-                                        alignSelf: 'flex-start',
-                                        marginBottom: 12,
-                                        borderRadius: 18,
-                                        overflow: 'hidden',
-                                    }}>
-                                        <BlurView
-                                            intensity={100}
-                                            tint="light"
-                                            style={{
-                                                paddingHorizontal: 20,
-                                                paddingVertical: 6,
-                                                backgroundColor: `${pillColor}66`,
-                                                borderRadius: 18,
-                                                borderWidth: 1,
-                                                borderColor: 'rgba(255,255,255,0.5)',
-                                            }}
-                                        >
-                                            <LinearGradient
-                                                colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)']}
-                                                style={StyleSheet.absoluteFill}
-                                            />
-                                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#000' }}>
-                                                {note.category}
-                                            </Text>
-                                        </BlurView>
+                                {note.tags?.length ? (
+                                    <View style={styles.tagContainer}>
+                                        {note.tags.map((tag: string) => (
+                                            <BlurView
+                                                key={tag}
+                                                intensity={100}
+                                                tint="light"
+                                                style={styles.tagPill}
+                                            >
+                                                <LinearGradient
+                                                    colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)']}
+                                                    style={StyleSheet.absoluteFill}
+                                                />
+                                                <Text style={styles.tagText}>{tag}</Text>
+                                            </BlurView>
+                                        ))}
                                     </View>
-                                )}
+                                ) : null}
 
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
                                     <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">{note.name}</Text>

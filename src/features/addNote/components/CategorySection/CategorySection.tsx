@@ -1,108 +1,87 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import { View, Text, TextInput, TouchableOpacity, FlatList } from 'react-native';
 import { styles } from './CategorySection.styles';
 import { globalStyles } from '@/theme/index';
-import { categoryColorOptions } from '@/utils/categoryColors';
 
 interface CategorySectionProps {
-    category: string;
-    setCategory: React.Dispatch<React.SetStateAction<string>>;
-    categories: string[];
-    openDropdown: boolean;
-    setOpenDropdown: React.Dispatch<React.SetStateAction<boolean>>;
-    showCategoryInput: boolean;
-    setShowCategoryInput: React.Dispatch<React.SetStateAction<boolean>>;
-    newCategory: string;
-    setNewCategory: React.Dispatch<React.SetStateAction<string>>;
-    newCategoryColor: string;
-    setNewCategoryColor: React.Dispatch<React.SetStateAction<string>>;
+    selectedTags: string[];
+    setSelectedTags: React.Dispatch<React.SetStateAction<string[]>>;
+    allCategories: string[];
+    newTag: string;
+    setNewTag: React.Dispatch<React.SetStateAction<string>>;
     handleAddCategory: () => void;
     loading: boolean;
-    editableCategory?: boolean;
-    style?: StyleProp<ViewStyle>;
+    editable?: boolean;
 }
 
 const CategorySection: React.FC<CategorySectionProps> = ({
-    category,
-    setCategory,
-    categories,
-    openDropdown,
-    setOpenDropdown,
-    showCategoryInput,
-    setShowCategoryInput,
-    newCategory,
-    setNewCategory,
-    newCategoryColor,
-    setNewCategoryColor,
+    selectedTags,
+    setSelectedTags,
+    allCategories,
+    newTag,
+    setNewTag,
     handleAddCategory,
     loading,
-    editableCategory = true,
-    style
-}) => (
-    <View style={[styles.section, style]}>
-        {editableCategory && <Text style={globalStyles.label}>Category</Text>}
-        <View style={styles.categoryRow}>
-            <View style={{ flex: 1 }}>
-                <DropDownPicker
-                    open={openDropdown}
-                    setOpen={setOpenDropdown}
-                    items={categories.map(c => ({ label: c, value: c }))}
-                    value={category}
-                    setValue={setCategory}
-                    placeholder="Select category"
-                    style={[globalStyles.standartDropdown, !editableCategory && { borderWidth: 0 }]}
-                    dropDownContainerStyle={[globalStyles.standartDropdownContainer, !editableCategory && { borderWidth: 1, borderColor: '#e2e2e2' }]}
-                    textStyle={globalStyles.standartDropdownText}
-                    listMode="SCROLLVIEW"
-                    scrollViewProps={{ nestedScrollEnabled: true }}
-                    zIndex={2000}
-                    disabled={loading}
-                />
+    editable = true,
+}) => {
+    const handleAddTag = (tag: string) => {
+        if (!selectedTags.includes(tag)) {
+            setSelectedTags([...selectedTags, tag]);
+        }
+    };
+
+    const removeTag = (tag: string) => {
+        setSelectedTags(selectedTags.filter(t => t !== tag));
+    };
+
+    return (
+        <View style={styles.section}>
+            {editable && <Text style={globalStyles.label}>Tags</Text>}
+
+            <View style={styles.tagContainer}>
+                {selectedTags.map(tag => (
+                    <TouchableOpacity key={tag} style={styles.tagPill} onPress={() => removeTag(tag)}>
+                        <Text style={styles.tagText}>{tag} ✕</Text>
+                    </TouchableOpacity>
+                ))}
             </View>
-            {editableCategory && (
-                <TouchableOpacity
-                    onPress={() => setShowCategoryInput(!showCategoryInput)}
-                    style={[styles.categoryButton, globalStyles.standartButton]}
-                >
-                    <Text style={styles.addCategoryButtonText}>+ Add</Text>
-                </TouchableOpacity>
+
+            {editable && (
+                <>
+                    <View style={styles.row}>
+                        <TextInput
+                            placeholder="Add new tag"
+                            style={styles.input}
+                            value={newTag}
+                            onChangeText={setNewTag}
+                            editable={!loading}
+                        />
+
+                        <TouchableOpacity
+                            onPress={handleAddCategory}
+                            style={[styles.categoryButton]}
+                            disabled={loading}
+                        >
+                            <Text style={styles.buttonText}>Add Tag</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <Text style={globalStyles.label}>Or select from existing</Text>
+                    <FlatList
+                        data={allCategories.filter(cat => !selectedTags.includes(cat))}
+                        keyExtractor={(item) => item}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity style={styles.tagOption} onPress={() => handleAddTag(item)}>
+                                <Text>{item}</Text>
+                            </TouchableOpacity>
+                        )}
+                    />
+                </>
             )}
         </View>
-
-        {showCategoryInput && (
-            <View>
-                <View style={styles.colorPickerContainer}>
-                    {categoryColorOptions.map(color => (
-                        <TouchableOpacity
-                            key={color}
-                            style={[
-                                styles.colorOption,
-                                { backgroundColor: color },
-                                newCategoryColor === color && styles.selectedColorOption
-                            ]}
-                            onPress={() => setNewCategoryColor(color)}
-                        />
-                    ))}
-                </View>
-                <View style={[styles.categoryRow, { marginTop: 8 }]}>
-                    <TextInput
-                        style={[globalStyles.standartInput, { flex: 3 }]}
-                        placeholder="Enter new category"
-                        value={newCategory}
-                        onChangeText={setNewCategory}
-                        placeholderTextColor="#888"
-                    />
-                    <TouchableOpacity
-                        onPress={handleAddCategory}
-                        style={[styles.categoryButton, globalStyles.standartButton]}
-                    >
-                        <Text style={styles.buttonText}>Save</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        )}
-    </View>
-);
+    );
+};
 
 export default CategorySection;

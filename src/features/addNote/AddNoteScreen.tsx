@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState, useCallback } from 'react'
+import React, { FC, useRef, useState, useCallback } from 'react'
 import { View, Text, TouchableOpacity, Alert, SafeAreaView } from 'react-native'
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack'
@@ -22,7 +22,6 @@ import { styles } from './AddNoteScreen.styles'
 import { globalStyles } from '@/theme'
 import { useCategories } from '@/hooks/useCategories'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
-import { categoryColorOptions } from '@/utils/categoryColors'
 
 type AddNoteRouteProp = RouteProp<RootStackParamList, 'AddNote'>
 type AddNoteNavigationProp = StackNavigationProp<RootStackParamList, 'AddNote'>
@@ -43,7 +42,11 @@ const AddNoteScreen: FC<Props> = () => {
 
     const navNote = route.params?.note as NavNote | undefined
     const existingNote: Note | undefined = navNote
-        ? { ...navNote, created: new Date(navNote.created) }
+        ? {
+            ...navNote,
+            created: new Date(navNote.created),
+            edited: navNote.edited ? new Date(navNote.edited) : undefined,
+        }
         : undefined
 
     const [title, setTitle] = useState(existingNote?.name ?? '')
@@ -57,21 +60,12 @@ const AddNoteScreen: FC<Props> = () => {
     const [loadingImage, setLoadingImage] = useState(false)
     const [saving, setSaving] = useState(false)
 
-    const { categories, addCategory, loading: addingCategory } = useCategories()
-    const categoryNames = categories.map(c => c.name)
-    const [category, setCategory] = useState(existingNote?.category ?? '')
-    const [openDropdown, setOpenDropdown] = useState(false)
-    const [showCategoryInput, setShowCategoryInput] = useState(false)
-    const [newCategory, setNewCategory] = useState('')
-    const [newCategoryColor, setNewCategoryColor] = useState<string>(categoryColorOptions[0])
+    const { categories, addCategory, loading: addingCategory } = useCategories();
+    const categoryNames = categories.map(c => c.name);
+    const [selectedTags, setSelectedTags] = useState<string[]>(existingNote?.tags ?? []);
+    const [newTag, setNewTag] = useState('');
 
     const scrollRef = useRef<KeyboardAwareScrollView>(null)
-
-    useEffect(() => {
-        if (!category && categoryNames.length) {
-            setCategory(categoryNames[0])
-        }
-    }, [categoryNames, category])
 
     const toggleCurrency = useCallback(() => {
         const opts: Currency[] = ['€', '$', '₴']
@@ -93,16 +87,20 @@ const AddNoteScreen: FC<Props> = () => {
     }, [])
 
     const handleAddCategory = useCallback(async () => {
-        if (newCategory.trim()) {
-            setShowCategoryInput(false)
-            await addCategory(newCategory.trim(), newCategoryColor)
-            setCategory(newCategory.trim())
-            setNewCategory('')
-            setNewCategoryColor(categoryColorOptions[0])
-        } else {
-            setShowCategoryInput(false)
+        const tag = newTag.trim();
+        if (!tag) return;
+
+        if (!categoryNames.includes(tag)) {
+            await addCategory(tag);
         }
-    }, [newCategory, newCategoryColor, addCategory])
+
+        if (!selectedTags.includes(tag)) {
+            setSelectedTags(prev => [...prev, tag]);
+        }
+
+        setNewTag('');
+    }, [newTag, addCategory, categoryNames, selectedTags]);
+
 
     const handleSave = useCallback(async () => {
         if (!title.trim()) {
@@ -128,12 +126,13 @@ const AddNoteScreen: FC<Props> = () => {
                 setLoadingImage(false)
             }
 
+            const now = new Date()
+
             const payload: Partial<Note> = {
                 name: title,
                 comment,
                 rating,
-                category,
-                created: new Date(),
+                tags: selectedTags,
             }
             if (price) {
                 payload.price = parseFloat(price.replace(',', '.'))
@@ -141,6 +140,12 @@ const AddNoteScreen: FC<Props> = () => {
             payload.currency = currency
             if (imageUrl) payload.image = imageUrl
             else if (existingNote?.image && !image) payload.image = deleteField() as any
+
+            if (existingNote) {
+                payload.edited = now
+            } else {
+                payload.created = now
+            }
 
             if (existingNote) {
                 await updateDoc(doc(firestore, 'reviews', existingNote.id), payload)
@@ -159,7 +164,7 @@ const AddNoteScreen: FC<Props> = () => {
         } finally {
             setSaving(false)
         }
-    }, [title, comment, rating, category, price, currency, image, existingNote, navigation])
+    }, [title, comment, rating, price, currency, image, existingNote, navigation])
 
     const handleTitleChange = useCallback((text: string) => {
         setTitle(text.slice(0, MAX_TITLE_LENGTH))
@@ -204,17 +209,11 @@ const AddNoteScreen: FC<Props> = () => {
                         onFocus={handleCommentFocus}
                     />
                     <CategorySection
-                        category={category}
-                        setCategory={setCategory}
-                        categories={categoryNames}
-                        openDropdown={openDropdown}
-                        setOpenDropdown={setOpenDropdown}
-                        showCategoryInput={showCategoryInput}
-                        setShowCategoryInput={setShowCategoryInput}
-                        newCategory={newCategory}
-                        setNewCategory={setNewCategory}
-                        newCategoryColor={newCategoryColor}
-                        setNewCategoryColor={setNewCategoryColor}
+                        selectedTags={selectedTags}
+                        setSelectedTags={setSelectedTags}
+                        allCategories={categoryNames}
+                        newTag={newTag}
+                        setNewTag={setNewTag}
                         handleAddCategory={handleAddCategory}
                         loading={addingCategory}
                     />

@@ -165,4 +165,29 @@ export const styles = StyleSheet.create({
     menuButton: {
         padding: 8,
     },
+
+    tagContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+        marginBottom: 12,
+    },
+
+    tagPill: {
+        borderRadius: 18,
+        overflow: 'hidden',
+
+        paddingHorizontal: 20,
+        paddingVertical: 6,
+
+        backgroundColor: 'rgba(255,255,255,0.4)',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.5)',
+    },
+
+    tagText: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#000',
+    },
 })

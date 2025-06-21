@@ -4,13 +4,12 @@ import { firestore } from '@/services/firebaseConfig';
 
 export interface Category {
     name: string;
-    color: string;
 }
 
 export interface CategoriesContextProps {
     categories: Category[];
     loading: boolean;
-    addCategory: (newCategory: string, color: string) => Promise<void>;
+    addCategory: (newCategory: string) => Promise<void>;
     refreshCategories: () => Promise<void>;
     deleteCategory: (categoryName: string) => Promise<void>;
     renameCategory: (oldName: string, newName: string) => Promise<void>;
@@ -26,23 +25,22 @@ export const CategoriesProvider: React.FC<{ children: ReactNode }> = ({ children
     const refreshCategories = async () => {
         setLoading(true);
         const snap = await getDocs(colRef);
-        const data = snap.docs.map(d => {
-            const doc = d.data() as any;
-            return { name: doc.name as string, color: doc.color as string };
-        });
+        const data = snap.docs.map(d => ({
+            name: (d.data() as any).name as string,
+        }))
         setCategories(data);
         setLoading(false);
     };
 
-    const addCategory = async (newCategory: string, color: string) => {
-        await addDoc(colRef, { name: newCategory, color });
+    const addCategory = async (newCategory: string) => {
+        await addDoc(colRef, { name: newCategory });
         await refreshCategories();
     };
 
     const deleteCategory = async (categoryName: string) => {
         const q = query(colRef, where('name', '==', categoryName));
         const snap = await getDocs(q);
-        for (let docSnap of snap.docs) {
+        for (const docSnap of snap.docs) {
             await deleteDoc(docSnap.ref);
         }
         await refreshCategories();
@@ -51,7 +49,7 @@ export const CategoriesProvider: React.FC<{ children: ReactNode }> = ({ children
     const renameCategory = async (oldName: string, newName: string) => {
         const q = query(colRef, where('name', '==', oldName));
         const snap = await getDocs(q);
-        for (let docSnap of snap.docs) {
+        for (const docSnap of snap.docs) {
             await updateDoc(docSnap.ref, { name: newName });
         }
         await refreshCategories();
@@ -60,14 +58,7 @@ export const CategoriesProvider: React.FC<{ children: ReactNode }> = ({ children
     useEffect(() => { refreshCategories(); }, []);
 
     return (
-        <CategoriesContext.Provider value={{
-            categories,
-            loading,
-            addCategory,
-            refreshCategories,
-            deleteCategory,
-            renameCategory
-        }}>
+        <CategoriesContext.Provider value={{ categories, loading, addCategory, refreshCategories, deleteCategory, renameCategory }}>
             {children}
         </CategoriesContext.Provider>
     );

@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
     screen: {
         padding: 16,
+        paddingBottom: 40,
         borderRadius: 8,
         backgroundColor: "#fff",
         margin: 10,
