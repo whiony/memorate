@@ -4,12 +4,18 @@ import { fonts } from '@/theme/index';
 export const styles = StyleSheet.create({
     container: {
         height: 220,
-        backgroundColor: '#EAEAEA',
-        borderRadius: 12,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        borderRadius: 16,
         overflow: 'hidden',
-        marginTop: 10,
         justifyContent: 'center',
         alignItems: 'center',
+        borderWidth: 1.5,
+        borderColor: 'rgba(255,255,255,0.3)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 3,
     },
     placeholder: {
         flex: 1,
@@ -30,8 +36,9 @@ export const styles = StyleSheet.create({
         borderRadius: 14,
     },
     imagePlaceholder: {
-        color: '#999',
+        color: 'rgba(0,0,0,0.5)',
         fontSize: 14,
         fontFamily: fonts.mainFont,
+        fontWeight: '500',
     },
 });

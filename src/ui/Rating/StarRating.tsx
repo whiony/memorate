@@ -48,14 +48,14 @@ const Star = ({
                             width: size,
                             height: size,
                             backgroundColor: showBorder
-                                ? '#fff'
+                                ? 'rgba(255,255,255,0.4)'
                                 : 'rgba(255,255,255,0.25)',
                         }}
                     />
                 )}
             </MaskedView>
 
-            {!filled && showBorder && (
+            {showBorder && (
                 <Svg
                     width={size}
                     height={size}
@@ -65,8 +65,8 @@ const Star = ({
                     <Path
                         d={path}
                         fill="none"
-                        stroke="#999"
-                        strokeWidth={1.2}
+                        stroke={filled ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)"}
+                        strokeWidth={filled ? 1 : 1}
                     />
                 </Svg>
             )}

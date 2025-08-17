@@ -55,6 +55,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                             value={newTag}
                             onChangeText={setNewTag}
                             editable={!loading}
+                            placeholderTextColor="rgba(0,0,0,0.5)"
                         />
 
                         <TouchableOpacity

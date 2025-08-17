@@ -31,7 +31,7 @@ const LabeledInput: React.FC<LabeledInputProps> = ({
                     style={[globalStyles.standartInput, inputStyle]}
                     value={value}
                     onChangeText={onChangeText}
-                    placeholderTextColor="#888"
+                    placeholderTextColor="rgba(0,0,0,0.5)"
                     {...rest}
                 />
                 {rightElement}

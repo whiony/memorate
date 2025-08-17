@@ -1,5 +1,5 @@
 import React, { FC, useRef, useState, useCallback } from 'react'
-import { View, Text, TouchableOpacity, Alert, SafeAreaView } from 'react-native'
+import { View, Text, TouchableOpacity, Alert, SafeAreaView, StyleSheet } from 'react-native'
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -17,9 +17,9 @@ import CategorySection from './components/CategorySection/CategorySection'
 import SaveButton from '@/ui/Button/SaveButton'
 import StarRating from '@/ui/Rating/StarRating'
 import FullscreenLoader from '@/ui/Loader/FullscreenLoader'
+import { LinearGradient } from 'expo-linear-gradient'
 
 import { styles } from './AddNoteScreen.styles'
-import { globalStyles } from '@/theme'
 import { useCategories } from '@/hooks/useCategories'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
 
@@ -175,57 +175,64 @@ const AddNoteScreen: FC<Props> = () => {
     }, [])
 
     return (
-        <SafeAreaView>
-            <View style={styles.headerContainer}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="arrow-back" size={24} color="#000" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>
-                    {existingNote ? 'Edit Note' : 'New Note'}
-                </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-                    <Ionicons name="home-outline" size={24} color="#000" />
-                </TouchableOpacity>
-            </View>
-
-            <KeyboardAwareScrollView ref={scrollRef} enableAutomaticScroll>
-                <View style={[globalStyles.screenBackground, styles.screen]}>
-                    <TitleInput value={title} onChange={handleTitleChange} />
-                    <ImagePickerComponent
-                        image={image}
-                        onPickImage={pickImage}
-                        onRemoveImage={() => setImage(null)}
-                    />
-                    <StarRating rating={rating} onChange={setRating} />
-                    <PriceCurrencyInput
-                        price={price}
-                        onChangePrice={setPrice}
-                        currency={currency}
-                        onToggleCurrency={toggleCurrency}
-                    />
-                    <CommentInput
-                        comment={comment}
-                        onChangeComment={setComment}
-                        onFocus={handleCommentFocus}
-                    />
-                    <CategorySection
-                        selectedTags={selectedTags}
-                        setSelectedTags={setSelectedTags}
-                        allCategories={categoryNames}
-                        newTag={newTag}
-                        setNewTag={setNewTag}
-                        handleAddCategory={handleAddCategory}
-                        loading={addingCategory}
-                    />
-                    <SaveButton
-                        onPress={handleSave}
-                        title={existingNote ? 'Update' : 'Save'}
-                        disabled={!title.trim() || rating <= 0 || saving || loadingImage}
-                    />
-                    {(saving || loadingImage) && <FullscreenLoader />}
+        <LinearGradient
+            colors={['#FFE29F', '#FFA99F', '#FF719A', '#A18CD1']}
+            style={{ flex: 1 }}
+            start={{ x: 0.2, y: 0 }}
+            end={{ x: 1, y: 1 }}
+        >
+            <SafeAreaView style={{ flex: 1 }}>
+                <View style={styles.headerContainer}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Ionicons name="arrow-back" size={24} color="#000" />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>
+                        {existingNote ? 'Edit Note' : 'New Note'}
+                    </Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                        <Ionicons name="home-outline" size={24} color="#000" />
+                    </TouchableOpacity>
                 </View>
-            </KeyboardAwareScrollView>
-        </SafeAreaView>
+
+                <KeyboardAwareScrollView ref={scrollRef} enableAutomaticScroll style={{ flex: 1 }}>
+                    <View style={styles.screen}>
+                        <TitleInput value={title} onChange={handleTitleChange} />
+                        <ImagePickerComponent
+                            image={image}
+                            onPickImage={pickImage}
+                            onRemoveImage={() => setImage(null)}
+                        />
+                        <StarRating rating={rating} onChange={setRating} />
+                        <PriceCurrencyInput
+                            price={price}
+                            onChangePrice={setPrice}
+                            currency={currency}
+                            onToggleCurrency={toggleCurrency}
+                        />
+                        <CommentInput
+                            comment={comment}
+                            onChangeComment={setComment}
+                            onFocus={handleCommentFocus}
+                        />
+                        <CategorySection
+                            selectedTags={selectedTags}
+                            setSelectedTags={setSelectedTags}
+                            allCategories={categoryNames}
+                            newTag={newTag}
+                            setNewTag={setNewTag}
+                            handleAddCategory={handleAddCategory}
+                            loading={addingCategory}
+                        />
+                        <SaveButton
+                            onPress={handleSave}
+                            title={existingNote ? 'Update' : 'Save'}
+                            disabled={!title.trim() || rating <= 0 || saving || loadingImage}
+                        />
+                        {(saving || loadingImage) && <FullscreenLoader />}
+                    </View>
+                </KeyboardAwareScrollView>
+            </SafeAreaView>
+        </LinearGradient>
     )
 }
 
