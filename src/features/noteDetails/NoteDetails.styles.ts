@@ -136,9 +136,19 @@ export const styles = StyleSheet.create({
         marginBottom: 16,
     },
 
+    datesContainer: {
+        gap: 4,
+    },
+
     date: {
         fontSize: 13,
         color: '#666',
+    },
+
+    editedDate: {
+        fontSize: 12,
+        color: '#888',
+        fontStyle: 'italic',
     },
 
     popupWrapper: {

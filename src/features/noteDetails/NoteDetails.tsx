@@ -56,7 +56,7 @@ const NoteDetails: FC = () => {
                     image: data.image,
                     tags: data.tags ?? (data.category ? [data.category] : []),
                     created: data.created.toDate(),
-                    edited: data.created.toDate(),
+                    edited: data.edited?.toDate(),
                     price: data.price,
                     currency: data.currency,
                 })
@@ -65,10 +65,23 @@ const NoteDetails: FC = () => {
         return () => unsub()
     }, [navNote.id])
 
-    const formattedDate = useMemo(
+    const formattedCreatedDate = useMemo(
         () => format(note.created!, 'MMMM dd, yyyy'),
         [note.created],
     )
+
+    const formattedEditedDate = useMemo(() => {
+        if (!note.edited || !note.created) return null
+
+        const createdTime = note.created.getTime()
+        const editedTime = note.edited.getTime()
+
+        if (Math.abs(editedTime - createdTime) > 60000) {
+            return format(note.edited, 'MMMM dd, yyyy')
+        }
+
+        return null
+    }, [note.edited, note.created])
 
     const priceDisplay = note.price && note.price > 0
         ? `${note.currency}${formatPrice(note.price)}`
@@ -202,7 +215,12 @@ const NoteDetails: FC = () => {
 
                                 {!!note.comment && <Text style={styles.comment}>{note.comment}</Text>}
 
-                                <Text style={styles.date}>Added on {formattedDate}</Text>
+                                <View style={styles.datesContainer}>
+                                    <Text style={styles.date}>Added on {formattedCreatedDate}</Text>
+                                    {formattedEditedDate && (
+                                        <Text style={styles.editedDate}>Last edited on {formattedEditedDate}</Text>
+                                    )}
+                                </View>
                             </View>
                         </BlurView>
                     </View>
