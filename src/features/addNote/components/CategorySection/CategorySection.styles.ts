@@ -54,8 +54,6 @@ export const styles = StyleSheet.create({
     tagContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        marginTop: 8,
-        marginBottom: 12,
     },
     tagPill: {
         paddingHorizontal: 12,
