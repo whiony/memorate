@@ -82,11 +82,11 @@ const HomeScreen: React.FC = () => {
     const closeAll = () => swipeableRefs.current.forEach(r => r?.close())
 
     const filteredAndSortedNotes = useMemo(() => {
-        // Filter by selected tags
+        // Filter by selected tags - note must have ALL selected tags
         let filtered = notes
         if (selectedTags.length > 0) {
             filtered = notes.filter(note => 
-                selectedTags.some(tag => note.tags.includes(tag))
+                selectedTags.every(tag => note.tags.includes(tag))
             )
         }
 
