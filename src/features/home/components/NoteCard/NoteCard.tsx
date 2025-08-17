@@ -149,6 +149,19 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                                         {note.comment}
                                     </Text>
 
+                                    {note.tags?.length > 0 && (
+                                        <View style={styles.tagsRow}>
+                                            {note.tags.slice(0, 2).map((tag: string) => (
+                                                <View key={tag} style={styles.tagPill}>
+                                                    <Text style={styles.tagText}>{tag}</Text>
+                                                </View>
+                                            ))}
+                                            {note.tags.length > 2 && (
+                                                <Text style={styles.moreTagsText}>+{note.tags.length - 2}</Text>
+                                            )}
+                                        </View>
+                                    )}
+
                                     <View style={styles.footerRow}>
                                         <StarRating rating={note.rating} disabled cardList />
                                         {!!priceDisplay && (

@@ -66,6 +66,34 @@ export const styles = StyleSheet.create({
         marginBottom: 8,
     },
 
+    tagsRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+        gap: 6,
+    },
+
+    tagPill: {
+        backgroundColor: 'rgba(255,255,255,0.3)',
+        borderRadius: 8,
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.4)',
+    },
+
+    tagText: {
+        fontSize: 11,
+        fontWeight: '500',
+        color: '#000',
+    },
+
+    moreTagsText: {
+        fontSize: 11,
+        fontWeight: '500',
+        color: '#666',
+    },
+
     footerRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',

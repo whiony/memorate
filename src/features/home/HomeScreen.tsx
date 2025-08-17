@@ -38,7 +38,7 @@ type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
 const HomeScreen: React.FC = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
     const [notes, setNotes] = useState<Note[]>([])
-    const [category, setCategory] = useState<'All' | string>('All')
+    const [selectedTags, setSelectedTags] = useState<string[]>([])
     const { sortBy, sortOrder } = useSort()
     const { categories: loadedCats } = useCategories()
     const swipeableRefs = useRef<Swipeable[]>([])
@@ -49,13 +49,7 @@ const HomeScreen: React.FC = () => {
     ]
 
     useEffect(() => {
-        let base: Query<DocumentData> = collection(firestore, 'reviews')
-
-        if (category !== 'All') {
-            base = query(base, where('tags', 'array-contains', category))
-        }
-
-        const q = query(base)
+        const q = query(collection(firestore, 'reviews'))
 
         const unsub = onSnapshot(q, snap => {
             const loaded = snap.docs.map(d => {
@@ -83,13 +77,22 @@ const HomeScreen: React.FC = () => {
         })
 
         return unsub
-    }, [category])
+    }, [])
 
     const closeAll = () => swipeableRefs.current.forEach(r => r?.close())
 
-    const sortedNotes = useMemo(() => {
+    const filteredAndSortedNotes = useMemo(() => {
+        // Filter by selected tags
+        let filtered = notes
+        if (selectedTags.length > 0) {
+            filtered = notes.filter(note => 
+                selectedTags.some(tag => note.tags.includes(tag))
+            )
+        }
+
+        // Sort the filtered notes
         const dir = sortOrder === 'asc' ? 1 : -1
-        return [...notes].sort((a, b) => {
+        return filtered.sort((a, b) => {
             switch (sortBy) {
                 case 'price': return dir * ((a.price || 0) - (b.price || 0))
                 case 'rating': return dir * (b.rating - a.rating)
@@ -100,7 +103,7 @@ const HomeScreen: React.FC = () => {
                 }
             }
         })
-    }, [notes, sortBy, sortOrder])
+    }, [notes, selectedTags, sortBy, sortOrder])
 
     const handleDelete = async (noteId: string) => {
         const note = notes.find(n => n.id === noteId)
@@ -145,13 +148,13 @@ const HomeScreen: React.FC = () => {
                 <View style={styles.categoryContainer}>
                     <CategoryFilter
                         categories={allCats}
-                        selected={category}
-                        onSelect={setCategory}
+                        selectedTags={selectedTags}
+                        onApplyFilter={setSelectedTags}
                     />
                 </View>
 
                 <FlatList
-                    data={sortedNotes}
+                    data={filteredAndSortedNotes}
                     keyExtractor={item => item.id}
                     onScroll={closeAll}
                     onTouchStart={closeAll}
