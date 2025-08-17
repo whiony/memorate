@@ -53,8 +53,12 @@ const ActionCategoryModal: FC<Props> = ({
     }, [visible])
 
     return (
-        <Modal transparent visible={visible} statusBarTranslucent>
-            <View style={styles.backdrop}>
+        <Modal transparent visible={visible} statusBarTranslucent animationType="fade">
+            <TouchableOpacity 
+                style={styles.backdrop} 
+                activeOpacity={1} 
+                onPress={onCancel}
+            >
                 <Animated.View
                     style={[
                         styles.modal,
@@ -83,7 +87,7 @@ const ActionCategoryModal: FC<Props> = ({
                         </Text>
                     </TouchableOpacity>
                 </Animated.View>
-            </View>
+            </TouchableOpacity>
         </Modal>
     )
 }
@@ -91,9 +95,10 @@ const ActionCategoryModal: FC<Props> = ({
 const styles = StyleSheet.create({
     backdrop: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.35)',
+        backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'center',
         alignItems: 'center',
+        zIndex: 9999,
     },
     modal: {
         width: SCREEN_WIDTH * 0.6,

@@ -32,6 +32,8 @@ import { useSort } from '@/contexts/SortContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
+import RenameCategoryModal from '@/modals/RenameCategoryModal'
+import DeleteCategoryModal from '@/modals/DeleteCategoryModal'
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
 
@@ -40,8 +42,13 @@ const HomeScreen: React.FC = () => {
     const [notes, setNotes] = useState<Note[]>([])
     const [selectedTags, setSelectedTags] = useState<string[]>([])
     const { sortBy, sortOrder } = useSort()
-    const { categories: loadedCats } = useCategories()
+    const { categories: loadedCats, renameCategory, deleteCategory } = useCategories()
     const swipeableRefs = useRef<Swipeable[]>([])
+    
+    // Tag action modal states
+    const [renameVisible, setRenameVisible] = useState(false)
+    const [deleteVisible, setDeleteVisible] = useState(false)
+    const [activeCat, setActiveCat] = useState('')
 
     const allCats: Category[] = [
         { name: 'All' },
@@ -80,6 +87,14 @@ const HomeScreen: React.FC = () => {
     }, [])
 
     const closeAll = () => swipeableRefs.current.forEach(r => r?.close())
+
+    useEffect(() => {
+        console.log('HomeScreen modal states changed:', { 
+            renameVisible, 
+            deleteVisible, 
+            activeCat 
+        })
+    }, [renameVisible, deleteVisible, activeCat])
 
     const filteredAndSortedNotes = useMemo(() => {
         // Filter by selected tags - note must have ALL selected tags
@@ -131,89 +146,152 @@ const HomeScreen: React.FC = () => {
             }
         })
 
+    const handleTagAction = async (action: 'rename' | 'delete', tagName: string, newName?: string) => {
+        // Handle updating selected tags for inline actions
+        if (action === 'rename' && newName) {
+            // Update selected tags if renamed tag was selected
+            if (selectedTags.includes(tagName)) {
+                const updatedTags = selectedTags.map(tag => 
+                    tag === tagName ? newName : tag
+                )
+                setSelectedTags(updatedTags)
+            }
+        } else if (action === 'delete') {
+            // Remove from selected tags if it was selected
+            const updatedTags = selectedTags.filter(tag => tag !== tagName)
+            setSelectedTags(updatedTags)
+        }
+    }
+
+
+    const confirmRename = async (newName: string) => {
+        setRenameVisible(false)
+        if (newName && newName !== activeCat) {
+            await renameCategory(activeCat, newName)
+            // Update selected tags if renamed tag was selected
+            if (selectedTags.includes(activeCat)) {
+                const updatedTags = selectedTags.map(tag => 
+                    tag === activeCat ? newName : tag
+                )
+                setSelectedTags(updatedTags)
+            }
+        }
+    }
+
+    const confirmDelete = async () => {
+        setDeleteVisible(false)
+        await deleteCategory(activeCat)
+        const updatedTags = selectedTags.filter(tag => tag !== activeCat)
+        setSelectedTags(updatedTags)
+    }
+
     return (
-        <LinearGradient
-            colors={['#E0E7FF', '#C7D2FE', '#A5B4FC', '#818CF8']}
-            style={{ flex: 1 }}
-            start={{ x: 0.2, y: 0 }}
-            end={{ x: 1, y: 1 }}
-        >
-            <View
-                style={[
-                    { flex: 1, paddingHorizontal: 16 },
-                ]}
+        <>
+            <LinearGradient
+                colors={['#E0E7FF', '#C7D2FE', '#A5B4FC', '#818CF8']}
+                style={{ flex: 1 }}
+                start={{ x: 0.2, y: 0 }}
+                end={{ x: 1, y: 1 }}
             >
-                <Text style={styles.header}>Memorate</Text>
+                <View
+                    style={[
+                        { flex: 1, paddingHorizontal: 16 },
+                    ]}
+                >
+                    <Text style={styles.header}>Memorate</Text>
 
-                <View style={styles.categoryContainer}>
-                    <CategoryFilter
-                        categories={allCats}
-                        selectedTags={selectedTags}
-                        onApplyFilter={setSelectedTags}
-                    />
-                </View>
-
-                <FlatList
-                    data={filteredAndSortedNotes}
-                    keyExtractor={item => item.id}
-                    onScroll={closeAll}
-                    onTouchStart={closeAll}
-                    showsVerticalScrollIndicator={false}
-                    renderItem={({ item, index }) => (
-                        <TouchableWithoutFeedback onPress={() => openDetail(item)}>
-                            <View>
-                                <NoteCard
-                                    ref={ref => {
-                                        swipeableRefs.current[index] = ref!
-                                    }}
-                                    note={item}
-                                    onEdit={openEdit}
-                                    onDelete={handleDelete}
-                                    onPress={openDetail}
-                                />
-                            </View>
-                        </TouchableWithoutFeedback>
-                    )}
-                    contentContainerStyle={styles.listContent}
-                />
-
-
-                <View style={styles.tabBarContainer}>
-                    <View style={styles.tabBarBackgroundWrapper}>
-                        <BlurView intensity={80} tint="light" style={styles.tabBarBackground}>
-                            <LinearGradient
-                                colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)']}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 1 }}
-                                style={StyleSheet.absoluteFill}
-                            />
-                        </BlurView>
+                    <View style={styles.categoryContainer}>
+                        <CategoryFilter
+                            categories={allCats}
+                            selectedTags={selectedTags}
+                            onApplyFilter={setSelectedTags}
+                            onTagAction={handleTagAction}
+                        />
                     </View>
 
-                    <TouchableOpacity 
-                        style={styles.iconButton} 
-                        onPress={() => navigation.navigate('FilterModal', { current: sortBy })}
-                    >
-                        <MaterialIcons name="sort" size={24} color="#fff" />
-                    </TouchableOpacity>
+                    <FlatList
+                        data={filteredAndSortedNotes}
+                        keyExtractor={item => item.id}
+                        onScroll={closeAll}
+                        onTouchStart={closeAll}
+                        showsVerticalScrollIndicator={false}
+                        renderItem={({ item, index }) => (
+                            <TouchableWithoutFeedback onPress={() => openDetail(item)}>
+                                <View>
+                                    <NoteCard
+                                        ref={ref => {
+                                            swipeableRefs.current[index] = ref!
+                                        }}
+                                        note={item}
+                                        onEdit={openEdit}
+                                        onDelete={handleDelete}
+                                        onPress={openDetail}
+                                    />
+                                </View>
+                            </TouchableWithoutFeedback>
+                        )}
+                        contentContainerStyle={styles.listContent}
+                    />
 
-                    <TouchableOpacity style={styles.floatingAddButton} onPress={() => navigation.navigate('AddNote', {})}>
-                        <BlurView intensity={100} tint="light" style={styles.floatingButtonGlass}>
-                            <LinearGradient
-                                colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.2)']}
-                                style={StyleSheet.absoluteFill}
-                            />
-                            <Ionicons name="add" size={28} color="#fff" />
-                        </BlurView>
-                    </TouchableOpacity>
 
-                    <TouchableOpacity style={[styles.iconButton, styles.rightIcon]}>
-                        <Ionicons name="settings-outline" size={24} color="#fff" />
-                    </TouchableOpacity>
+                    <View style={styles.tabBarContainer}>
+                        <View style={styles.tabBarBackgroundWrapper}>
+                            <BlurView intensity={80} tint="light" style={styles.tabBarBackground}>
+                                <LinearGradient
+                                    colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)']}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 1 }}
+                                    style={StyleSheet.absoluteFill}
+                                />
+                            </BlurView>
+                        </View>
+
+                        <TouchableOpacity 
+                            style={styles.iconButton} 
+                            onPress={() => navigation.navigate('FilterModal', { current: sortBy })}
+                        >
+                            <MaterialIcons name="sort" size={24} color="#fff" />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.floatingAddButton} onPress={() => navigation.navigate('AddNote', {})}>
+                            <BlurView intensity={100} tint="light" style={styles.floatingButtonGlass}>
+                                <LinearGradient
+                                    colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.2)']}
+                                    style={StyleSheet.absoluteFill}
+                                />
+                                <Ionicons name="add" size={28} color="#fff" />
+                            </BlurView>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.iconButton, styles.rightIcon]}>
+                            <Ionicons name="settings-outline" size={24} color="#fff" />
+                        </TouchableOpacity>
+                    </View>
+
                 </View>
 
-            </View>
-        </LinearGradient>
+            </LinearGradient>
+
+            {/* Tag action modals rendered outside main UI */}
+            <RenameCategoryModal
+                visible={renameVisible}
+                initialName={activeCat}
+                onCancel={() => {
+                    console.log('RenameCategoryModal cancelled')
+                    setRenameVisible(false)
+                }}
+                onSubmit={confirmRename}
+            />
+            <DeleteCategoryModal
+                visible={deleteVisible}
+                category={activeCat}
+                onCancel={() => {
+                    console.log('DeleteCategoryModal cancelled')
+                    setDeleteVisible(false)
+                }}
+                onConfirm={confirmDelete}
+            />
+        </>
     )
 }
 
