@@ -180,9 +180,9 @@ const HomeScreen: React.FC = () => {
 
                 <View style={styles.tabBarContainer}>
                     <View style={styles.tabBarBackgroundWrapper}>
-                        <BlurView intensity={70} tint="light" style={styles.tabBarBackground}>
+                        <BlurView intensity={80} tint="light" style={styles.tabBarBackground}>
                             <LinearGradient
-                                colors={['rgba(255,255,255,0.25)', 'rgba(255,255,255,0.1)']}
+                                colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)']}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}
                                 style={StyleSheet.absoluteFill}
@@ -190,13 +190,20 @@ const HomeScreen: React.FC = () => {
                         </BlurView>
                     </View>
 
-                    <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('FilterModal', { current: sortBy })}>
+                    <TouchableOpacity 
+                        style={styles.iconButton} 
+                        onPress={() => navigation.navigate('FilterModal', { current: sortBy })}
+                    >
                         <MaterialIcons name="sort" size={24} color="#fff" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.floatingAddButton} onPress={() => navigation.navigate('AddNote', {})}>
                         <BlurView intensity={100} tint="light" style={styles.floatingButtonGlass}>
-                            <Ionicons name="add-outline" size={28} color="#fff" />
+                            <LinearGradient
+                                colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.2)']}
+                                style={StyleSheet.absoluteFill}
+                            />
+                            <Ionicons name="add" size={28} color="#fff" />
                         </BlurView>
                     </TouchableOpacity>
 
