@@ -2,28 +2,28 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
     cardWrapper: {
-        borderRadius: 16,
-        marginBottom: 14,
+        borderRadius: 20,
+        marginBottom: 16,
         overflow: 'hidden',
         position: 'relative',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        elevation: 4,
+        shadowColor: 'rgba(99, 102, 241, 0.3)',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.25,
+        shadowRadius: 20,
+        elevation: 8,
     },
 
     cardBackground: {
         ...StyleSheet.absoluteFillObject,
-        borderRadius: 16,
+        borderRadius: 20,
         overflow: 'hidden',
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.4)',
+        backgroundColor: 'rgba(255,255,255,0.08)',
+        borderWidth: 1.5,
+        borderColor: 'rgba(255,255,255,0.3)',
     },
 
     cardContent: {
-        padding: 12,
+        padding: 16,
         zIndex: 1,
     },
 
@@ -33,14 +33,19 @@ export const styles = StyleSheet.create({
     },
 
     imageWrapper: {
-        width: 85,
-        height: 85,
-        borderRadius: 12,
+        width: 90,
+        height: 90,
+        borderRadius: 16,
         overflow: 'hidden',
-        marginRight: 12,
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.3)',
+        marginRight: 14,
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        borderWidth: 1.5,
+        borderColor: 'rgba(255,255,255,0.25)',
+        shadowColor: 'rgba(0,0,0,0.1)',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
     },
 
     image: {
@@ -54,44 +59,48 @@ export const styles = StyleSheet.create({
     },
 
     title: {
-        fontSize: 16,
-        fontWeight: '600',
-        marginBottom: 4,
+        fontSize: 17,
+        fontWeight: '700',
+        marginBottom: 6,
         color: '#111',
+        letterSpacing: 0.3,
     },
 
     comment: {
-        fontSize: 13,
-        color: '#222',
-        marginBottom: 8,
+        fontSize: 14,
+        color: '#333',
+        marginBottom: 10,
+        lineHeight: 20,
+        letterSpacing: 0.2,
     },
 
     tagsRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 8,
-        gap: 6,
+        marginBottom: 10,
+        gap: 8,
     },
 
     tagPill: {
-        backgroundColor: 'rgba(255,255,255,0.3)',
-        borderRadius: 8,
-        paddingHorizontal: 8,
-        paddingVertical: 2,
+        backgroundColor: 'rgba(99, 102, 241, 0.15)',
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.4)',
+        borderColor: 'rgba(99, 102, 241, 0.25)',
     },
 
     tagText: {
-        fontSize: 11,
-        fontWeight: '500',
-        color: '#000',
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#6366F1',
+        letterSpacing: 0.2,
     },
 
     moreTagsText: {
-        fontSize: 11,
+        fontSize: 12,
         fontWeight: '500',
-        color: '#666',
+        color: '#888',
     },
 
     footerRow: {
@@ -101,9 +110,10 @@ export const styles = StyleSheet.create({
     },
 
     price: {
-        fontSize: 14,
-        fontWeight: '500',
+        fontSize: 15,
+        fontWeight: '700',
         color: '#111',
+        letterSpacing: 0.3,
     },
 
     divider: {

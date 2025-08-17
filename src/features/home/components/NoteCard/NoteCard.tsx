@@ -92,18 +92,25 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
 
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const translateYAnim = useRef(new Animated.Value(20)).current;
+    const scaleAnim = useRef(new Animated.Value(0.95)).current;
 
     useEffect(() => {
         Animated.parallel([
             Animated.timing(fadeAnim, {
                 toValue: 1,
-                duration: 300,
+                duration: 400,
                 easing: Easing.out(Easing.ease),
                 useNativeDriver: true,
             }),
             Animated.timing(translateYAnim, {
                 toValue: 0,
-                duration: 300,
+                duration: 400,
+                easing: Easing.out(Easing.ease),
+                useNativeDriver: true,
+            }),
+            Animated.timing(scaleAnim, {
+                toValue: 1,
+                duration: 400,
                 easing: Easing.out(Easing.ease),
                 useNativeDriver: true,
             }),
@@ -118,16 +125,29 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                     style={[StyleSheet.absoluteFillObject, { borderRadius: 20 }]}
                 />
                 <TouchableOpacity
-                    activeOpacity={0.9}
+                    activeOpacity={0.8}
                     onPress={() => {
                         closeSwipe();
                         onPress(note);
                     }}
                 >
-                    <Animated.View style={[styles.cardWrapper, { opacity: fadeAnim, transform: [{ translateY: translateYAnim }] }]}>
-                        <BlurView intensity={100} tint="light" style={styles.cardBackground}>
+                    <Animated.View style={[
+                        styles.cardWrapper, 
+                        { 
+                            opacity: fadeAnim, 
+                            transform: [
+                                { translateY: translateYAnim },
+                                { scale: scaleAnim }
+                            ] 
+                        }
+                    ]}>
+                        <BlurView intensity={120} tint="light" style={styles.cardBackground}>
                             <LinearGradient
-                                colors={['rgba(255,255,255,0.25)', 'rgba(255,255,255,0.05)']}
+                                colors={[
+                                    'rgba(255,255,255,0.35)', 
+                                    'rgba(255,255,255,0.15)', 
+                                    'rgba(99, 102, 241, 0.08)'
+                                ]}
                                 style={StyleSheet.absoluteFillObject}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}

@@ -52,12 +52,12 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
             <View style={{ flex: 1 }}>
                 <TouchableWithoutFeedback>
                     <Animated.View style={[styles.dropdown, dropdownAnim]}>
-                        <BlurView intensity={120} tint="light" style={StyleSheet.absoluteFill}>
+                        <BlurView intensity={100} tint="light" style={StyleSheet.absoluteFill}>
                             <LinearGradient
                                 colors={[
-                                    'rgba(255,255,255,0.4)',
+                                    'rgba(99, 102, 241, 0.15)',
                                     'rgba(255,255,255,0.25)',
-                                    'rgba(255,255,255,0.35)',
+                                    'rgba(99, 102, 241, 0.1)',
                                 ]}
                                 style={StyleSheet.absoluteFill}
                                 start={{ x: 0, y: 0 }}
@@ -91,7 +91,7 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
                                             {
                                                 backgroundColor: activeAnim[key].interpolate({
                                                     inputRange: [0, 1],
-                                                    outputRange: ['transparent', 'rgba(255,255,255,0.25)'],
+                                                    outputRange: ['transparent', 'rgba(99, 102, 241, 0.3)'],
                                                 }),
                                                 transform: [
                                                     {
@@ -103,7 +103,7 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
                                                 ],
                                                 borderColor: activeAnim[key].interpolate({
                                                     inputRange: [0, 1],
-                                                    outputRange: ['transparent', 'rgba(255,255,255,0.4)'],
+                                                    outputRange: ['transparent', 'rgba(99, 102, 241, 0.6)'],
                                                 }),
                                                 borderWidth: 1,
                                             },
@@ -114,9 +114,9 @@ const FilterModal: React.FC<Props> = ({ navigation }) => {
                                                 styles.optionText,
                                                 {
                                                     color: colorAnim,
-                                                    textShadowColor: 'rgba(255, 255, 255, 0.8)',
+                                                    textShadowColor: isActive ? 'rgba(0, 0, 0, 0.1)' : 'transparent',
                                                     textShadowOffset: { width: 0, height: 1 },
-                                                    textShadowRadius: 2,
+                                                    textShadowRadius: 1,
                                                     fontWeight: isActive ? '600' : '500',
                                                 },
                                             ]}
@@ -171,12 +171,12 @@ const styles = StyleSheet.create({
         width: 150,
         borderRadius: 20,
         overflow: 'hidden',
-        backgroundColor: 'rgba(255,255,255,0.12)',
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
         borderWidth: 1.5,
-        borderColor: 'rgba(255,255,255,0.35)',
+        borderColor: 'rgba(255,255,255,0.3)',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.15,
         shadowRadius: 24,
         elevation: 15,
         padding: 12,

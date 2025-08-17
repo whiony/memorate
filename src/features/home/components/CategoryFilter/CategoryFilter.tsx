@@ -317,10 +317,17 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     applyButton: {
-        backgroundColor: '#FF6F61',
+        backgroundColor: '#6366F1',
         paddingHorizontal: 16,
         paddingVertical: 8,
         borderRadius: 12,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)',
+        shadowColor: '#6366F1',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 12,
+        elevation: 6,
     },
     applyButtonText: {
         color: '#fff',
@@ -368,7 +375,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     selectedModalTagPill: {
-        backgroundColor: '#FF6F61',
+        backgroundColor: '#6366F1',
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 12,
@@ -398,7 +405,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f8f8f8',
     },
     tagListItemSelected: {
-        backgroundColor: '#FF6F61',
+        backgroundColor: '#6366F1',
     },
     tagListText: {
         fontSize: 16,
