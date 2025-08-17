@@ -102,13 +102,20 @@ export const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: '700',
         color: '#000',
+        marginBottom: 12,
     },
 
     inlineRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        justifyContent: 'space-between',
         marginBottom: 12,
+    },
+
+    ratingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
     },
 
     ratingText: {

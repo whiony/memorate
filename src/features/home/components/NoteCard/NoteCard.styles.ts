@@ -33,8 +33,8 @@ export const styles = StyleSheet.create({
     },
 
     imageWrapper: {
-        width: 84,
-        height: 84,
+        width: 85,
+        height: 85,
         borderRadius: 12,
         overflow: 'hidden',
         marginRight: 12,
