@@ -49,20 +49,34 @@ export const styles = StyleSheet.create({
     imageWrapper: {
         position: 'relative',
         width: width - 32,
-        height: width - 32,
+        height: (width - 32) * 0.75,
         alignSelf: 'center',
+        borderTopLeftRadius: 32,
+        borderTopRightRadius: 32,
+        overflow: 'hidden',
+        backgroundColor: 'rgba(255,255,255,0.1)',
+        borderWidth: 2,
+        borderBottomWidth: 0,
+        borderColor: 'rgba(255,255,255,0.2)',
     },
 
     image: {
         width: '100%',
         height: '100%',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
     },
 
     noteCard: {
-        borderRadius: 28,
+        borderRadius: 32,
         overflow: 'hidden',
         marginBottom: 32,
         backgroundColor: 'transparent',
+        shadowColor: 'rgba(99, 102, 241, 0.4)',
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.3,
+        shadowRadius: 24,
+        elevation: 12,
     },
 
     noteImage: {
@@ -71,12 +85,17 @@ export const styles = StyleSheet.create({
     },
 
     noteBody: {
-        paddingTop: 16,
-        paddingBottom: 24,
-        paddingHorizontal: 20,
-        borderBottomLeftRadius: 28,
-        borderBottomRightRadius: 28,
+        paddingTop: 24,
+        paddingBottom: 32,
+        paddingHorizontal: 24,
+        borderBottomLeftRadius: 32,
+        borderBottomRightRadius: 32,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
         overflow: 'hidden',
+        borderWidth: 2,
+        borderTopWidth: 0,
+        borderColor: 'rgba(255,255,255,0.2)',
     },
 
     noteContent: {
@@ -99,62 +118,72 @@ export const styles = StyleSheet.create({
     },
 
     title: {
-        fontSize: 22,
-        fontWeight: '700',
-        color: '#000',
-        marginBottom: 12,
+        fontSize: 26,
+        fontWeight: '800',
+        color: '#111',
+        marginBottom: 16,
+        letterSpacing: 0.5,
+        lineHeight: 32,
     },
 
     inlineRow: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 12,
+        marginBottom: 16,
+        paddingVertical: 8,
     },
 
     ratingContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 10,
     },
 
     ratingText: {
-        fontSize: 14,
-        color: '#555',
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#333',
+        letterSpacing: 0.3,
     },
 
     price: {
-        fontSize: 16,
-        fontWeight: '500',
-        color: '#555',
-        backgroundColor: 'rgba(255,255,255,0.3)',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.4)',
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#111',
+        backgroundColor: 'rgba(99, 102, 241, 0.15)',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 12,
+        borderWidth: 1.5,
+        borderColor: 'rgba(99, 102, 241, 0.25)',
+        letterSpacing: 0.3,
     },
 
     comment: {
-        color: '#444',
-        fontSize: 15,
-        lineHeight: 22,
-        marginBottom: 16,
+        color: '#333',
+        fontSize: 16,
+        lineHeight: 24,
+        marginBottom: 20,
+        letterSpacing: 0.3,
     },
 
     datesContainer: {
-        gap: 4,
+        gap: 6,
+        paddingTop: 8,
     },
 
     date: {
-        fontSize: 13,
+        fontSize: 14,
         color: '#666',
+        letterSpacing: 0.2,
     },
 
     editedDate: {
-        fontSize: 12,
+        fontSize: 13,
         color: '#888',
         fontStyle: 'italic',
+        letterSpacing: 0.2,
     },
 
     popupWrapper: {
@@ -192,25 +221,24 @@ export const styles = StyleSheet.create({
     tagContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 8,
-        marginBottom: 12,
+        gap: 10,
+        marginBottom: 16,
     },
 
     tagPill: {
-        borderRadius: 18,
+        borderRadius: 20,
         overflow: 'hidden',
-
-        paddingHorizontal: 20,
-        paddingVertical: 6,
-
-        backgroundColor: 'rgba(255,255,255,0.4)',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.5)',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        backgroundColor: 'rgba(99, 102, 241, 0.15)',
+        borderWidth: 1.5,
+        borderColor: 'rgba(99, 102, 241, 0.25)',
     },
 
     tagText: {
         fontSize: 14,
-        fontWeight: '500',
-        color: '#000',
+        fontWeight: '600',
+        color: '#6366F1',
+        letterSpacing: 0.3,
     },
 })

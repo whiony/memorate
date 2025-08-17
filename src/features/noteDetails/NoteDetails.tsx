@@ -177,9 +177,15 @@ const NoteDetails: FC = () => {
                             </View>
                         )}
 
-                        <BlurView intensity={100} tint="light" style={styles.noteBody}>
+                        <BlurView intensity={120} tint="light" style={styles.noteBody}>
                             <LinearGradient
-                                colors={['rgba(255,255,255,0.7)', 'rgba(255,255,255,0.5)', 'rgba(255,255,255,0.3)']}
+                                colors={[
+                                    'rgba(255,255,255,0.6)', 
+                                    'rgba(255,255,255,0.4)', 
+                                    'rgba(99, 102, 241, 0.1)'
+                                ]}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
                                 style={StyleSheet.absoluteFill}
                             />
 
