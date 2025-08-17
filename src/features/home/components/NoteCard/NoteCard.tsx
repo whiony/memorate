@@ -161,28 +161,20 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                                         <Image source={{ uri: note.image }} style={styles.image} resizeMode="cover" />
                                     </View>
                                 )}
-                                <View style={styles.mainContent}>
-                                    <Text style={styles.title} numberOfLines={1}>
-                                        {note.name}
-                                    </Text>
-                                    <Text style={styles.comment} numberOfLines={2}>
-                                        {note.comment}
-                                    </Text>
+                                
+                                <View style={styles.textContent}>
+                                    <View>
+                                        <Text style={styles.title} numberOfLines={1}>
+                                            {note.name}
+                                        </Text>
+                                        {!!note.comment && (
+                                            <Text style={styles.comment} numberOfLines={2}>
+                                                {note.comment}
+                                            </Text>
+                                        )}
+                                    </View>
 
-                                    {note.tags?.length > 0 && (
-                                        <View style={styles.tagsRow}>
-                                            {note.tags.slice(0, 2).map((tag: string) => (
-                                                <View key={tag} style={styles.tagPill}>
-                                                    <Text style={styles.tagText}>{tag}</Text>
-                                                </View>
-                                            ))}
-                                            {note.tags.length > 2 && (
-                                                <Text style={styles.moreTagsText}>+{note.tags.length - 2}</Text>
-                                            )}
-                                        </View>
-                                    )}
-
-                                    <View style={styles.footerRow}>
+                                    <View style={styles.ratingSection}>
                                         <StarRating rating={note.rating} disabled cardList />
                                         {!!priceDisplay && (
                                             <Text style={styles.price}>
@@ -192,6 +184,19 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                                     </View>
                                 </View>
                             </View>
+                            
+                            {note.tags?.length > 0 && (
+                                <View style={styles.tagsRow}>
+                                    {note.tags.slice(0, 2).map((tag: string) => (
+                                        <View key={tag} style={styles.tagPill}>
+                                            <Text style={styles.tagText}>{tag}</Text>
+                                        </View>
+                                    ))}
+                                    {note.tags.length > 2 && (
+                                        <Text style={styles.moreTagsText}>+{note.tags.length - 2}</Text>
+                                    )}
+                                </View>
+                            )}
                         </View>
 
                     </Animated.View>

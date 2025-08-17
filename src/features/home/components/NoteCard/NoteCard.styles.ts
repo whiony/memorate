@@ -32,9 +32,14 @@ export const styles = StyleSheet.create({
         alignItems: 'flex-start',
     },
 
+    textContent: {
+        flex: 1,
+        justifyContent: 'space-between',
+    },
+
     imageWrapper: {
         width: 100,
-        height: 130,
+        height: 100,
         borderRadius: 16,
         overflow: 'hidden',
         marginRight: 14,
@@ -51,11 +56,6 @@ export const styles = StyleSheet.create({
     image: {
         width: '100%',
         height: '100%',
-    },
-
-    mainContent: {
-        flex: 1,
-        justifyContent: 'space-between',
     },
 
     title: {
@@ -77,21 +77,21 @@ export const styles = StyleSheet.create({
     tagsRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
-        gap: 8,
+        marginTop: 12,
+        gap: 6,
     },
 
     tagPill: {
-        backgroundColor: 'rgba(99, 102, 241, 0.15)',
-        borderRadius: 10,
-        paddingHorizontal: 10,
-        paddingVertical: 4,
+        backgroundColor: 'rgba(99, 102, 241, 0.12)',
+        borderRadius: 8,
+        paddingHorizontal: 8,
+        paddingVertical: 3,
         borderWidth: 1,
-        borderColor: 'rgba(99, 102, 241, 0.25)',
+        borderColor: 'rgba(99, 102, 241, 0.2)',
     },
 
     tagText: {
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: '600',
         color: '#6366F1',
         letterSpacing: 0.2,
@@ -103,7 +103,7 @@ export const styles = StyleSheet.create({
         color: '#888',
     },
 
-    footerRow: {
+    ratingSection: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
