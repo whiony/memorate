@@ -124,9 +124,15 @@ export const styles = StyleSheet.create({
     },
 
     price: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#000',
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#555',
+        backgroundColor: 'rgba(255,255,255,0.3)',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.4)',
     },
 
     comment: {
