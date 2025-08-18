@@ -16,6 +16,8 @@ import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons } from '@expo/vector-icons'
 import { styles as additionalStyles } from './CategoryFilter.styles'
+import { useTheme } from '@/contexts/ThemeContext'
+import { lightTheme, darkTheme } from '@/theme/colors'
 
 const AnimatedBlur = Animated.createAnimatedComponent(BlurView)
 
@@ -37,6 +39,8 @@ const CategoryFilter: React.FC<Props> = ({
     currentSearchQuery = '',
 }) => {
     const { addCategory, renameCategory, deleteCategory } = useCategories()
+    const { isDark } = useTheme()
+    const colors = isDark ? darkTheme : lightTheme
 
     const [searchVisible, setSearchVisible] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
@@ -183,15 +187,15 @@ const CategoryFilter: React.FC<Props> = ({
                 <TouchableOpacity onPress={openSearch} style={styles.searchButton}>
                     <AnimatedBlur
                         intensity={100}
-                        tint="light"
+                        tint={isDark ? "dark" : "light"}
                         style={styles.searchButtonBlur}
                     >
                         <LinearGradient
-                            colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.1)']}
+                            colors={colors.searchButtonGradient}
                             style={StyleSheet.absoluteFill}
                         />
-                        <Ionicons name="search" size={18} color="#000" />
-                        <Text style={styles.searchButtonText}>
+                        <Ionicons name="search" size={18} color={colors.text} />
+                        <Text style={[styles.searchButtonText, { color: colors.text }]}>
                             {currentSearchQuery ? `"${currentSearchQuery}"` : selectedTags.length > 0 ? `${selectedTags.length} tags selected` : 'Search reviews...'}
                         </Text>
                     </AnimatedBlur>
@@ -205,8 +209,8 @@ const CategoryFilter: React.FC<Props> = ({
                         contentContainerStyle={styles.selectedTagsList}
                     >
                         {selectedTags.map(tag => (
-                            <View key={tag} style={styles.selectedTagPill}>
-                                <Text style={styles.selectedTagText}>{tag}</Text>
+                            <View key={tag} style={[styles.selectedTagPill, { backgroundColor: colors.cardBackground, borderColor: colors.border }]}>
+                                <Text style={[styles.selectedTagText, { color: colors.text }]}>{tag}</Text>
                             </View>
                         ))}
                     </ScrollView>
@@ -220,25 +224,26 @@ const CategoryFilter: React.FC<Props> = ({
                 onRequestClose={closeSearch}
             >
                 <TouchableOpacity
-                    style={styles.modalContainer}
+                    style={[styles.modalContainer, { backgroundColor: colors.modalBackground }]}
                     activeOpacity={1}
                     onPress={() => setDropdownVisible('')}
                 >
-                    <View style={styles.modalHeader}>
+                    <View style={[styles.modalHeader, { borderBottomColor: colors.border }]}>
                         <TouchableOpacity onPress={closeSearch}>
-                            <Ionicons name="close" size={24} color="#000" />
+                            <Ionicons name="close" size={24} color={colors.text} />
                         </TouchableOpacity>
-                        <Text style={styles.modalTitle}>Search & Filter</Text>
-                        <TouchableOpacity onPress={applyFilter} style={styles.applyButton}>
+                        <Text style={[styles.modalTitle, { color: colors.text }]}>Search & Filter</Text>
+                        <TouchableOpacity onPress={applyFilter} style={[styles.applyButton, { backgroundColor: colors.accent, borderColor: colors.border, shadowColor: colors.accent }]}>
                             <Text style={styles.applyButtonText}>Filter</Text>
                         </TouchableOpacity>
                     </View>
 
-                    <View style={styles.searchInputContainer}>
-                        <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
+                    <View style={[styles.searchInputContainer, { backgroundColor: colors.searchBackground }]}>
+                        <Ionicons name="search" size={20} color={colors.textMuted} style={styles.searchIcon} />
                         <TextInput
-                            style={styles.searchInput}
+                            style={[styles.searchInput, { color: colors.text }]}
                             placeholder="Search reviews & tags..."
+                            placeholderTextColor={colors.textMuted}
                             value={searchQuery}
                             onChangeText={setSearchQuery}
                             autoFocus
@@ -249,15 +254,16 @@ const CategoryFilter: React.FC<Props> = ({
                                 style={styles.clearSearchButton}
                                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                             >
-                                <Ionicons name="close-circle" size={20} color="#999" />
+                                <Ionicons name="close-circle" size={20} color={colors.textMuted} />
                             </TouchableOpacity>
                         )}
                     </View>
 
-                    <View style={styles.addTagContainer}>
+                    <View style={[styles.addTagContainer, { backgroundColor: colors.searchBackground }]}>
                         <TextInput
-                            style={styles.addTagInput}
+                            style={[styles.addTagInput, { color: colors.text }]}
                             placeholder="Create new tag..."
+                            placeholderTextColor={colors.textMuted}
                             value={newTagName}
                             onChangeText={setNewTagName}
                             onSubmitEditing={handleAddNewTag}
@@ -267,7 +273,7 @@ const CategoryFilter: React.FC<Props> = ({
                             style={[styles.addTagButton, !newTagName.trim() && styles.addTagButtonDisabled]}
                             disabled={!newTagName.trim()}
                         >
-                            <Ionicons name="add" size={20} color={newTagName.trim() ? "#6366F1" : "#ccc"} />
+                            <Ionicons name="add" size={20} color={newTagName.trim() ? colors.accent : colors.textMuted} />
                         </TouchableOpacity>
                     </View>
 
@@ -281,7 +287,7 @@ const CategoryFilter: React.FC<Props> = ({
                             opacity: selectedSectionHeight,
                         }
                     ]}>
-                        <Text style={styles.sectionTitle}>Selected ({tempSelectedTags.length})</Text>
+                        <Text style={[styles.sectionTitle, { color: colors.text }]}>Selected ({tempSelectedTags.length})</Text>
                         <ScrollView
                             horizontal
                             showsHorizontalScrollIndicator={false}
@@ -289,14 +295,14 @@ const CategoryFilter: React.FC<Props> = ({
                         >
                             <TouchableOpacity
                                 onPress={() => setTempSelectedTags([])}
-                                style={styles.clearAllButton}
+                                style={[styles.clearAllButton, { backgroundColor: colors.searchBackground }]}
                             >
-                                <Text style={styles.clearAllText}>Clear All</Text>
+                                <Text style={[styles.clearAllText, { color: colors.textSecondary }]}>Clear All</Text>
                             </TouchableOpacity>
                             {tempSelectedTags.map(tag => (
                                 <TouchableOpacity
                                     key={tag}
-                                    style={styles.selectedModalTagPill}
+                                    style={[styles.selectedModalTagPill, { backgroundColor: colors.accent }]}
                                     onPress={() => toggleTag(tag)}
                                 >
                                     <Text style={styles.selectedModalTagText}>{tag}</Text>
@@ -308,17 +314,17 @@ const CategoryFilter: React.FC<Props> = ({
 
                     {hasContentMatches && (
                         <View style={additionalStyles.contentMatchesSection}>
-                            <Text style={styles.sectionTitle}>
+                            <Text style={[styles.sectionTitle, { color: colors.text }]}>
                                 Found in {matchingNotes.length} review{matchingNotes.length !== 1 ? 's' : ''}
                             </Text>
-                            <Text style={additionalStyles.contentMatchHint}>
+                            <Text style={[additionalStyles.contentMatchHint, { color: colors.textSecondary }]}>
                                 Content matches will be included in results
                             </Text>
                         </View>
                     )}
 
                     <View style={styles.allTagsSection}>
-                        <Text style={styles.sectionTitle}>Tags</Text>
+                        <Text style={[styles.sectionTitle, { color: colors.text }]}>Tags</Text>
                         <FlatList
                             data={filteredCategories}
                             keyExtractor={(item) => item.name}
@@ -333,13 +339,16 @@ const CategoryFilter: React.FC<Props> = ({
                                         {isEditing ? (
                                             <View style={[
                                                 styles.tagListItem,
-                                                isSelected && styles.tagListItemSelected,
-                                                styles.editingItem
+                                                { backgroundColor: colors.searchBackground },
+                                                isSelected && { backgroundColor: colors.accent },
+                                                styles.editingItem,
+                                                { borderColor: colors.accent }
                                             ]}>
                                                 <TextInput
                                                     style={[
                                                         styles.editInput,
-                                                        isSelected && styles.editInputSelected
+                                                        { color: colors.text },
+                                                        isSelected && { color: '#fff' }
                                                     ]}
                                                     value={editingValue}
                                                     onChangeText={setEditingValue}
@@ -381,7 +390,8 @@ const CategoryFilter: React.FC<Props> = ({
                                             <TouchableOpacity
                                                 style={[
                                                     styles.tagListItem,
-                                                    isSelected && styles.tagListItemSelected
+                                                    { backgroundColor: colors.searchBackground },
+                                                    isSelected && { backgroundColor: colors.accent }
                                                 ]}
                                                 onPress={() => toggleTag(item.name)}
                                                 onLongPress={() => handleLong(item.name)}
@@ -389,7 +399,8 @@ const CategoryFilter: React.FC<Props> = ({
                                             >
                                                 <Text style={[
                                                     styles.tagListText,
-                                                    isSelected && styles.tagListTextSelected
+                                                    { color: colors.text },
+                                                    isSelected && { color: '#fff', fontWeight: '600' }
                                                 ]}>
                                                     {item.name}
                                                 </Text>
@@ -400,12 +411,12 @@ const CategoryFilter: React.FC<Props> = ({
                                         )}
 
                                         {showDropdown && !isEditing && !isDeleting && (
-                                            <View style={styles.dropdown}>
+                                            <View style={[styles.dropdown, { backgroundColor: colors.modalBackground, borderColor: colors.border }]}>
                                                 <TouchableOpacity
-                                                    style={styles.dropdownItem}
+                                                    style={[styles.dropdownItem, { borderBottomColor: colors.border }]}
                                                     onPress={() => handleDropdownAction('rename', item.name)}
                                                 >
-                                                    <Text style={styles.dropdownText}>Rename</Text>
+                                                    <Text style={[styles.dropdownText, { color: colors.text }]}>Rename</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity
                                                     style={[styles.dropdownItem, styles.dropdownItemLast]}

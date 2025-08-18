@@ -1,12 +1,13 @@
 import { StyleSheet } from 'react-native';
+import type { Theme } from '@/theme/colors';
 
-export const styles = StyleSheet.create({
+export const createStyles = (colors: Theme) => StyleSheet.create({
     cardWrapper: {
         borderRadius: 20,
         marginBottom: 16,
         overflow: 'hidden',
         position: 'relative',
-        shadowColor: 'rgba(99, 102, 241, 0.3)',
+        shadowColor: colors.shadow,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.25,
         shadowRadius: 20,
@@ -17,9 +18,8 @@ export const styles = StyleSheet.create({
         ...StyleSheet.absoluteFillObject,
         borderRadius: 20,
         overflow: 'hidden',
-        backgroundColor: 'rgba(255,255,255,0.08)',
         borderWidth: 1.5,
-        borderColor: 'rgba(255,255,255,0.3)',
+        borderColor: colors.border,
     },
 
     cardContent: {
@@ -43,9 +43,9 @@ export const styles = StyleSheet.create({
         borderRadius: 16,
         overflow: 'hidden',
         marginRight: 14,
-        backgroundColor: 'rgba(255,255,255,0.15)',
+        backgroundColor: colors.border,
         borderWidth: 1.5,
-        borderColor: 'rgba(255,255,255,0.25)',
+        borderColor: colors.border,
         shadowColor: 'rgba(0,0,0,0.1)',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
@@ -62,13 +62,11 @@ export const styles = StyleSheet.create({
         fontSize: 17,
         fontWeight: '700',
         marginBottom: 6,
-        color: '#111',
         letterSpacing: 0.3,
     },
 
     comment: {
         fontSize: 14,
-        color: '#333',
         marginBottom: 10,
         lineHeight: 20,
         letterSpacing: 0.2,
@@ -82,25 +80,24 @@ export const styles = StyleSheet.create({
     },
 
     tagPill: {
-        backgroundColor: 'rgba(99, 102, 241, 0.12)',
+        backgroundColor: `${colors.accent}20`,
         borderRadius: 8,
         paddingHorizontal: 8,
         paddingVertical: 3,
         borderWidth: 1,
-        borderColor: 'rgba(99, 102, 241, 0.2)',
+        borderColor: `${colors.accent}33`,
     },
 
     tagText: {
         fontSize: 11,
         fontWeight: '600',
-        color: '#6366F1',
+        color: colors.accent,
         letterSpacing: 0.2,
     },
 
     moreTagsText: {
         fontSize: 12,
         fontWeight: '500',
-        color: '#888',
     },
 
     ratingSection: {
@@ -112,7 +109,6 @@ export const styles = StyleSheet.create({
     price: {
         fontSize: 15,
         fontWeight: '700',
-        color: '#111',
         letterSpacing: 0.3,
     },
 
@@ -131,9 +127,7 @@ export const styles = StyleSheet.create({
     date: {
         fontFamily: 'Montserrat-Regular',
         fontSize: 13,
-        color: '#666',
         letterSpacing: 0.3,
-
         position: 'absolute',
         top: '45%',
         left: 16,
@@ -178,7 +172,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1.5,
-        borderColor: 'rgba(255,255,255,0.4)',
+        borderColor: colors.border,
     },
 
     deleteButton: {
@@ -189,7 +183,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1.5,
-        borderColor: 'rgba(255,255,255,0.4)',
+        borderColor: colors.border,
     },
 
     editIcon: {
@@ -224,3 +218,5 @@ export const styles = StyleSheet.create({
         fontWeight: '600',
     },
 });
+
+export const styles = createStyles({} as any); // fallback for legacy usage

@@ -13,6 +13,8 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTheme } from '@/contexts/ThemeContext'
+import { lightTheme, darkTheme } from '@/theme/colors'
 import { collection, query, where, getDocs, doc, setDoc, getDoc } from 'firebase/firestore'
 import { firestore } from '@/services/firebaseConfig'
 import type { RootStackParamList } from '@/navigation/AppNavigator'
@@ -23,6 +25,8 @@ type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Prof
 const ProfileScreen: React.FC = () => {
     const navigation = useNavigation<ProfileScreenNavigationProp>()
     const { user } = useAuth()
+    const { isDark } = useTheme()
+    const colors = isDark ? darkTheme : lightTheme
     const [noteCount, setNoteCount] = useState(0)
     const [loading, setLoading] = useState(true)
     const [displayName, setDisplayName] = useState('')
@@ -143,7 +147,7 @@ const ProfileScreen: React.FC = () => {
 
     return (
         <LinearGradient
-            colors={['#E0E7FF', '#C7D2FE', '#A5B4FC', '#818CF8']}
+            colors={colors.background}
             start={{ x: 0.2, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.container}
@@ -151,24 +155,20 @@ const ProfileScreen: React.FC = () => {
             <SafeAreaView style={styles.safeArea}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-                        <Ionicons name="chevron-back" size={24} color="#000" />
+                        <Ionicons name="chevron-back" size={24} color={colors.text} />
                     </TouchableOpacity>
 
-                    <Text style={styles.headerTitle}>Profile</Text>
+                    <Text style={[styles.headerTitle, { color: colors.text }]}>Profile</Text>
 
                     <TouchableOpacity onPress={handleSettings} style={styles.settingsButton}>
-                        <Ionicons name="settings-outline" size={24} color="#000" />
+                        <Ionicons name="settings-outline" size={24} color={colors.text} />
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.content}>
-                    <BlurView intensity={100} tint="light" style={styles.profileCard}>
+                    <BlurView intensity={100} tint={isDark ? "dark" : "light"} style={styles.profileCard}>
                         <LinearGradient
-                            colors={[
-                                'rgba(255,255,255,0.4)',
-                                'rgba(255,255,255,0.2)',
-                                'rgba(99, 102, 241, 0.1)'
-                            ]}
+                            colors={colors.cardBodyGradient}
                             style={styles.cardGradient}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
@@ -177,7 +177,7 @@ const ProfileScreen: React.FC = () => {
                         <View style={styles.profileInfo}>
                             <View style={styles.avatarContainer}>
                                 <View style={styles.avatar}>
-                                    <Ionicons name="person" size={48} color="#6366F1" />
+                                    <Ionicons name="person" size={48} color={colors.accent} />
                                 </View>
                             </View>
 
@@ -186,34 +186,35 @@ const ProfileScreen: React.FC = () => {
                                     {isEditingName ? (
                                         <View style={styles.nameEditContainer}>
                                             <TextInput
-                                                style={styles.nameInput}
+                                                style={[styles.nameInput, { color: colors.text, borderColor: colors.border, backgroundColor: colors.cardBackground }]}
                                                 value={tempName}
                                                 onChangeText={setTempName}
                                                 placeholder="Enter your name"
+                                                placeholderTextColor={colors.textMuted}
                                                 maxLength={30}
                                                 autoFocus
                                             />
                                             <View style={styles.nameEditActions}>
                                                 <TouchableOpacity onPress={handleSaveName} style={styles.nameActionButton}>
-                                                    <Ionicons name="checkmark" size={20} color="#4CAF50" />
+                                                    <Ionicons name="checkmark" size={20} color={colors.success} />
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={handleCancelEdit} style={styles.nameActionButton}>
-                                                    <Ionicons name="close" size={20} color="#f44336" />
+                                                    <Ionicons name="close" size={20} color={colors.danger} />
                                                 </TouchableOpacity>
                                             </View>
                                         </View>
                                     ) : (
                                         <View style={styles.nameDisplayContainer}>
-                                            <Text style={styles.displayName}>{displayName}</Text>
+                                            <Text style={[styles.displayName, { color: colors.text }]}>{displayName}</Text>
                                             <TouchableOpacity onPress={handleEditName} style={styles.editButton}>
-                                                <Ionicons name="pencil" size={16} color="#6366F1" />
+                                                <Ionicons name="pencil" size={16} color={colors.accent} />
                                             </TouchableOpacity>
                                         </View>
                                     )}
                                 </View>
 
-                                <Text style={styles.email}>{user.email}</Text>
-                                <Text style={styles.joinDate}>
+                                <Text style={[styles.email, { color: colors.textSecondary }]}>{user.email}</Text>
+                                <Text style={[styles.joinDate, { color: colors.textMuted }]}>
                                     Member since {user.metadata.creationTime ?
                                         new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
                                             month: 'long',
@@ -224,13 +225,9 @@ const ProfileScreen: React.FC = () => {
                         </View>
                     </BlurView>
 
-                    <BlurView intensity={100} tint="light" style={styles.statsCard}>
+                    <BlurView intensity={100} tint={isDark ? "dark" : "light"} style={styles.statsCard}>
                         <LinearGradient
-                            colors={[
-                                'rgba(255,255,255,0.4)',
-                                'rgba(255,255,255,0.2)',
-                                'rgba(99, 102, 241, 0.1)'
-                            ]}
+                            colors={colors.cardBodyGradient}
                             style={styles.cardGradient}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
@@ -239,13 +236,13 @@ const ProfileScreen: React.FC = () => {
                         <View style={styles.statsContent}>
                             <View style={styles.statItem}>
                                 <View style={styles.statIconContainer}>
-                                    <Ionicons name="document-text" size={32} color="#6366F1" />
+                                    <Ionicons name="document-text" size={32} color={colors.accent} />
                                 </View>
                                 <View style={styles.statInfo}>
-                                    <Text style={styles.statNumber}>
+                                    <Text style={[styles.statNumber, { color: colors.text }]}>
                                         {loading ? '...' : noteCount}
                                     </Text>
-                                    <Text style={styles.statLabel}>
+                                    <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
                                         {noteCount === 1 ? 'Review' : 'Reviews'}
                                     </Text>
                                 </View>
@@ -254,13 +251,9 @@ const ProfileScreen: React.FC = () => {
                     </BlurView>
 
                     {noteCount > 0 && (
-                        <BlurView intensity={100} tint="light" style={styles.compactStatsCard}>
+                        <BlurView intensity={100} tint={isDark ? "dark" : "light"} style={styles.compactStatsCard}>
                             <LinearGradient
-                                colors={[
-                                    'rgba(255,255,255,0.4)',
-                                    'rgba(255,255,255,0.2)',
-                                    'rgba(99, 102, 241, 0.1)'
-                                ]}
+                                colors={colors.cardBodyGradient}
                                 style={styles.cardGradient}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}
@@ -268,27 +261,27 @@ const ProfileScreen: React.FC = () => {
 
                             <View style={styles.compactStatsContent}>
                                 <View style={styles.compactStatItem}>
-                                    <Ionicons name="star" size={20} color="#FFA726" />
-                                    <Text style={styles.compactStatNumber}>
+                                    <Ionicons name="star" size={20} color={colors.warning} />
+                                    <Text style={[styles.compactStatNumber, { color: colors.text }]}>
                                         {loading ? '...' : avgRating.toFixed(1)}
                                     </Text>
-                                    <Text style={styles.compactStatLabel}>Avg Rating</Text>
+                                    <Text style={[styles.compactStatLabel, { color: colors.textMuted }]}>Avg Rating</Text>
                                 </View>
 
                                 <View style={styles.compactStatItem}>
-                                    <Ionicons name="pricetag" size={20} color="#AB47BC" />
-                                    <Text style={styles.compactStatNumber}>
+                                    <Ionicons name="pricetag" size={20} color={colors.accent} />
+                                    <Text style={[styles.compactStatNumber, { color: colors.text }]}>
                                         {loading ? '...' : (topTag || 'None')}
                                     </Text>
-                                    <Text style={styles.compactStatLabel}>Top Category</Text>
+                                    <Text style={[styles.compactStatLabel, { color: colors.textMuted }]}>Top Category</Text>
                                 </View>
 
                                 <View style={styles.compactStatItem}>
-                                    <Ionicons name="flame" size={20} color="#FF7043" />
-                                    <Text style={styles.compactStatNumber}>
+                                    <Ionicons name="flame" size={20} color={colors.warning} />
+                                    <Text style={[styles.compactStatNumber, { color: colors.text }]}>
                                         {loading ? '...' : reviewStreak}
                                     </Text>
-                                    <Text style={styles.compactStatLabel}>Day Streak</Text>
+                                    <Text style={[styles.compactStatLabel, { color: colors.textMuted }]}>Day Streak</Text>
                                 </View>
                             </View>
                         </BlurView>

@@ -1,7 +1,9 @@
 import React from 'react'
 import { TouchableOpacity, Text } from 'react-native'
 import LabeledInput from '@/ui/Input/LabeledInput'
-import { styles } from './PriceCurrencyInput.styles'
+import { createStyles } from './PriceCurrencyInput.styles'
+import { useTheme } from '@/contexts/ThemeContext'
+import { lightTheme, darkTheme } from '@/theme/colors'
 
 interface PriceCurrencyInputProps {
     price: string
@@ -16,6 +18,9 @@ const PriceCurrencyInput: React.FC<PriceCurrencyInputProps> = ({
     currency,
     onToggleCurrency,
 }) => {
+    const { isDark } = useTheme()
+    const colors = isDark ? darkTheme : lightTheme
+    const styles = createStyles(colors)
     const handleChange = (raw: string) => {
         let cleaned = raw.replace(/[^0-9.,]/g, '')
         const parts = cleaned.split(/[.,]/)

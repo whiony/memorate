@@ -1,8 +1,9 @@
 import { StyleSheet, Dimensions } from 'react-native'
+import type { Theme } from '@/theme/colors'
 
 const { width } = Dimensions.get('window')
 
-export const styles = StyleSheet.create({
+export const createStyles = (colors: Theme) => StyleSheet.create({
     container: {
         paddingHorizontal: 16,
         paddingTop: 16,
@@ -13,7 +14,7 @@ export const styles = StyleSheet.create({
         minHeight: 280,
         borderRadius: 32,
         overflow: 'hidden',
-        shadowColor: 'rgba(99, 102, 241, 0.4)',
+        shadowColor: colors.shadow,
         shadowOffset: { width: 0, height: 12 },
         shadowOpacity: 0.3,
         shadowRadius: 24,
@@ -23,7 +24,7 @@ export const styles = StyleSheet.create({
     cardBlur: {
         flex: 1,
         borderWidth: 2,
-        borderColor: 'rgba(255,255,255,0.3)',
+        borderColor: colors.border,
         borderStyle: 'dashed',
         borderRadius: 32,
         justifyContent: 'center',
@@ -50,19 +51,18 @@ export const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderRadius: 40,
-        backgroundColor: 'rgba(99, 102, 241, 0.15)',
+        backgroundColor: `${colors.accent}26`,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20,
         borderWidth: 2,
-        borderColor: 'rgba(99, 102, 241, 0.3)',
+        borderColor: `${colors.accent}4D`,
         borderStyle: 'dashed',
     },
 
     title: {
         fontSize: 24,
         fontWeight: '700',
-        color: '#111',
         marginBottom: 8,
         letterSpacing: 0.5,
         textAlign: 'center',
@@ -70,9 +70,10 @@ export const styles = StyleSheet.create({
 
     subtitle: {
         fontSize: 16,
-        color: '#666',
         letterSpacing: 0.3,
         textAlign: 'center',
         lineHeight: 22,
     },
-})
+});
+
+export const styles = createStyles({} as any); // fallback for legacy usage

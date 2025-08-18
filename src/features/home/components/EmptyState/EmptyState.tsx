@@ -3,13 +3,19 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons } from '@expo/vector-icons'
-import { styles } from './EmptyState.styles'
+import { useTheme } from '@/contexts/ThemeContext'
+import { lightTheme, darkTheme } from '@/theme/colors'
+import { createStyles } from './EmptyState.styles'
 
 interface EmptyStateProps {
     onAddNote: () => void
 }
 
 const EmptyState: React.FC<EmptyStateProps> = ({ onAddNote }) => {
+    const { isDark } = useTheme()
+    const colors = isDark ? darkTheme : lightTheme
+    const styles = createStyles(colors)
+
     return (
         <View style={styles.container}>
             <TouchableOpacity
@@ -17,13 +23,9 @@ const EmptyState: React.FC<EmptyStateProps> = ({ onAddNote }) => {
                 onPress={onAddNote}
                 activeOpacity={0.7}
             >
-                <BlurView intensity={80} tint="light" style={styles.cardBlur}>
+                <BlurView intensity={80} tint={isDark ? "dark" : "light"} style={styles.cardBlur}>
                     <LinearGradient
-                        colors={[
-                            'rgba(255,255,255,0.4)',
-                            'rgba(255,255,255,0.2)',
-                            'rgba(99, 102, 241, 0.1)'
-                        ]}
+                        colors={colors.cardBodyGradient}
                         style={styles.cardGradient}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
@@ -31,11 +33,11 @@ const EmptyState: React.FC<EmptyStateProps> = ({ onAddNote }) => {
                     
                     <View style={styles.content}>
                         <View style={styles.iconContainer}>
-                            <Ionicons name="add" size={48} color="#6366F1" />
+                            <Ionicons name="add" size={48} color={colors.accent} />
                         </View>
                         
-                        <Text style={styles.title}>Add your first review</Text>
-                        <Text style={styles.subtitle}>
+                        <Text style={[styles.title, { color: colors.text }]}>Add your first review</Text>
+                        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
                             Start building your collection of memories
                         </Text>
                     </View>

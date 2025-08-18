@@ -19,10 +19,12 @@ import StarRating from '@/ui/Rating/StarRating'
 import FullscreenLoader from '@/ui/Loader/FullscreenLoader'
 import { LinearGradient } from 'expo-linear-gradient'
 
-import { styles } from './AddNoteScreen.styles'
+import { createStyles } from './AddNoteScreen.styles'
 import { useCategories } from '@/hooks/useCategories'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTheme } from '@/contexts/ThemeContext'
+import { lightTheme, darkTheme } from '@/theme/colors'
 
 type AddNoteRouteProp = RouteProp<RootStackParamList, 'AddNote'>
 type AddNoteNavigationProp = StackNavigationProp<RootStackParamList, 'AddNote'>
@@ -41,6 +43,9 @@ const AddNoteScreen: FC<Props> = () => {
     const navigation = useNavigation<AddNoteNavigationProp>()
     const route = useRoute<AddNoteRouteProp>()
     const { user } = useAuth()
+    const { isDark } = useTheme()
+    const colors = isDark ? darkTheme : lightTheme
+    const styles = createStyles(colors)
 
     const navNote = route.params?.note as NavNote | undefined
     const existingNote: Note | undefined = navNote
@@ -271,7 +276,7 @@ const AddNoteScreen: FC<Props> = () => {
 
     return (
         <LinearGradient
-            colors={['#E0E7FF', '#C7D2FE', '#A5B4FC', '#818CF8']}
+            colors={colors.background}
             style={{ flex: 1 }}
             start={{ x: 0.2, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -279,13 +284,13 @@ const AddNoteScreen: FC<Props> = () => {
             <SafeAreaView style={{ flex: 1 }}>
                 <View style={styles.headerContainer}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Ionicons name="arrow-back" size={24} color="#000" />
+                        <Ionicons name="arrow-back" size={24} color={colors.text} />
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>
+                    <Text style={[styles.headerTitle, { color: colors.text }]}>
                         {existingNote ? 'Edit Note' : 'New Note'}
                     </Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-                        <Ionicons name="home-outline" size={24} color="#000" />
+                        <Ionicons name="home-outline" size={24} color={colors.text} />
                     </TouchableOpacity>
                 </View>
 

@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList } from 'react-native';
-import { styles } from './CategorySection.styles';
+import { createStyles } from './CategorySection.styles';
 import { globalStyles } from '@/theme/index';
+import { useTheme } from '@/contexts/ThemeContext';
+import { lightTheme, darkTheme } from '@/theme/colors';
 
 interface CategorySectionProps {
     selectedTags: string[];
@@ -24,6 +26,9 @@ const CategorySection: React.FC<CategorySectionProps> = ({
     loading,
     editable = true,
 }) => {
+    const { isDark } = useTheme();
+    const colors = isDark ? darkTheme : lightTheme;
+    const styles = createStyles(colors);
     const handleAddTag = (tag: string) => {
         if (!selectedTags.includes(tag)) {
             setSelectedTags([...selectedTags, tag]);
@@ -36,12 +41,12 @@ const CategorySection: React.FC<CategorySectionProps> = ({
 
     return (
         <View style={styles.section}>
-            {editable && <Text style={globalStyles.label}>Tags</Text>}
+            {editable && <Text style={[globalStyles.label, { color: colors.text }]}>Tags</Text>}
 
             <View style={styles.tagContainer}>
                 {selectedTags.map(tag => (
                     <TouchableOpacity key={tag} style={styles.tagPill} onPress={() => removeTag(tag)}>
-                        <Text style={styles.tagText}>{tag} ✕</Text>
+                        <Text style={[styles.tagText, { color: colors.accent }]}>{tag} ✕</Text>
                     </TouchableOpacity>
                 ))}
             </View>
@@ -55,7 +60,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                             value={newTag}
                             onChangeText={setNewTag}
                             editable={!loading}
-                            placeholderTextColor="rgba(0,0,0,0.5)"
+                            placeholderTextColor={colors.textMuted}
                         />
 
                         <TouchableOpacity
@@ -67,7 +72,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                         </TouchableOpacity>
                     </View>
 
-                    <Text style={globalStyles.label}>Or select from existing</Text>
+                    <Text style={[globalStyles.label, { color: colors.text }]}>Or select from existing</Text>
                     <FlatList
                         data={allCategories.filter(cat => !selectedTags.includes(cat))}
                         keyExtractor={(item) => item}
@@ -75,7 +80,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item }) => (
                             <TouchableOpacity style={styles.tagOption} onPress={() => handleAddTag(item)}>
-                                <Text>{item}</Text>
+                                <Text style={[styles.tagText, { color: colors.text }]}>{item}</Text>
                             </TouchableOpacity>
                         )}
                     />

@@ -11,10 +11,12 @@ import { format, isValid, parseISO } from 'date-fns'
 import StarRating from '@/ui/Rating/StarRating'
 import DeleteNoteModal from '@/modals/DeleteNoteModal'
 import type { Note } from '@/navigation/AppNavigator'
-import { styles } from './NoteCard.styles'
+import { createStyles } from './NoteCard.styles'
 import { formatPrice } from '@/utils/formatPrice'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
+import { useTheme } from '@/contexts/ThemeContext'
+import { lightTheme, darkTheme } from '@/theme/colors'
 
 type Props = {
     note: Note
@@ -28,6 +30,9 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
     ref,
 ) {
     const swipeableRef = ref as React.RefObject<SwipeableType>
+    const { isDark } = useTheme()
+    const colors = isDark ? darkTheme : lightTheme
+    const styles = createStyles(colors)
 
     const [delVisible, setDelVisible] = useState(false)
 
@@ -56,7 +61,7 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                 }}
                 style={styles.actionButton}
             >
-                <BlurView intensity={100} tint="light" style={styles.editButton}>
+                <BlurView intensity={100} tint={isDark ? "dark" : "light"} style={styles.editButton}>
                     <LinearGradient
                         colors={[
                             'rgba(99, 102, 241, 0.3)',
@@ -78,7 +83,7 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                 }}
                 style={styles.actionButton}
             >
-                <BlurView intensity={100} tint="light" style={styles.deleteButton}>
+                <BlurView intensity={100} tint={isDark ? "dark" : "light"} style={styles.deleteButton}>
                     <LinearGradient
                         colors={[
                             'rgba(248, 113, 113, 0.35)',
@@ -127,7 +132,7 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
         <>
             <Swipeable ref={swipeableRef} renderRightActions={renderRightActions}>
                 <LinearGradient
-                    colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)']}
+                    colors={colors.cardMainGradient}
                     style={[StyleSheet.absoluteFillObject, { borderRadius: 20 }]}
                 />
                 <TouchableOpacity
@@ -147,13 +152,9 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                             ]
                         }
                     ]}>
-                        <BlurView intensity={120} tint="light" style={styles.cardBackground}>
+                        <BlurView intensity={120} tint={isDark ? "dark" : "light"} style={[styles.cardBackground, { backgroundColor: colors.cardBackground }]}>
                             <LinearGradient
-                                colors={[
-                                    'rgba(255,255,255,0.35)',
-                                    'rgba(255,255,255,0.15)',
-                                    'rgba(99, 102, 241, 0.08)'
-                                ]}
+                                colors={colors.cardBodyGradient}
                                 style={StyleSheet.absoluteFillObject}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}
@@ -184,11 +185,11 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
 
                                 <View style={styles.textContent}>
                                     <View>
-                                        <Text style={styles.title} numberOfLines={1}>
+                                        <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
                                             {note.name}
                                         </Text>
                                         {!!note.comment && (
-                                            <Text style={styles.comment} numberOfLines={2}>
+                                            <Text style={[styles.comment, { color: colors.textSecondary }]} numberOfLines={2}>
                                                 {note.comment}
                                             </Text>
                                         )}
@@ -197,7 +198,7 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                                     <View style={styles.ratingSection}>
                                         <StarRating rating={note.rating} disabled cardList />
                                         {!!priceDisplay && (
-                                            <Text style={styles.price}>
+                                            <Text style={[styles.price, { color: colors.text }]}>
                                                 {note.currency}{priceDisplay}
                                             </Text>
                                         )}
@@ -213,7 +214,7 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                                         </View>
                                     ))}
                                     {note.tags.length > 2 && (
-                                        <Text style={styles.moreTagsText}>+{note.tags.length - 2}</Text>
+                                        <Text style={[styles.moreTagsText, { color: colors.textMuted }]}>+{note.tags.length - 2}</Text>
                                     )}
                                 </View>
                             )}

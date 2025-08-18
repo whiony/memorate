@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
+import type { Theme } from '@/theme/colors';
 
-export const styles = StyleSheet.create({
+export const createStyles = (colors: Theme) => StyleSheet.create({
     screen: {
         padding: 20,
         paddingBottom: 40,
@@ -18,9 +19,10 @@ export const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 20,
         fontWeight: '700',
-        color: '#000',
         textShadowColor: 'rgba(255,255,255,0.8)',
         textShadowOffset: { width: 0, height: 1 },
         textShadowRadius: 2,
     },
 });
+
+export const styles = createStyles({} as any); // fallback for legacy usage

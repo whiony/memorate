@@ -36,6 +36,8 @@ import { Ionicons } from '@expo/vector-icons'
 import RenameCategoryModal from '@/modals/RenameCategoryModal'
 import DeleteCategoryModal from '@/modals/DeleteCategoryModal'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTheme } from '@/contexts/ThemeContext'
+import { lightTheme, darkTheme } from '@/theme/colors'
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
 
@@ -48,6 +50,8 @@ const HomeScreen: React.FC = () => {
     const { categories: loadedCats, renameCategory, deleteCategory } = useCategories()
     const swipeableRefs = useRef<Swipeable[]>([])
     const { user } = useAuth()
+    const { isDark } = useTheme()
+    const colors = isDark ? darkTheme : lightTheme
     const [displayName, setDisplayName] = useState('')
 
     const [renameVisible, setRenameVisible] = useState(false)
@@ -226,7 +230,7 @@ const HomeScreen: React.FC = () => {
     return (
         <>
             <LinearGradient
-                colors={['#E0E7FF', '#C7D2FE', '#A5B4FC', '#818CF8']}
+                colors={colors.background}
                 style={{ flex: 1 }}
                 start={{ x: 0.2, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -239,19 +243,19 @@ const HomeScreen: React.FC = () => {
                     <View style={styles.headerContainer}>
                         <View style={styles.headerContent}>
                             <View style={styles.headerLeft}>
-                                <Text style={styles.greeting}>
+                                <Text style={[styles.greeting, { color: colors.textSecondary }]}>
                                     {new Date().getHours() < 12
                                         ? 'Good morning'
                                         : new Date().getHours() < 18
                                             ? 'Good afternoon'
                                             : 'Good evening'}
                                 </Text>
-                                <Text style={styles.userEmail}>{displayName || 'User'}</Text>
+                                <Text style={[styles.userEmail, { color: colors.text }]}>{displayName || 'User'}</Text>
                             </View>
                             <View style={styles.headerRight}>
-                                <View style={styles.statsContainer}>
-                                    <Text style={styles.statsNumber}>{filteredAndSortedNotes.length}</Text>
-                                    <Text style={styles.statsLabel}>
+                                <View style={[styles.statsContainer, { backgroundColor: colors.statsContainer, borderColor: colors.border, shadowColor: colors.shadow }]}>
+                                    <Text style={[styles.statsNumber, { color: colors.text }]}>{filteredAndSortedNotes.length}</Text>
+                                    <Text style={[styles.statsLabel, { color: colors.textSecondary }]}>
                                         {filteredAndSortedNotes.length === 1 ? 'Review' : 'Reviews'}
                                     </Text>
                                 </View>
@@ -301,9 +305,9 @@ const HomeScreen: React.FC = () => {
 
                     <View style={styles.tabBarContainer}>
                         <View style={styles.tabBarBackgroundWrapper}>
-                            <BlurView intensity={80} tint="light" style={styles.tabBarBackground}>
+                            <BlurView intensity={80} tint={isDark ? "dark" : "light"} style={styles.tabBarBackground}>
                                 <LinearGradient
-                                    colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)']}
+                                    colors={[colors.tabBarBackground, `${colors.tabBarBackground}80`]}
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 1 }}
                                     style={StyleSheet.absoluteFill}
@@ -315,21 +319,21 @@ const HomeScreen: React.FC = () => {
                             style={styles.iconButton}
                             onPress={() => navigation.navigate('FilterModal', { current: sortBy })}
                         >
-                            <MaterialIcons name="sort" size={24} color="#fff" />
+                            <MaterialIcons name="sort" size={24} color={colors.tabBarIcon} />
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.floatingAddButton} onPress={() => navigation.navigate('AddNote', {})}>
-                            <BlurView intensity={100} tint="light" style={styles.floatingButtonGlass}>
+                            <BlurView intensity={100} tint={isDark ? "dark" : "light"} style={styles.floatingButtonGlass}>
                                 <LinearGradient
-                                    colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.2)']}
+                                    colors={isDark ? ['rgba(40,40,60,0.4)', 'rgba(30,30,50,0.2)'] : ['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.2)']}
                                     style={StyleSheet.absoluteFill}
                                 />
-                                <Ionicons name="add" size={28} color="#fff" />
+                                <Ionicons name="add" size={28} color={colors.tabBarIcon} />
                             </BlurView>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={[styles.iconButton, styles.rightIcon]} onPress={handleProfile}>
-                            <Ionicons name="person-outline" size={24} color="#fff" />
+                            <Ionicons name="person-outline" size={24} color={colors.tabBarIcon} />
                         </TouchableOpacity>
                     </View>
 

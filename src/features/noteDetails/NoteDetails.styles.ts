@@ -1,9 +1,10 @@
 import { StyleSheet, Dimensions } from 'react-native'
 import { colors } from '@/theme/index'
+import type { Theme } from '@/theme/colors'
 
 const { width, width: screenWidth } = Dimensions.get('window')
 
-export const styles = StyleSheet.create({
+export const createStyles = (themeColors: Theme) => StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -56,7 +57,7 @@ export const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255,0.1)',
         borderWidth: 2,
         borderBottomWidth: 0,
-        borderColor: 'rgba(255,255,255,0.2)',
+        borderColor: themeColors.border,
     },
 
     imageCarousel: {
@@ -98,7 +99,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0,0,0,0.3)',
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.3)',
+        borderColor: themeColors.border,
     },
 
     imageModalContainer: {
@@ -197,7 +198,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0,0,0,0.3)',
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.3)',
+        borderColor: themeColors.border,
     },
 
     modalImageCounter: {
@@ -214,7 +215,7 @@ export const styles = StyleSheet.create({
         borderRadius: 20,
         backgroundColor: 'rgba(0,0,0,0.3)',
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.3)',
+        borderColor: themeColors.border,
     },
 
     modalCounterText: {
@@ -228,11 +229,13 @@ export const styles = StyleSheet.create({
         overflow: 'hidden',
         marginBottom: 32,
         backgroundColor: 'transparent',
-        shadowColor: 'rgba(99, 102, 241, 0.4)',
+        shadowColor: themeColors.shadow,
         shadowOffset: { width: 0, height: 12 },
         shadowOpacity: 0.3,
         shadowRadius: 24,
         elevation: 12,
+        borderWidth: 2,
+        borderColor: themeColors.border,
     },
 
     noteImage: {
@@ -249,9 +252,6 @@ export const styles = StyleSheet.create({
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
         overflow: 'hidden',
-        borderWidth: 2,
-        borderTopWidth: 0,
-        borderColor: 'rgba(255,255,255,0.2)',
     },
 
     noteContent: {
@@ -299,7 +299,7 @@ export const styles = StyleSheet.create({
         paddingVertical: 8,
         borderRadius: 12,
         borderWidth: 1.5,
-        borderColor: 'rgba(99, 102, 241, 0.25)',
+        borderColor: `${themeColors.accent}40`,
         letterSpacing: 0.3,
     },
 
@@ -340,7 +340,7 @@ export const styles = StyleSheet.create({
         borderRadius: 16,
         paddingVertical: 12,
         paddingHorizontal: 0,
-        shadowColor: 'rgba(99, 102, 241, 0.4)',
+        shadowColor: themeColors.shadow,
         shadowOpacity: 0.3,
         shadowRadius: 20,
         shadowOffset: { width: 0, height: 8 },
@@ -348,7 +348,7 @@ export const styles = StyleSheet.create({
         minWidth: 140,
         overflow: 'hidden',
         borderWidth: 1.5,
-        borderColor: 'rgba(255,255,255,0.3)',
+        borderColor: themeColors.border,
     },
 
     menuItem: {
@@ -356,7 +356,7 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 20,
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderBottomColor: 'rgba(255,255,255,0.2)',
+        borderBottomColor: themeColors.border,
     },
 
     menuText: {
@@ -384,7 +384,7 @@ export const styles = StyleSheet.create({
         paddingVertical: 8,
         backgroundColor: 'rgba(99, 102, 241, 0.15)',
         borderWidth: 1.5,
-        borderColor: 'rgba(99, 102, 241, 0.25)',
+        borderColor: `${themeColors.accent}40`,
     },
 
     tagText: {
@@ -413,7 +413,7 @@ export const styles = StyleSheet.create({
         height: 40,
         borderRadius: 20,
         borderWidth: 3,
-        borderColor: 'rgba(255,255,255,0.3)',
+        borderColor: themeColors.border,
         borderTopColor: 'rgba(99, 102, 241, 0.8)',
     },
 
@@ -434,7 +434,9 @@ export const styles = StyleSheet.create({
         height: 60,
         borderRadius: 30,
         borderWidth: 4,
-        borderColor: 'rgba(255,255,255,0.2)',
+        borderColor: themeColors.border,
         borderTopColor: '#fff',
     },
-})
+});
+
+export const styles = createStyles({} as any); // fallback for legacy usage

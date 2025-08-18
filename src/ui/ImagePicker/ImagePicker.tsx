@@ -7,7 +7,9 @@ import {
     ScrollView,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { styles } from './ImagePicker.styles'
+import { useTheme } from '@/contexts/ThemeContext'
+import { lightTheme, darkTheme } from '@/theme/colors'
+import { createStyles } from './ImagePicker.styles'
 
 interface ImagePickerProps {
     images: string[]
@@ -21,7 +23,12 @@ const ImagePickerComponent: React.FC<ImagePickerProps> = ({
     onPickImages,
     onRemoveImage,
     onEditImage,
-}) => (
+}) => {
+    const { isDark } = useTheme()
+    const colors = isDark ? darkTheme : lightTheme
+    const styles = createStyles(colors)
+
+    return (
     <View style={styles.container}>
         <ScrollView 
             horizontal 
@@ -53,14 +60,15 @@ const ImagePickerComponent: React.FC<ImagePickerProps> = ({
             
             {images.length < 5 && (
                 <TouchableOpacity style={styles.addButton} onPress={onPickImages}>
-                    <Ionicons name="add" size={32} color="#6366F1" />
-                    <Text style={styles.addButtonText}>
+                    <Ionicons name="add" size={32} color={colors.accent} />
+                    <Text style={[styles.addButtonText, { color: colors.textSecondary }]}>
                         {images.length === 0 ? 'Add photos' : `Add more\n(${images.length}/5)`}
                     </Text>
                 </TouchableOpacity>
             )}
         </ScrollView>
     </View>
-)
+    )
+}
 
 export default ImagePickerComponent

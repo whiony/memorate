@@ -14,6 +14,7 @@ import SettingsScreen from '@/features/settings/SettingsScreen'
 import { CategoriesProvider } from '@/hooks/useCategories'
 import { SortProvider, SortKey } from '@/contexts/SortContext'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
+import { ThemeProvider } from '@/contexts/ThemeContext'
 
 export interface Note {
     id: string
@@ -153,9 +154,11 @@ const AppContent: FC = () => {
 }
 
 const AppNavigator: FC = () => (
-    <AuthProvider>
-        <AppContent />
-    </AuthProvider>
+    <ThemeProvider>
+        <AuthProvider>
+            <AppContent />
+        </AuthProvider>
+    </ThemeProvider>
 )
 
 export default AppNavigator

@@ -5,6 +5,8 @@ import Svg, { Path } from 'react-native-svg'
 import { LinearGradient } from 'expo-linear-gradient'
 import { styles } from './StarRating.styles'
 import { globalStyles } from '@/theme/index'
+import { useTheme } from '@/contexts/ThemeContext'
+import { lightTheme, darkTheme } from '@/theme/colors'
 
 interface Props {
     rating: number
@@ -17,10 +19,12 @@ const Star = ({
     filled,
     size,
     showBorder,
+    colors,
 }: {
     filled: boolean
     size: number
     showBorder: boolean
+    colors: any
 }) => {
     const path =
         'M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z'
@@ -48,8 +52,8 @@ const Star = ({
                             width: size,
                             height: size,
                             backgroundColor: showBorder
-                                ? 'rgba(255,255,255,0.4)'
-                                : 'rgba(255,255,255,0.25)',
+                                ? colors.border
+                                : colors.cardBackground,
                         }}
                     />
                 )}
@@ -65,7 +69,7 @@ const Star = ({
                     <Path
                         d={path}
                         fill="none"
-                        stroke={filled ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)"}
+                        stroke={filled ? colors.border : colors.textMuted}
                         strokeWidth={filled ? 1 : 1}
                     />
                 </Svg>
@@ -80,11 +84,13 @@ const StarRating: React.FC<Props> = ({
     disabled = false,
     cardList = false,
 }) => {
+    const { isDark } = useTheme()
+    const colors = isDark ? darkTheme : lightTheme
     const size = cardList ? 20 : 30
 
     return (
         <View style={cardList ? styles.cardStarContainer : styles.section}>
-            {!cardList && <Text style={globalStyles.label}>Rating</Text>}
+            {!cardList && <Text style={[globalStyles.label, { color: colors.text }]}>Rating</Text>}
             <View style={styles.starContainer}>
                 {[1, 2, 3, 4, 5].map(i => (
                     <TouchableOpacity
@@ -98,6 +104,7 @@ const StarRating: React.FC<Props> = ({
                             filled={i <= rating}
                             size={size}
                             showBorder={!cardList}
+                            colors={colors}
                         />
                     </TouchableOpacity>
                 ))}

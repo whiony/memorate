@@ -5,6 +5,7 @@ import {
     TouchableOpacity,
     SafeAreaView,
     Alert,
+    Switch,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack'
@@ -12,6 +13,8 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTheme } from '@/contexts/ThemeContext'
+import { lightTheme, darkTheme } from '@/theme/colors'
 import { deleteUser } from 'firebase/auth'
 import type { RootStackParamList } from '@/navigation/AppNavigator'
 import { styles } from './Settings.styles'
@@ -21,6 +24,8 @@ type SettingsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Set
 const SettingsScreen: React.FC = () => {
     const navigation = useNavigation<SettingsScreenNavigationProp>()
     const { user, logout } = useAuth()
+    const { theme, toggleTheme, isDark } = useTheme()
+    const colors = isDark ? darkTheme : lightTheme
 
     const handleGoBack = () => navigation.goBack()
 
@@ -91,7 +96,7 @@ const SettingsScreen: React.FC = () => {
 
     return (
         <LinearGradient
-            colors={['#E0E7FF', '#C7D2FE', '#A5B4FC', '#818CF8']}
+            colors={colors.background}
             start={{ x: 0.2, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.container}
@@ -99,52 +104,68 @@ const SettingsScreen: React.FC = () => {
             <SafeAreaView style={styles.safeArea}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-                        <Ionicons name="chevron-back" size={24} color="#000" />
+                        <Ionicons name="chevron-back" size={24} color={colors.text} />
                     </TouchableOpacity>
                     
-                    <Text style={styles.headerTitle}>Settings</Text>
+                    <Text style={[styles.headerTitle, { color: colors.text }]}>Settings</Text>
                     
                     <View style={styles.placeholder} />
                 </View>
 
                 <View style={styles.content}>
-                    <BlurView intensity={100} tint="light" style={styles.settingsCard}>
+                    <BlurView intensity={100} tint={isDark ? "dark" : "light"} style={styles.settingsCard}>
                         <LinearGradient
-                            colors={[
-                                'rgba(255,255,255,0.4)',
-                                'rgba(255,255,255,0.2)',
-                                'rgba(99, 102, 241, 0.1)'
-                            ]}
+                            colors={colors.cardBodyGradient}
                             style={styles.cardGradient}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
                         />
                         
                         <View style={styles.settingsContent}>
-                            <Text style={styles.sectionTitle}>Account</Text>
+                            <Text style={[styles.sectionTitle, { color: colors.text }]}>Appearance</Text>
+                            
+                            <TouchableOpacity style={styles.settingItem} onPress={toggleTheme}>
+                                <View style={styles.settingIcon}>
+                                    <Ionicons name={isDark ? "moon" : "sunny"} size={24} color={colors.accent} />
+                                </View>
+                                <View style={styles.settingInfo}>
+                                    <Text style={[styles.settingTitle, { color: colors.text }]}>Dark Mode</Text>
+                                    <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>Switch between light and dark theme</Text>
+                                </View>
+                                <Switch
+                                    value={isDark}
+                                    onValueChange={toggleTheme}
+                                    trackColor={{ false: colors.textMuted, true: colors.accent }}
+                                    thumbColor={isDark ? colors.background[0] : '#f4f3f4'}
+                                />
+                            </TouchableOpacity>
+
+                            <View style={[styles.separator, { backgroundColor: colors.border }]} />
+
+                            <Text style={[styles.sectionTitle, { color: colors.text }]}>Account</Text>
                             
                             <TouchableOpacity style={styles.settingItem} onPress={handleLogout}>
                                 <View style={styles.settingIcon}>
-                                    <Ionicons name="log-out-outline" size={24} color="#6366F1" />
+                                    <Ionicons name="log-out-outline" size={24} color={colors.accent} />
                                 </View>
                                 <View style={styles.settingInfo}>
-                                    <Text style={styles.settingTitle}>Sign Out</Text>
-                                    <Text style={styles.settingSubtitle}>Sign out of your account</Text>
+                                    <Text style={[styles.settingTitle, { color: colors.text }]}>Sign Out</Text>
+                                    <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>Sign out of your account</Text>
                                 </View>
-                                <Ionicons name="chevron-forward" size={20} color="#999" />
+                                <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
                             </TouchableOpacity>
 
-                            <View style={styles.separator} />
+                            <View style={[styles.separator, { backgroundColor: colors.border }]} />
 
                             <TouchableOpacity style={styles.settingItem} onPress={handleDeleteAccount}>
                                 <View style={[styles.settingIcon, styles.dangerIcon]}>
-                                    <Ionicons name="trash-outline" size={24} color="#E53935" />
+                                    <Ionicons name="trash-outline" size={24} color={colors.danger} />
                                 </View>
                                 <View style={styles.settingInfo}>
-                                    <Text style={[styles.settingTitle, styles.dangerText]}>Delete Account</Text>
-                                    <Text style={styles.settingSubtitle}>Permanently delete your account and all data</Text>
+                                    <Text style={[styles.settingTitle, { color: colors.danger }]}>Delete Account</Text>
+                                    <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>Permanently delete your account and all data</Text>
                                 </View>
-                                <Ionicons name="chevron-forward" size={20} color="#999" />
+                                <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
                             </TouchableOpacity>
                         </View>
                     </BlurView>

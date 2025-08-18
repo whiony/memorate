@@ -1,7 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { colors, fonts } from "@/theme";
+import type { Theme } from '@/theme/colors';
 
-export const styles = StyleSheet.create({
+export const createStyles = (themeColors: Theme) => StyleSheet.create({
     section: {},
     categoryRow: {
         flexDirection: 'row',
@@ -14,14 +15,14 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 12,
         borderRadius: 16,
-        backgroundColor: colors.primary,
-        shadowColor: colors.primary,
+        backgroundColor: themeColors.accent,
+        shadowColor: themeColors.accent,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 12,
         elevation: 6,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.3)',
+        borderColor: themeColors.border,
     },
     row: {
         flexDirection: 'row',
@@ -34,10 +35,10 @@ export const styles = StyleSheet.create({
         paddingVertical: 12,
         borderRadius: 16,
         borderWidth: 1.5,
-        borderColor: 'rgba(255,255,255,0.3)',
-        backgroundColor: 'rgba(255,255,255,0.2)',
+        borderColor: themeColors.border,
+        backgroundColor: themeColors.cardBackground,
         fontSize: 15,
-        color: '#000',
+        color: themeColors.text,
         marginBottom: 0,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -62,9 +63,9 @@ export const styles = StyleSheet.create({
         marginRight: 8,
         marginBottom: 8,
 
-        backgroundColor: 'rgba(255,255,255,0.25)',
+        backgroundColor: `${themeColors.accent}20`,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.4)',
+        borderColor: `${themeColors.accent}40`,
 
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -73,9 +74,10 @@ export const styles = StyleSheet.create({
         elevation: 3,
     },
     tagText: {
-        color: '#000',
+        color: themeColors.accent,
         fontSize: 14,
         fontFamily: fonts.mainFont,
+        fontWeight: '600',
     },
     tagOption: {
         paddingHorizontal: 12,
@@ -84,9 +86,9 @@ export const styles = StyleSheet.create({
         marginRight: 8,
         marginBottom: 8,
 
-        backgroundColor: 'rgba(255,255,255,0.25)',
+        backgroundColor: `${themeColors.accent}15`,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.4)',
+        borderColor: `${themeColors.accent}30`,
 
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -95,3 +97,5 @@ export const styles = StyleSheet.create({
         elevation: 3,
     },
 });
+
+export const styles = createStyles({} as any); // fallback for legacy usage

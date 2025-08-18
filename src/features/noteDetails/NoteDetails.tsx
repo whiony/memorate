@@ -23,10 +23,12 @@ import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
 import { deleteDoc, doc as firestoreDoc, onSnapshot } from 'firebase/firestore'
 import { firestore } from '@/services/firebaseConfig'
 import { formatPrice } from '@/utils/formatPrice'
-import { styles } from './NoteDetails.styles'
+import { createStyles } from './NoteDetails.styles'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 import { StyleSheet } from 'react-native'
+import { useTheme } from '@/contexts/ThemeContext'
+import { lightTheme, darkTheme } from '@/theme/colors'
 
 type NoteDetailsRouteProp = RouteProp<RootStackParamList, 'NoteDetails'>
 type NoteDetailsNavigationProp = StackNavigationProp<RootStackParamList, 'NoteDetails'>
@@ -35,6 +37,9 @@ const NoteDetails: FC = () => {
     const navigation = useNavigation<NoteDetailsNavigationProp>()
     const route = useRoute<NoteDetailsRouteProp>()
     const navNote = route.params.note as NavNote
+    const { isDark } = useTheme()
+    const colors = isDark ? darkTheme : lightTheme
+    const styles = createStyles(colors)
 
     const [note, setNote] = useState<Note>({
         ...navNote,
@@ -214,7 +219,7 @@ const NoteDetails: FC = () => {
 
     return (
         <LinearGradient
-            colors={['#E0E7FF', '#C7D2FE', '#A5B4FC', '#818CF8']}
+            colors={colors.background}
             start={{ x: 0.2, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{ flex: 1 }}
@@ -223,11 +228,11 @@ const NoteDetails: FC = () => {
                 <View style={styles.header}>
                     <View style={[styles.side, styles.sideLeft]}>
                         <TouchableOpacity onPress={handleGoBack}>
-                            <Ionicons name="chevron-back" size={24} color="#000" />
+                            <Ionicons name="chevron-back" size={24} color={colors.text} />
                         </TouchableOpacity>
                     </View>
 
-                    <Text style={styles.headerTitle} ellipsizeMode="tail">
+                    <Text style={[styles.headerTitle, { color: colors.text }]} ellipsizeMode="tail">
                         Note Details
                     </Text>
 
@@ -237,7 +242,7 @@ const NoteDetails: FC = () => {
                             style={styles.menuButton}
                             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                         >
-                            <Ionicons name="ellipsis-vertical" size={22} color="#000" />
+                            <Ionicons name="ellipsis-vertical" size={22} color={colors.text} />
                         </TouchableOpacity>
                     </View>
 
@@ -252,13 +257,9 @@ const NoteDetails: FC = () => {
                             onPress={() => setMenuVisible(false)}
                         >
                             <View style={styles.popupWrapper}>
-                                <BlurView intensity={120} tint="light" style={styles.popupMenu}>
+                                <BlurView intensity={120} tint={isDark ? "dark" : "light"} style={styles.popupMenu}>
                                     <LinearGradient
-                                        colors={[
-                                            'rgba(255,255,255,0.4)',
-                                            'rgba(255,255,255,0.25)',
-                                            'rgba(99, 102, 241, 0.08)'
-                                        ]}
+                                        colors={colors.popupMenuGradient}
                                         style={StyleSheet.absoluteFill}
                                         start={{ x: 0, y: 0 }}
                                         end={{ x: 1, y: 1 }}
@@ -267,13 +268,13 @@ const NoteDetails: FC = () => {
                                         setMenuVisible(false)
                                         handleEdit()
                                     }}>
-                                        <Text style={styles.menuText}>Edit</Text>
+                                        <Text style={[styles.menuText, { color: colors.text }]}>Edit</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={[styles.menuItem, { borderBottomWidth: 0 }]} onPress={() => {
                                         setMenuVisible(false)
                                         openDeleteModal()
                                     }}>
-                                        <Text style={[styles.menuText, { color: '#E53935' }]}>Delete</Text>
+                                        <Text style={[styles.menuText, { color: colors.danger }]}>Delete</Text>
                                     </TouchableOpacity>
                                 </BlurView>
                             </View>
@@ -358,23 +359,27 @@ const NoteDetails: FC = () => {
                                 )}
 
                                 {allImages.length > 1 && (
-                                    <Text style={styles.imageCounter}>
+                                    <Text style={[styles.imageCounter, { color: '#fff' }]}>
                                         {currentImageIndex + 1} / {allImages.length}
                                     </Text>
                                 )}
                             </View>
                         )}
 
-                        <BlurView intensity={120} tint="light" style={styles.noteBody}>
+                        <BlurView intensity={120} tint={isDark ? "dark" : "light"} style={styles.noteBody}>
                             <LinearGradient
-                                colors={[
-                                    'rgba(255,255,255,0.6)',
-                                    'rgba(255,255,255,0.4)',
-                                    'rgba(99, 102, 241, 0.1)'
-                                ]}
+                                colors={colors.noteDetailsGradient}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}
-                                style={StyleSheet.absoluteFill}
+                                style={[
+                                    StyleSheet.absoluteFill,
+                                    {
+                                        borderBottomLeftRadius: 32,
+                                        borderBottomRightRadius: 32,
+                                        borderTopLeftRadius: allImages.length > 0 ? 0 : 32,
+                                        borderTopRightRadius: allImages.length > 0 ? 0 : 32,
+                                    }
+                                ]}
                             />
 
                             <View style={styles.noteContent}>
@@ -384,32 +389,32 @@ const NoteDetails: FC = () => {
                                             <BlurView
                                                 key={tag}
                                                 intensity={100}
-                                                tint="light"
+                                                tint={isDark ? "dark" : "light"}
                                                 style={styles.tagPill}
                                             >
                                                 <LinearGradient
-                                                    colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)']}
+                                                    colors={colors.cardMainGradient}
                                                     style={StyleSheet.absoluteFill}
                                                 />
-                                                <Text style={styles.tagText}>{tag}</Text>
+                                                <Text style={[styles.tagText, { color: colors.accent }]}>{tag}</Text>
                                             </BlurView>
                                         ))}
                                     </View>
                                 ) : null}
 
-                                <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">{note.name}</Text>
+                                <Text style={[styles.title, { color: colors.text }]} numberOfLines={2} ellipsizeMode="tail">{note.name}</Text>
 
                                 <View style={styles.inlineRow}>
                                     <StarRating rating={note.rating} disabled />
-                                    {!!note.price && <Text style={styles.price}>{priceDisplay}</Text>}
+                                    {!!note.price && <Text style={[styles.price, { color: colors.text }]}>{priceDisplay}</Text>}
                                 </View>
 
-                                {!!note.comment && <Text style={styles.comment}>{note.comment}</Text>}
+                                {!!note.comment && <Text style={[styles.comment, { color: colors.textSecondary }]}>{note.comment}</Text>}
 
                                 <View style={styles.datesContainer}>
-                                    <Text style={styles.date}>Added on {formattedCreatedDate}</Text>
+                                    <Text style={[styles.date, { color: colors.textMuted }]}>Added on {formattedCreatedDate}</Text>
                                     {formattedEditedDate && (
-                                        <Text style={styles.editedDate}>Last edited on {formattedEditedDate}</Text>
+                                        <Text style={[styles.editedDate, { color: colors.textMuted }]}>Last edited on {formattedEditedDate}</Text>
                                     )}
                                 </View>
                             </View>
@@ -496,7 +501,7 @@ const NoteDetails: FC = () => {
                                             style={[styles.navButton, styles.navButtonLeft]}
                                             onPress={() => navigateImage('prev')}
                                         >
-                                            <BlurView intensity={100} tint="light" style={styles.navButtonBlur}>
+                                            <BlurView intensity={100} tint={isDark ? "dark" : "light"} style={styles.navButtonBlur}>
                                                 <Ionicons name="chevron-back" size={28} color="#fff" />
                                             </BlurView>
                                         </TouchableOpacity>
@@ -505,7 +510,7 @@ const NoteDetails: FC = () => {
                                             style={[styles.navButton, styles.navButtonRight]}
                                             onPress={() => navigateImage('next')}
                                         >
-                                            <BlurView intensity={100} tint="light" style={styles.navButtonBlur}>
+                                            <BlurView intensity={100} tint={isDark ? "dark" : "light"} style={styles.navButtonBlur}>
                                                 <Ionicons name="chevron-forward" size={28} color="#fff" />
                                             </BlurView>
                                         </TouchableOpacity>
@@ -516,15 +521,15 @@ const NoteDetails: FC = () => {
                                     style={styles.closeButton}
                                     onPress={toggleImageExpansion}
                                 >
-                                    <BlurView intensity={100} tint="light" style={styles.closeButtonBlur}>
+                                    <BlurView intensity={100} tint={isDark ? "dark" : "light"} style={styles.closeButtonBlur}>
                                         <Ionicons name="close" size={24} color="#fff" />
                                     </BlurView>
                                 </TouchableOpacity>
 
                                 {allImages.length > 1 && (
                                     <View style={styles.modalImageCounter}>
-                                        <BlurView intensity={100} tint="light" style={styles.modalCounterBlur}>
-                                            <Text style={styles.modalCounterText}>
+                                        <BlurView intensity={100} tint={isDark ? "dark" : "light"} style={styles.modalCounterBlur}>
+                                            <Text style={[styles.modalCounterText, { color: '#fff' }]}>
                                                 {currentImageIndex + 1} / {allImages.length}
                                             </Text>
                                         </BlurView>

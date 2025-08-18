@@ -1,14 +1,15 @@
 import { StyleSheet } from 'react-native';
 import { fonts } from '@/theme/index';
+import type { Theme } from '@/theme/colors';
 
-export const styles = StyleSheet.create({
+export const createStyles = (colors: Theme) => StyleSheet.create({
     container: {
         height: 140,
-        backgroundColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: colors.cardBackground,
         borderRadius: 16,
         overflow: 'hidden',
         borderWidth: 1.5,
-        borderColor: 'rgba(255,255,255,0.3)',
+        borderColor: colors.border,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -28,7 +29,7 @@ export const styles = StyleSheet.create({
         borderRadius: 12,
         overflow: 'hidden',
         position: 'relative',
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        backgroundColor: colors.border,
     },
     imageContainer: {
         width: '100%',
@@ -44,14 +45,14 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 4,
         left: 4,
-        backgroundColor: 'rgba(99, 102, 241, 0.8)',
+        backgroundColor: `${colors.accent}CC`,
         borderRadius: 12,
         width: 28,
         height: 28,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.3)',
+        borderColor: colors.border,
     },
     removeButton: {
         position: 'absolute',
@@ -68,16 +69,15 @@ export const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 12,
-        backgroundColor: 'rgba(255,255,255,0.3)',
+        backgroundColor: colors.cardBackground,
         borderWidth: 2,
-        borderColor: 'rgba(99, 102, 241, 0.3)',
+        borderColor: `${colors.accent}4D`,
         borderStyle: 'dashed',
         justifyContent: 'center',
         alignItems: 'center',
         gap: 8,
     },
     addButtonText: {
-        color: '#6366F1',
         fontSize: 12,
         fontFamily: fonts.mainFont,
         fontWeight: '600',
@@ -85,3 +85,5 @@ export const styles = StyleSheet.create({
         lineHeight: 14,
     },
 });
+
+export const styles = createStyles({} as any); // fallback for legacy usage
