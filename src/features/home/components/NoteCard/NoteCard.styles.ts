@@ -204,4 +204,23 @@ export const styles = StyleSheet.create({
         borderRadius: 35,
         zIndex: -1,
     },
+
+    multipleImagesIndicator: {
+        position: 'absolute',
+        top: 6,
+        right: 6,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        borderRadius: 12,
+        paddingHorizontal: 6,
+        paddingVertical: 3,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 3,
+    },
+
+    imageCount: {
+        color: '#fff',
+        fontSize: 11,
+        fontWeight: '600',
+    },
 });

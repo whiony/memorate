@@ -44,9 +44,19 @@ const NoteDetails: FC = () => {
     const [delVisible, setDelVisible] = useState(false)
     const [menuVisible, setMenuVisible] = useState(false)
     const [imageExpanded, setImageExpanded] = useState(false)
-    
+    const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
     const expandAnimation = useRef(new Animated.Value(0)).current
     const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
+
+    const allImages = useMemo(() => {
+        if (note.images && note.images.length > 0) {
+            return note.images
+        } else if (note.image) {
+            return [note.image]
+        }
+        return []
+    }, [note.images, note.image])
 
     useEffect(() => {
         const ref = firestoreDoc(firestore, 'reviews', navNote.id)
@@ -59,6 +69,7 @@ const NoteDetails: FC = () => {
                     comment: data.comment,
                     rating: data.rating,
                     image: data.image,
+                    images: data.images,
                     tags: data.tags ?? (data.category ? [data.category] : []),
                     created: data.created.toDate(),
                     edited: data.edited?.toDate(),
@@ -117,14 +128,12 @@ const NoteDetails: FC = () => {
 
     const toggleImageExpansion = useCallback(() => {
         if (imageExpanded) {
-            // Collapse animation
             Animated.timing(expandAnimation, {
                 toValue: 0,
                 duration: 300,
                 useNativeDriver: false,
             }).start(() => setImageExpanded(false))
         } else {
-            // Expand animation
             setImageExpanded(true)
             Animated.timing(expandAnimation, {
                 toValue: 1,
@@ -133,6 +142,23 @@ const NoteDetails: FC = () => {
             }).start()
         }
     }, [imageExpanded, expandAnimation])
+
+    const navigateImage = useCallback((direction: 'prev' | 'next') => {
+        if (allImages.length <= 1) return
+
+        setCurrentImageIndex(prevIndex => {
+            if (direction === 'next') {
+                return prevIndex >= allImages.length - 1 ? 0 : prevIndex + 1
+            } else {
+                return prevIndex <= 0 ? allImages.length - 1 : prevIndex - 1
+            }
+        })
+    }, [allImages.length])
+
+    const openImageExpansion = useCallback((imageIndex: number) => {
+        setCurrentImageIndex(imageIndex)
+        toggleImageExpansion()
+    }, [toggleImageExpansion])
 
     return (
         <LinearGradient
@@ -177,7 +203,7 @@ const NoteDetails: FC = () => {
                                 <BlurView intensity={120} tint="light" style={styles.popupMenu}>
                                     <LinearGradient
                                         colors={[
-                                            'rgba(255,255,255,0.4)', 
+                                            'rgba(255,255,255,0.4)',
                                             'rgba(255,255,255,0.25)',
                                             'rgba(99, 102, 241, 0.08)'
                                         ]}
@@ -205,27 +231,64 @@ const NoteDetails: FC = () => {
 
                 <ScrollView contentContainerStyle={styles.scrollContent}>
                     <View style={styles.noteCard}>
-                        {note.image && (
-                            <TouchableOpacity 
-                                onPress={toggleImageExpansion}
-                                activeOpacity={0.9}
-                                style={styles.imageWrapper}
-                            >
-                                <View style={styles.imageContainer}>
-                                    <Image 
-                                        source={{ uri: note.image }} 
-                                        style={styles.image} 
-                                        resizeMode="cover"
-                                    />
-                                </View>
-                            </TouchableOpacity>
+                        {allImages.length > 0 && (
+                            <View style={styles.imageWrapper}>
+                                <ScrollView
+                                    horizontal
+                                    pagingEnabled
+                                    showsHorizontalScrollIndicator={false}
+                                    style={styles.imageCarousel}
+                                    snapToInterval={screenWidth - 32}
+                                    decelerationRate="fast"
+                                    snapToAlignment="center"
+                                    onMomentumScrollEnd={(event) => {
+                                        const newIndex = Math.round(event.nativeEvent.contentOffset.x / (screenWidth - 32))
+                                        setCurrentImageIndex(newIndex)
+                                    }}
+                                >
+                                    {allImages.map((imageUri, index) => (
+                                        <TouchableOpacity
+                                            key={index}
+                                            onPress={() => openImageExpansion(index)}
+                                            activeOpacity={0.9}
+                                            style={styles.imageContainer}
+                                        >
+                                            <Image
+                                                source={{ uri: imageUri }}
+                                                style={styles.image}
+                                                resizeMode="cover"
+                                            />
+                                        </TouchableOpacity>
+                                    ))}
+                                </ScrollView>
+
+                                {allImages.length > 1 && (
+                                    <View style={styles.imageIndicators}>
+                                        {allImages.map((_, index) => (
+                                            <View
+                                                key={index}
+                                                style={[
+                                                    styles.indicator,
+                                                    index === currentImageIndex && styles.indicatorActive
+                                                ]}
+                                            />
+                                        ))}
+                                    </View>
+                                )}
+
+                                {allImages.length > 1 && (
+                                    <Text style={styles.imageCounter}>
+                                        {currentImageIndex + 1} / {allImages.length}
+                                    </Text>
+                                )}
+                            </View>
                         )}
 
                         <BlurView intensity={120} tint="light" style={styles.noteBody}>
                             <LinearGradient
                                 colors={[
-                                    'rgba(255,255,255,0.6)', 
-                                    'rgba(255,255,255,0.4)', 
+                                    'rgba(255,255,255,0.6)',
+                                    'rgba(255,255,255,0.4)',
                                     'rgba(99, 102, 241, 0.1)'
                                 ]}
                                 start={{ x: 0, y: 0 }}
@@ -280,7 +343,6 @@ const NoteDetails: FC = () => {
                     onConfirm={handleDelete}
                 />
 
-                {/* Image Expansion Modal */}
                 <Modal
                     visible={imageExpanded}
                     transparent
@@ -289,7 +351,7 @@ const NoteDetails: FC = () => {
                     onRequestClose={toggleImageExpansion}
                 >
                     <View style={styles.imageModalContainer}>
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             style={styles.imageModalBackground}
                             onPress={toggleImageExpansion}
                             activeOpacity={1}
@@ -306,12 +368,51 @@ const NoteDetails: FC = () => {
                                     opacity: expandAnimation,
                                 }
                             ]}>
-                                <Image 
-                                    source={{ uri: note.image }} 
-                                    style={styles.expandedImage} 
-                                    resizeMode="contain"
-                                />
-                                <TouchableOpacity 
+                                <ScrollView
+                                    horizontal
+                                    pagingEnabled
+                                    showsHorizontalScrollIndicator={false}
+                                    style={styles.expandedImageCarousel}
+                                    contentOffset={{ x: currentImageIndex * screenWidth, y: 0 }}
+                                    onMomentumScrollEnd={(event) => {
+                                        const newIndex = Math.round(event.nativeEvent.contentOffset.x / screenWidth)
+                                        setCurrentImageIndex(newIndex)
+                                    }}
+                                >
+                                    {allImages.map((imageUri, index) => (
+                                        <View key={index} style={styles.expandedImageSlide}>
+                                            <Image
+                                                source={{ uri: imageUri }}
+                                                style={styles.expandedImage}
+                                                resizeMode="contain"
+                                            />
+                                        </View>
+                                    ))}
+                                </ScrollView>
+
+                                {allImages.length > 1 && (
+                                    <>
+                                        <TouchableOpacity
+                                            style={[styles.navButton, styles.navButtonLeft]}
+                                            onPress={() => navigateImage('prev')}
+                                        >
+                                            <BlurView intensity={100} tint="light" style={styles.navButtonBlur}>
+                                                <Ionicons name="chevron-back" size={28} color="#fff" />
+                                            </BlurView>
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity
+                                            style={[styles.navButton, styles.navButtonRight]}
+                                            onPress={() => navigateImage('next')}
+                                        >
+                                            <BlurView intensity={100} tint="light" style={styles.navButtonBlur}>
+                                                <Ionicons name="chevron-forward" size={28} color="#fff" />
+                                            </BlurView>
+                                        </TouchableOpacity>
+                                    </>
+                                )}
+
+                                <TouchableOpacity
                                     style={styles.closeButton}
                                     onPress={toggleImageExpansion}
                                 >
@@ -319,6 +420,16 @@ const NoteDetails: FC = () => {
                                         <Ionicons name="close" size={24} color="#fff" />
                                     </BlurView>
                                 </TouchableOpacity>
+
+                                {allImages.length > 1 && (
+                                    <View style={styles.modalImageCounter}>
+                                        <BlurView intensity={100} tint="light" style={styles.modalCounterBlur}>
+                                            <Text style={styles.modalCounterText}>
+                                                {currentImageIndex + 1} / {allImages.length}
+                                            </Text>
+                                        </BlurView>
+                                    </View>
+                                )}
                             </Animated.View>
                         </TouchableOpacity>
                     </View>

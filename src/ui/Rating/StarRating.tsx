@@ -90,8 +90,6 @@ const StarRating: React.FC<Props> = ({
                     <TouchableOpacity
                         key={`${i}-${i <= rating}`}
                         onPress={() => {
-                            // If clicking on the same star as current rating, clear it
-                            // Otherwise set to clicked star value
                             onChange?.(rating === i ? 0 : i)
                         }}
                         disabled={disabled}

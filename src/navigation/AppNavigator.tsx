@@ -16,6 +16,7 @@ export interface Note {
     comment: string
     rating: number
     image?: string
+    images?: string[]
     tags: string[];
     created?: Date
     edited?: Date

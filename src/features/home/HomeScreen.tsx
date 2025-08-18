@@ -18,8 +18,6 @@ import {
     onSnapshot,
     deleteDoc,
     doc,
-    Query,
-    DocumentData,
 } from 'firebase/firestore'
 import { firestore } from '@/services/firebaseConfig'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
@@ -44,11 +42,10 @@ const HomeScreen: React.FC = () => {
     const { sortBy, sortOrder } = useSort()
     const { categories: loadedCats, renameCategory, deleteCategory } = useCategories()
     const swipeableRefs = useRef<Swipeable[]>([])
-    
-    // Tag action modal states
+
     const [renameVisible, setRenameVisible] = useState(false)
     const [deleteVisible, setDeleteVisible] = useState(false)
-    const [activeCat, setActiveCat] = useState('')
+    const [activeCat] = useState('')
 
     const allCats: Category[] = [
         { name: 'All' },
@@ -88,24 +85,15 @@ const HomeScreen: React.FC = () => {
 
     const closeAll = () => swipeableRefs.current.forEach(r => r?.close())
 
-    useEffect(() => {
-        console.log('HomeScreen modal states changed:', { 
-            renameVisible, 
-            deleteVisible, 
-            activeCat 
-        })
-    }, [renameVisible, deleteVisible, activeCat])
 
     const filteredAndSortedNotes = useMemo(() => {
-        // Filter by selected tags - note must have ALL selected tags
         let filtered = notes
         if (selectedTags.length > 0) {
-            filtered = notes.filter(note => 
+            filtered = notes.filter(note =>
                 selectedTags.every(tag => note.tags.includes(tag))
             )
         }
 
-        // Sort the filtered notes
         const dir = sortOrder === 'asc' ? 1 : -1
         return filtered.sort((a, b) => {
             switch (sortBy) {
@@ -147,17 +135,14 @@ const HomeScreen: React.FC = () => {
         })
 
     const handleTagAction = async (action: 'rename' | 'delete', tagName: string, newName?: string) => {
-        // Handle updating selected tags for inline actions
         if (action === 'rename' && newName) {
-            // Update selected tags if renamed tag was selected
             if (selectedTags.includes(tagName)) {
-                const updatedTags = selectedTags.map(tag => 
+                const updatedTags = selectedTags.map(tag =>
                     tag === tagName ? newName : tag
                 )
                 setSelectedTags(updatedTags)
             }
         } else if (action === 'delete') {
-            // Remove from selected tags if it was selected
             const updatedTags = selectedTags.filter(tag => tag !== tagName)
             setSelectedTags(updatedTags)
         }
@@ -168,9 +153,8 @@ const HomeScreen: React.FC = () => {
         setRenameVisible(false)
         if (newName && newName !== activeCat) {
             await renameCategory(activeCat, newName)
-            // Update selected tags if renamed tag was selected
             if (selectedTags.includes(activeCat)) {
-                const updatedTags = selectedTags.map(tag => 
+                const updatedTags = selectedTags.map(tag =>
                     tag === activeCat ? newName : tag
                 )
                 setSelectedTags(updatedTags)
@@ -246,8 +230,8 @@ const HomeScreen: React.FC = () => {
                             </BlurView>
                         </View>
 
-                        <TouchableOpacity 
-                            style={styles.iconButton} 
+                        <TouchableOpacity
+                            style={styles.iconButton}
                             onPress={() => navigation.navigate('FilterModal', { current: sortBy })}
                         >
                             <MaterialIcons name="sort" size={24} color="#fff" />
@@ -272,23 +256,16 @@ const HomeScreen: React.FC = () => {
 
             </LinearGradient>
 
-            {/* Tag action modals rendered outside main UI */}
             <RenameCategoryModal
                 visible={renameVisible}
                 initialName={activeCat}
-                onCancel={() => {
-                    console.log('RenameCategoryModal cancelled')
-                    setRenameVisible(false)
-                }}
+                onCancel={() => setRenameVisible(false)}
                 onSubmit={confirmRename}
             />
             <DeleteCategoryModal
                 visible={deleteVisible}
                 category={activeCat}
-                onCancel={() => {
-                    console.log('DeleteCategoryModal cancelled')
-                    setDeleteVisible(false)
-                }}
+                onCancel={() => setDeleteVisible(false)}
                 onConfirm={confirmDelete}
             />
         </>

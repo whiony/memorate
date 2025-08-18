@@ -56,7 +56,14 @@ const AddNoteScreen: FC<Props> = () => {
         existingNote?.price != null ? existingNote.price.toString().replace('.', ',') : ''
     )
     const [currency, setCurrency] = useState<Currency>(existingNote?.currency ?? '€')
-    const [image, setImage] = useState<string | null>(existingNote?.image ?? null)
+    const [images, setImages] = useState<string[]>(() => {
+        if (existingNote?.images && existingNote.images.length > 0) {
+            return existingNote.images
+        } else if (existingNote?.image) {
+            return [existingNote.image]
+        }
+        return []
+    })
     const [loadingImage, setLoadingImage] = useState(false)
     const [saving, setSaving] = useState(false)
 
@@ -73,7 +80,66 @@ const AddNoteScreen: FC<Props> = () => {
         setCurrency(opts[(idx + 1) % opts.length])
     }, [currency])
 
-    const pickImage = useCallback(async () => {
+    const pickImages = useCallback(async () => {
+        if (images.length >= 5) {
+            Alert.alert('Limit reached', 'You can add up to 5 images maximum.')
+            return
+        }
+
+        Alert.alert(
+            'Add Photos',
+            'Choose how you want to add photos:',
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel'
+                },
+                {
+                    text: 'Quick Add (Multiple)',
+                    onPress: async () => {
+                        const result = await ImagePicker.launchImageLibraryAsync({
+                            mediaTypes: ['images'],
+                            allowsEditing: false,
+                            quality: 0.7,
+                            base64: true,
+                            allowsMultipleSelection: true,
+                            selectionLimit: 5 - images.length,
+                        })
+
+                        if (!result.canceled) {
+                            const newImages = result.assets.map(asset =>
+                                `data:image/jpeg;base64,${asset.base64}`
+                            )
+                            setImages(prev => [...prev, ...newImages].slice(0, 5))
+                        }
+                    }
+                },
+                {
+                    text: 'Add & Crop (Single)',
+                    onPress: async () => {
+                        const result = await ImagePicker.launchImageLibraryAsync({
+                            mediaTypes: ['images'],
+                            allowsEditing: true,
+                            aspect: [4, 3],
+                            quality: 0.7,
+                            base64: true,
+                        })
+
+                        if (!result.canceled) {
+                            const newImage = `data:image/jpeg;base64,${result.assets[0].base64}`
+                            setImages(prev => [...prev, newImage].slice(0, 5))
+                        }
+                    }
+                }
+            ]
+        )
+    }, [images.length])
+
+    const removeImage = useCallback((indexToRemove: number) => {
+        setImages(prev => prev.filter((_, index) => index !== indexToRemove))
+    }, [])
+
+    const editImage = useCallback(async (indexToEdit: number) => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
             allowsEditing: true,
@@ -81,8 +147,12 @@ const AddNoteScreen: FC<Props> = () => {
             quality: 0.7,
             base64: true,
         })
+
         if (!result.canceled) {
-            setImage(`data:image/jpeg;base64,${result.assets[0].base64}`)
+            const editedImage = `data:image/jpeg;base64,${result.assets[0].base64}`
+            setImages(prev => prev.map((img, index) =>
+                index === indexToEdit ? editedImage : img
+            ))
         }
     }, [])
 
@@ -115,16 +185,29 @@ const AddNoteScreen: FC<Props> = () => {
         try {
             setSaving(true)
 
-            if (existingNote?.image && !image) {
+            if (existingNote?.image && !images.includes(existingNote.image)) {
                 await deleteFromCloudinary(existingNote.image)
             }
-
-            let imageUrl: string | null = image
-            if (image?.startsWith('data:image')) {
-                setLoadingImage(true)
-                imageUrl = await uploadToCloudinary(image, CLOUD_NAME, UPLOAD_PRESET)
-                setLoadingImage(false)
+            if (existingNote?.images) {
+                for (const oldImage of existingNote.images) {
+                    if (!images.includes(oldImage)) {
+                        await deleteFromCloudinary(oldImage)
+                    }
+                }
             }
+
+            setLoadingImage(true)
+            const uploadedImages: string[] = []
+
+            for (const img of images) {
+                if (img.startsWith('data:image')) {
+                    const uploadedUrl = await uploadToCloudinary(img, CLOUD_NAME, UPLOAD_PRESET)
+                    uploadedImages.push(uploadedUrl)
+                } else {
+                    uploadedImages.push(img)
+                }
+            }
+            setLoadingImage(false)
 
             const now = new Date()
 
@@ -138,18 +221,22 @@ const AddNoteScreen: FC<Props> = () => {
                 payload.price = parseFloat(price.replace(',', '.'))
             }
             payload.currency = currency
-            if (imageUrl) payload.image = imageUrl
-            else if (existingNote?.image && !image) payload.image = deleteField() as any
 
-            if (existingNote) {
-                payload.edited = now
-            } else {
-                payload.created = now
+            if (uploadedImages.length > 0) {
+                payload.images = uploadedImages
             }
 
             if (existingNote) {
+                payload.edited = now
+                if (uploadedImages.length > 0) {
+                    payload.image = deleteField() as any
+                } else {
+                    payload.images = deleteField() as any
+                    payload.image = deleteField() as any
+                }
                 await updateDoc(doc(firestore, 'reviews', existingNote.id), payload)
             } else {
+                payload.created = now
                 await addDoc(collection(firestore, 'reviews'), payload)
             }
 
@@ -164,7 +251,7 @@ const AddNoteScreen: FC<Props> = () => {
         } finally {
             setSaving(false)
         }
-    }, [title, comment, rating, price, currency, image, existingNote, navigation])
+    }, [title, comment, rating, price, currency, images, existingNote, navigation, selectedTags])
 
     const handleTitleChange = useCallback((text: string) => {
         setTitle(text.slice(0, MAX_TITLE_LENGTH))
@@ -198,9 +285,10 @@ const AddNoteScreen: FC<Props> = () => {
                     <View style={styles.screen}>
                         <TitleInput value={title} onChange={handleTitleChange} />
                         <ImagePickerComponent
-                            image={image}
-                            onPickImage={pickImage}
-                            onRemoveImage={() => setImage(null)}
+                            images={images}
+                            onPickImages={pickImages}
+                            onRemoveImage={removeImage}
+                            onEditImage={editImage}
                         />
                         <StarRating rating={rating} onChange={setRating} />
                         <PriceCurrencyInput

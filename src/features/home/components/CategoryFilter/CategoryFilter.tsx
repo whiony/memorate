@@ -12,9 +12,6 @@ import {
 } from 'react-native'
 import type { Category } from '@/hooks/useCategories'
 import { useCategories } from '@/hooks/useCategories'
-import ActionCategoryModal from '@/modals/ActionCategoryModal'
-import RenameCategoryModal from '@/modals/RenameCategoryModal'
-import DeleteCategoryModal from '@/modals/DeleteCategoryModal'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons } from '@expo/vector-icons'
@@ -44,11 +41,10 @@ const CategoryFilter: React.FC<Props> = ({
     const [editingTag, setEditingTag] = useState('')
     const [editingValue, setEditingValue] = useState('')
     const [deletingTag, setDeletingTag] = useState('')
-    
+
     const selectedSectionHeight = useRef(new Animated.Value(tempSelectedTags.length > 0 ? 1 : 0)).current
 
     const handleLong = (catName: string) => {
-        console.log('Long press triggered for:', catName)
         if (catName === 'All') return
         setDropdownVisible(catName)
     }
@@ -65,15 +61,12 @@ const CategoryFilter: React.FC<Props> = ({
 
     const handleSaveEdit = async () => {
         if (editingValue.trim() && editingValue !== editingTag) {
-            // Directly call rename using useCategories hook
             await renameCategory(editingTag, editingValue.trim())
-            
-            // Notify parent about the rename
+
             onTagAction('rename', editingTag, editingValue.trim())
-            
-            // Update temp selected tags if the edited tag was selected
+
             if (tempSelectedTags.includes(editingTag)) {
-                const updatedTags = tempSelectedTags.map(tag => 
+                const updatedTags = tempSelectedTags.map(tag =>
                     tag === editingTag ? editingValue.trim() : tag
                 )
                 setTempSelectedTags(updatedTags)
@@ -89,13 +82,10 @@ const CategoryFilter: React.FC<Props> = ({
     }
 
     const handleConfirmDelete = async () => {
-        // Directly call delete using useCategories hook
         await deleteCategory(deletingTag)
-        
-        // Notify parent about the deletion
+
         onTagAction('delete', deletingTag)
-        
-        // Remove from temp selected tags if it was selected
+
         const updatedTags = tempSelectedTags.filter(tag => tag !== deletingTag)
         setTempSelectedTags(updatedTags)
         setDeletingTag('')
@@ -122,19 +112,18 @@ const CategoryFilter: React.FC<Props> = ({
             setTempSelectedTags([])
             return
         }
-        
+
         setTempSelectedTags(prev => {
-            const newTags = prev.includes(tagName) 
+            const newTags = prev.includes(tagName)
                 ? prev.filter(t => t !== tagName)
                 : [...prev, tagName]
-            
-            // Animate selected section
+
             Animated.timing(selectedSectionHeight, {
                 toValue: newTags.length > 0 ? 1 : 0,
                 duration: 300,
                 useNativeDriver: false,
             }).start()
-            
+
             return newTags
         })
     }
@@ -142,15 +131,15 @@ const CategoryFilter: React.FC<Props> = ({
     const handleAddNewTag = async () => {
         const tagName = newTagName.trim()
         if (!tagName) return
-        
+
         if (!categories.find(cat => cat.name === tagName)) {
             await addCategory(tagName)
         }
-        
+
         if (!tempSelectedTags.includes(tagName)) {
             toggleTag(tagName)
         }
-        
+
         setNewTagName('')
     }
 
@@ -159,8 +148,8 @@ const CategoryFilter: React.FC<Props> = ({
         closeSearch()
     }
 
-    const filteredCategories = categories.filter(cat => 
-        cat.name !== 'All' && 
+    const filteredCategories = categories.filter(cat =>
+        cat.name !== 'All' &&
         cat.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
@@ -192,10 +181,10 @@ const CategoryFilter: React.FC<Props> = ({
                         </Text>
                     </AnimatedBlur>
                 </TouchableOpacity>
-                
+
                 {selectedTags.length > 0 && (
-                    <ScrollView 
-                        horizontal 
+                    <ScrollView
+                        horizontal
                         showsHorizontalScrollIndicator={false}
                         style={styles.selectedTagsScroll}
                         contentContainerStyle={styles.selectedTagsList}
@@ -215,7 +204,7 @@ const CategoryFilter: React.FC<Props> = ({
                 presentationStyle="pageSheet"
                 onRequestClose={closeSearch}
             >
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.modalContainer}
                     activeOpacity={1}
                     onPress={() => setDropdownVisible('')}
@@ -249,7 +238,7 @@ const CategoryFilter: React.FC<Props> = ({
                             onChangeText={setNewTagName}
                             onSubmitEditing={handleAddNewTag}
                         />
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             onPress={handleAddNewTag}
                             style={[styles.addTagButton, !newTagName.trim() && styles.addTagButtonDisabled]}
                             disabled={!newTagName.trim()}
@@ -269,20 +258,20 @@ const CategoryFilter: React.FC<Props> = ({
                         }
                     ]}>
                         <Text style={styles.sectionTitle}>Selected ({tempSelectedTags.length})</Text>
-                        <ScrollView 
-                            horizontal 
+                        <ScrollView
+                            horizontal
                             showsHorizontalScrollIndicator={false}
                             contentContainerStyle={styles.selectedTagsList}
                         >
-                            <TouchableOpacity 
-                                onPress={() => setTempSelectedTags([])} 
+                            <TouchableOpacity
+                                onPress={() => setTempSelectedTags([])}
                                 style={styles.clearAllButton}
                             >
                                 <Text style={styles.clearAllText}>Clear All</Text>
                             </TouchableOpacity>
                             {tempSelectedTags.map(tag => (
-                                <TouchableOpacity 
-                                    key={tag} 
+                                <TouchableOpacity
+                                    key={tag}
                                     style={styles.selectedModalTagPill}
                                     onPress={() => toggleTag(tag)}
                                 >
@@ -303,7 +292,7 @@ const CategoryFilter: React.FC<Props> = ({
                                 const showDropdown = dropdownVisible === item.name
                                 const isEditing = editingTag === item.name
                                 const isDeleting = deletingTag === item.name
-                                
+
                                 return (
                                     <View style={styles.tagItemWrapper}>
                                         {isEditing ? (
@@ -374,7 +363,7 @@ const CategoryFilter: React.FC<Props> = ({
                                                 )}
                                             </TouchableOpacity>
                                         )}
-                                        
+
                                         {showDropdown && !isEditing && !isDeleting && (
                                             <View style={styles.dropdown}>
                                                 <TouchableOpacity

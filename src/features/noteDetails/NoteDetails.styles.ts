@@ -1,7 +1,7 @@
 import { StyleSheet, Dimensions } from 'react-native'
 import { colors } from '@/theme/index'
 
-const { width } = Dimensions.get('window')
+const { width, width: screenWidth } = Dimensions.get('window')
 
 export const styles = StyleSheet.create({
     container: {
@@ -59,8 +59,12 @@ export const styles = StyleSheet.create({
         borderColor: 'rgba(255,255,255,0.2)',
     },
 
+    imageCarousel: {
+        height: (width - 32) * 0.75,
+    },
+
     imageContainer: {
-        width: '100%',
+        width: width - 32,
         height: (width - 32) * 0.75,
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
@@ -121,8 +125,109 @@ export const styles = StyleSheet.create({
     },
 
     expandedImage: {
+        width: screenWidth,
+        height: '100%',
+        maxWidth: screenWidth,
+    },
+
+    imageIndicators: {
+        position: 'absolute',
+        bottom: 16,
+        left: 0,
+        right: 0,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 8,
+    },
+
+    indicator: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: 'rgba(255,255,255,0.5)',
+    },
+
+    indicatorActive: {
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        width: 24,
+    },
+
+    imageCounter: {
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 12,
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: '600',
+    },
+
+    expandedImageCarousel: {
         width: '100%',
         height: '100%',
+    },
+
+    expandedImageSlide: {
+        width: screenWidth,
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    navButton: {
+        position: 'absolute',
+        top: '50%',
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        overflow: 'hidden',
+        marginTop: -25,
+        zIndex: 10,
+    },
+
+    navButtonLeft: {
+        left: 20,
+    },
+
+    navButtonRight: {
+        right: 20,
+    },
+
+    navButtonBlur: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.3)',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)',
+    },
+
+    modalImageCounter: {
+        position: 'absolute',
+        bottom: 40,
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+    },
+
+    modalCounterBlur: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 20,
+        backgroundColor: 'rgba(0,0,0,0.3)',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)',
+    },
+
+    modalCounterText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
     },
 
     noteCard: {

@@ -59,7 +59,7 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                 <BlurView intensity={100} tint="light" style={styles.editButton}>
                     <LinearGradient
                         colors={[
-                            'rgba(99, 102, 241, 0.3)', 
+                            'rgba(99, 102, 241, 0.3)',
                             'rgba(129, 140, 248, 0.2)',
                             'rgba(165, 180, 252, 0.15)'
                         ]}
@@ -81,7 +81,7 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                 <BlurView intensity={100} tint="light" style={styles.deleteButton}>
                     <LinearGradient
                         colors={[
-                            'rgba(248, 113, 113, 0.35)', 
+                            'rgba(248, 113, 113, 0.35)',
                             'rgba(239, 68, 68, 0.25)',
                             'rgba(220, 38, 38, 0.15)'
                         ]}
@@ -138,20 +138,20 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                     }}
                 >
                     <Animated.View style={[
-                        styles.cardWrapper, 
-                        { 
-                            opacity: fadeAnim, 
+                        styles.cardWrapper,
+                        {
+                            opacity: fadeAnim,
                             transform: [
                                 { translateY: translateYAnim },
                                 { scale: scaleAnim }
-                            ] 
+                            ]
                         }
                     ]}>
                         <BlurView intensity={120} tint="light" style={styles.cardBackground}>
                             <LinearGradient
                                 colors={[
-                                    'rgba(255,255,255,0.35)', 
-                                    'rgba(255,255,255,0.15)', 
+                                    'rgba(255,255,255,0.35)',
+                                    'rgba(255,255,255,0.15)',
                                     'rgba(99, 102, 241, 0.08)'
                                 ]}
                                 style={StyleSheet.absoluteFillObject}
@@ -162,12 +162,26 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
 
                         <View style={styles.cardContent}>
                             <View style={styles.mainRow}>
-                                {note.image && (
+                                {((note.images && note.images.length > 0) || note.image) && (
                                     <View style={styles.imageWrapper}>
-                                        <Image source={{ uri: note.image }} style={styles.image} resizeMode="cover" />
+                                        <Image
+                                            source={{
+                                                uri: note.images && note.images.length > 0
+                                                    ? note.images[0]
+                                                    : note.image
+                                            }}
+                                            style={styles.image}
+                                            resizeMode="cover"
+                                        />
+                                        {note.images && note.images.length > 1 && (
+                                            <View style={styles.multipleImagesIndicator}>
+                                                <Ionicons name="copy-outline" size={14} color="#fff" />
+                                                <Text style={styles.imageCount}>{note.images.length}</Text>
+                                            </View>
+                                        )}
                                     </View>
                                 )}
-                                
+
                                 <View style={styles.textContent}>
                                     <View>
                                         <Text style={styles.title} numberOfLines={1}>
@@ -190,7 +204,7 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                                     </View>
                                 </View>
                             </View>
-                            
+
                             {note.tags?.length > 0 && (
                                 <View style={styles.tagsRow}>
                                     {note.tags.slice(0, 2).map((tag: string) => (
