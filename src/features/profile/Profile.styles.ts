@@ -212,6 +212,7 @@ export const styles = StyleSheet.create({
         color: '#111',
         letterSpacing: 0.5,
         marginBottom: 2,
+        textTransform: 'capitalize',
     },
 
     statLabel: {
@@ -219,5 +220,47 @@ export const styles = StyleSheet.create({
         color: '#666',
         letterSpacing: 0.3,
         fontWeight: '500',
+    },
+
+    compactStatsCard: {
+        borderRadius: 20,
+        overflow: 'hidden',
+        borderWidth: 1.5,
+        borderColor: 'rgba(255,255,255,0.3)',
+        shadowColor: 'rgba(99, 102, 241, 0.4)',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+
+    compactStatsContent: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        paddingVertical: 20,
+        paddingHorizontal: 16,
+    },
+
+    compactStatItem: {
+        alignItems: 'center',
+        flex: 1,
+        gap: 6,
+    },
+
+    compactStatNumber: {
+        fontSize: 18,
+        fontWeight: '800',
+        color: '#111',
+        letterSpacing: 0.3,
+        textTransform: 'capitalize',
+    },
+
+    compactStatLabel: {
+        fontSize: 11,
+        color: '#666',
+        letterSpacing: 0.2,
+        fontWeight: '600',
+        textAlign: 'center',
     },
 })

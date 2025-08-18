@@ -28,19 +28,65 @@ const ProfileScreen: React.FC = () => {
     const [displayName, setDisplayName] = useState('')
     const [isEditingName, setIsEditingName] = useState(false)
     const [tempName, setTempName] = useState('')
+    const [avgRating, setAvgRating] = useState(0)
+    const [topTag, setTopTag] = useState('')
+    const [reviewStreak, setReviewStreak] = useState(0)
 
     useEffect(() => {
         const fetchUserData = async () => {
             if (!user) return
 
             try {
-                // Fetch note count
                 const q = query(
                     collection(firestore, 'reviews'),
                     where('userId', '==', user.uid)
                 )
                 const snapshot = await getDocs(q)
+                const reviews = snapshot.docs.map(doc => doc.data())
                 setNoteCount(snapshot.size)
+
+                if (reviews.length > 0) {
+                    const totalRating = reviews.reduce((sum, review) => sum + (review.rating || 0), 0)
+                    setAvgRating(totalRating / reviews.length)
+
+                    const tagCounts: { [key: string]: number } = {}
+                    reviews.forEach(review => {
+                        const tags = review.tags || []
+                        tags.forEach((tag: string) => {
+                            tagCounts[tag] = (tagCounts[tag] || 0) + 1
+                        })
+                    })
+                    const mostUsedTag = Object.entries(tagCounts).sort(([,a], [,b]) => b - a)[0]
+                    setTopTag(mostUsedTag ? mostUsedTag[0] : '')
+
+                    const sortedReviews = reviews
+                        .filter(r => r.created)
+                        .sort((a, b) => {
+                            const dateA = a.created.toDate ? a.created.toDate() : new Date(a.created)
+                            const dateB = b.created.toDate ? b.created.toDate() : new Date(b.created)
+                            return dateB.getTime() - dateA.getTime()
+                        })
+
+                    let streak = 0
+                    let currentDate = new Date()
+                    currentDate.setHours(0, 0, 0, 0)
+
+                    for (const review of sortedReviews) {
+                        const reviewDate = review.created.toDate ? review.created.toDate() : new Date(review.created)
+                        reviewDate.setHours(0, 0, 0, 0)
+                        
+                        const daysDiff = Math.floor((currentDate.getTime() - reviewDate.getTime()) / (1000 * 60 * 60 * 24))
+                        
+                        if (daysDiff === streak) {
+                            streak++
+                        } else if (daysDiff === streak + 1) {
+                            streak++
+                        } else {
+                            break
+                        }
+                    }
+                    setReviewStreak(streak)
+                }
 
                 const userDocRef = doc(firestore, 'users', user.uid)
                 const userDoc = await getDoc(userDocRef)
@@ -206,6 +252,47 @@ const ProfileScreen: React.FC = () => {
                             </View>
                         </View>
                     </BlurView>
+
+                    {noteCount > 0 && (
+                        <BlurView intensity={100} tint="light" style={styles.compactStatsCard}>
+                            <LinearGradient
+                                colors={[
+                                    'rgba(255,255,255,0.4)',
+                                    'rgba(255,255,255,0.2)',
+                                    'rgba(99, 102, 241, 0.1)'
+                                ]}
+                                style={styles.cardGradient}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                            />
+
+                            <View style={styles.compactStatsContent}>
+                                <View style={styles.compactStatItem}>
+                                    <Ionicons name="star" size={20} color="#FFA726" />
+                                    <Text style={styles.compactStatNumber}>
+                                        {loading ? '...' : avgRating.toFixed(1)}
+                                    </Text>
+                                    <Text style={styles.compactStatLabel}>Avg Rating</Text>
+                                </View>
+
+                                <View style={styles.compactStatItem}>
+                                    <Ionicons name="pricetag" size={20} color="#AB47BC" />
+                                    <Text style={styles.compactStatNumber}>
+                                        {loading ? '...' : (topTag || 'None')}
+                                    </Text>
+                                    <Text style={styles.compactStatLabel}>Top Category</Text>
+                                </View>
+
+                                <View style={styles.compactStatItem}>
+                                    <Ionicons name="flame" size={20} color="#FF7043" />
+                                    <Text style={styles.compactStatNumber}>
+                                        {loading ? '...' : reviewStreak}
+                                    </Text>
+                                    <Text style={styles.compactStatLabel}>Day Streak</Text>
+                                </View>
+                            </View>
+                        </BlurView>
+                    )}
                 </View>
             </SafeAreaView>
         </LinearGradient>
