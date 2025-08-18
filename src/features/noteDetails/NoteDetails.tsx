@@ -45,6 +45,7 @@ const NoteDetails: FC = () => {
     const [menuVisible, setMenuVisible] = useState(false)
     const [imageExpanded, setImageExpanded] = useState(false)
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
+    const indicatorAnimations = useRef<Animated.Value[]>([]).current
 
     const expandAnimation = useRef(new Animated.Value(0)).current
     const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
@@ -57,6 +58,25 @@ const NoteDetails: FC = () => {
         }
         return []
     }, [note.images, note.image])
+
+    useEffect(() => {
+        indicatorAnimations.length = allImages.length
+        for (let i = 0; i < allImages.length; i++) {
+            if (!indicatorAnimations[i]) {
+                indicatorAnimations[i] = new Animated.Value(i === currentImageIndex ? 1 : 0)
+            }
+        }
+    }, [allImages.length, currentImageIndex])
+
+    useEffect(() => {
+        indicatorAnimations.forEach((anim, index) => {
+            Animated.timing(anim, {
+                toValue: index === currentImageIndex ? 1 : 0,
+                duration: 300,
+                useNativeDriver: false,
+            }).start()
+        })
+    }, [currentImageIndex, indicatorAnimations])
 
     useEffect(() => {
         const ref = firestoreDoc(firestore, 'reviews', navNote.id)
@@ -266,11 +286,20 @@ const NoteDetails: FC = () => {
                                 {allImages.length > 1 && (
                                     <View style={styles.imageIndicators}>
                                         {allImages.map((_, index) => (
-                                            <View
+                                            <Animated.View
                                                 key={index}
                                                 style={[
                                                     styles.indicator,
-                                                    index === currentImageIndex && styles.indicatorActive
+                                                    {
+                                                        width: indicatorAnimations[index]?.interpolate({
+                                                            inputRange: [0, 1],
+                                                            outputRange: [8, 24],
+                                                        }) || 8,
+                                                        backgroundColor: indicatorAnimations[index]?.interpolate({
+                                                            inputRange: [0, 1],
+                                                            outputRange: ['rgba(255,255,255,0.5)', 'rgba(255,255,255,0.9)'],
+                                                        }) || 'rgba(255,255,255,0.5)',
+                                                    }
                                                 ]}
                                             />
                                         ))}

@@ -141,15 +141,8 @@ export const styles = StyleSheet.create({
     },
 
     indicator: {
-        width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: 'rgba(255,255,255,0.5)',
-    },
-
-    indicatorActive: {
-        backgroundColor: 'rgba(255,255,255,0.9)',
-        width: 24,
     },
 
     imageCounter: {
