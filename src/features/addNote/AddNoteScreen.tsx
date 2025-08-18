@@ -22,6 +22,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { styles } from './AddNoteScreen.styles'
 import { useCategories } from '@/hooks/useCategories'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
+import { useAuth } from '@/contexts/AuthContext'
 
 type AddNoteRouteProp = RouteProp<RootStackParamList, 'AddNote'>
 type AddNoteNavigationProp = StackNavigationProp<RootStackParamList, 'AddNote'>
@@ -39,6 +40,7 @@ type Currency = '€' | '$' | '₴'
 const AddNoteScreen: FC<Props> = () => {
     const navigation = useNavigation<AddNoteNavigationProp>()
     const route = useRoute<AddNoteRouteProp>()
+    const { user } = useAuth()
 
     const navNote = route.params?.note as NavNote | undefined
     const existingNote: Note | undefined = navNote
@@ -211,11 +213,17 @@ const AddNoteScreen: FC<Props> = () => {
 
             const now = new Date()
 
-            const payload: Partial<Note> = {
+            if (!user) {
+                Alert.alert('Error', 'You must be logged in to save notes')
+                return
+            }
+
+            const payload: any = {
                 name: title,
                 comment,
                 rating,
                 tags: selectedTags,
+                userId: user.uid,
             }
             if (price) {
                 payload.price = parseFloat(price.replace(',', '.'))

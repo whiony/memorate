@@ -5,7 +5,8 @@ import {
     TouchableOpacity,
     Text,
     TouchableWithoutFeedback,
-    StyleSheet
+    StyleSheet,
+    Alert
 } from 'react-native'
 import { Swipeable } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
@@ -32,6 +33,7 @@ import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
 import RenameCategoryModal from '@/modals/RenameCategoryModal'
 import DeleteCategoryModal from '@/modals/DeleteCategoryModal'
+import { useAuth } from '@/contexts/AuthContext'
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>
 
@@ -42,6 +44,7 @@ const HomeScreen: React.FC = () => {
     const { sortBy, sortOrder } = useSort()
     const { categories: loadedCats, renameCategory, deleteCategory } = useCategories()
     const swipeableRefs = useRef<Swipeable[]>([])
+    const { logout, user } = useAuth()
 
     const [renameVisible, setRenameVisible] = useState(false)
     const [deleteVisible, setDeleteVisible] = useState(false)
@@ -53,7 +56,12 @@ const HomeScreen: React.FC = () => {
     ]
 
     useEffect(() => {
-        const q = query(collection(firestore, 'reviews'))
+        if (!user) return
+
+        const q = query(
+            collection(firestore, 'reviews'),
+            where('userId', '==', user.uid)
+        )
 
         const unsub = onSnapshot(q, snap => {
             const loaded = snap.docs.map(d => {
@@ -81,7 +89,7 @@ const HomeScreen: React.FC = () => {
         })
 
         return unsub
-    }, [])
+    }, [user])
 
     const closeAll = () => swipeableRefs.current.forEach(r => r?.close())
 
@@ -169,6 +177,27 @@ const HomeScreen: React.FC = () => {
         setSelectedTags(updatedTags)
     }
 
+    const handleLogout = async () => {
+        Alert.alert(
+            'Sign Out',
+            'Are you sure you want to sign out?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Sign Out',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await logout()
+                        } catch (error) {
+                            Alert.alert('Error', 'Failed to sign out')
+                        }
+                    }
+                }
+            ]
+        )
+    }
+
     return (
         <>
             <LinearGradient
@@ -247,8 +276,8 @@ const HomeScreen: React.FC = () => {
                             </BlurView>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.iconButton, styles.rightIcon]}>
-                            <Ionicons name="settings-outline" size={24} color="#fff" />
+                        <TouchableOpacity style={[styles.iconButton, styles.rightIcon]} onPress={handleLogout}>
+                            <Ionicons name="log-out-outline" size={24} color="#fff" />
                         </TouchableOpacity>
                     </View>
 

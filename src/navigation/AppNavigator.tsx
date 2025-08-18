@@ -1,14 +1,17 @@
 import React, { FC } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack'
+import { View, ActivityIndicator } from 'react-native'
 
 import HomeScreen from '@/features/home/HomeScreen'
 import AddNoteScreen from '@/features/addNote/AddNoteScreen'
 import NoteDetails from '@/features/noteDetails/NoteDetails'
 import FilterModal from '@/modals/FilterModal'
+import AuthScreen from '@/features/auth/AuthScreen'
 
 import { CategoriesProvider } from '@/hooks/useCategories'
 import { SortProvider, SortKey } from '@/contexts/SortContext'
+import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 
 export interface Note {
     id: string
@@ -23,6 +26,7 @@ export interface Note {
     price?: number
     currency?: '€' | '$' | '₴'
     category?: string;
+    userId: string;
 }
 
 export type NavNote = Omit<Note, 'created' | 'edited'> & { created: string, edited?: string }
@@ -103,27 +107,49 @@ const noteDetailsOptions: StackNavigationOptions = {
     },
 }
 
+const AppContent: FC = () => {
+    const { user, loading } = useAuth()
+
+    if (loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#E0E7FF' }}>
+                <ActivityIndicator size="large" color="#6366F1" />
+            </View>
+        )
+    }
+
+    if (!user) {
+        return <AuthScreen />
+    }
+
+    return (
+        <CategoriesProvider>
+            <SortProvider>
+                <NavigationContainer>
+                    <Stack.Navigator screenOptions={defaultOptions}>
+                        <Stack.Screen name="Home" component={HomeScreen} />
+                        <Stack.Screen name="AddNote" component={AddNoteScreen} />
+                        <Stack.Screen 
+                            name="NoteDetails" 
+                            component={NoteDetails}
+                            options={noteDetailsOptions}
+                        />
+                        <Stack.Screen
+                            name="FilterModal"
+                            component={FilterModal}
+                            options={modalOptions}
+                        />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </SortProvider>
+        </CategoriesProvider>
+    )
+}
+
 const AppNavigator: FC = () => (
-    <CategoriesProvider>
-        <SortProvider>
-            <NavigationContainer>
-                <Stack.Navigator screenOptions={defaultOptions}>
-                    <Stack.Screen name="Home" component={HomeScreen} />
-                    <Stack.Screen name="AddNote" component={AddNoteScreen} />
-                    <Stack.Screen 
-                        name="NoteDetails" 
-                        component={NoteDetails}
-                        options={noteDetailsOptions}
-                    />
-                    <Stack.Screen
-                        name="FilterModal"
-                        component={FilterModal}
-                        options={modalOptions}
-                    />
-                </Stack.Navigator>
-            </NavigationContainer>
-        </SortProvider>
-    </CategoriesProvider>
+    <AuthProvider>
+        <AppContent />
+    </AuthProvider>
 )
 
 export default AppNavigator
