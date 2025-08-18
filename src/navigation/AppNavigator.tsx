@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator, StackNavigationOptions } from '@react-navigation/stack'
+import { createStackNavigator, StackNavigationOptions, TransitionPresets } from '@react-navigation/stack'
 
 import HomeScreen from '@/features/home/HomeScreen'
 import AddNoteScreen from '@/features/addNote/AddNoteScreen'
@@ -44,6 +44,65 @@ const modalOptions: StackNavigationOptions = {
     cardStyle: { backgroundColor: 'transparent' },
 }
 
+const noteDetailsOptions: StackNavigationOptions = {
+    headerShown: false,
+    presentation: 'modal',
+    cardStyleInterpolator: ({ current }) => {
+        const scale = current.progress.interpolate({
+            inputRange: [0, 0.3, 1],
+            outputRange: [0.88, 0.95, 1],
+            extrapolate: 'clamp',
+        })
+
+        const opacity = current.progress.interpolate({
+            inputRange: [0, 0.15, 0.4, 1],
+            outputRange: [0, 0.3, 0.85, 1],
+            extrapolate: 'clamp',
+        })
+
+        const blur = current.progress.interpolate({
+            inputRange: [0, 0.2, 1],
+            outputRange: [10, 3, 0],
+            extrapolate: 'clamp',
+        })
+
+        return {
+            cardStyle: {
+                opacity,
+                transform: [
+                    { scale },
+                    {
+                        perspective: 1000,
+                    },
+                ],
+                filter: `blur(${blur}px)`,
+            },
+        }
+    },
+    transitionSpec: {
+        open: {
+            animation: 'timing',
+            config: {
+                duration: 450,
+                easing: (t: number) => {
+                    return t < 0.5 
+                        ? 4 * t * t * t 
+                        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                },
+            },
+        },
+        close: {
+            animation: 'timing',
+            config: {
+                duration: 350,
+                easing: (t: number) => {
+                    return t * t * (3 - 2 * t);
+                },
+            },
+        },
+    },
+}
+
 const AppNavigator: FC = () => (
     <CategoriesProvider>
         <SortProvider>
@@ -51,7 +110,11 @@ const AppNavigator: FC = () => (
                 <Stack.Navigator screenOptions={defaultOptions}>
                     <Stack.Screen name="Home" component={HomeScreen} />
                     <Stack.Screen name="AddNote" component={AddNoteScreen} />
-                    <Stack.Screen name="NoteDetails" component={NoteDetails} />
+                    <Stack.Screen 
+                        name="NoteDetails" 
+                        component={NoteDetails}
+                        options={noteDetailsOptions}
+                    />
                     <Stack.Screen
                         name="FilterModal"
                         component={FilterModal}
