@@ -43,6 +43,7 @@ const HomeScreen: React.FC = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
     const [notes, setNotes] = useState<Note[]>([])
     const [selectedTags, setSelectedTags] = useState<string[]>([])
+    const [searchQuery, setSearchQuery] = useState('')
     const { sortBy, sortOrder } = useSort()
     const { categories: loadedCats, renameCategory, deleteCategory } = useCategories()
     const swipeableRefs = useRef<Swipeable[]>([])
@@ -121,8 +122,19 @@ const HomeScreen: React.FC = () => {
 
     const filteredAndSortedNotes = useMemo(() => {
         let filtered = notes
+        
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase().trim()
+            filtered = filtered.filter(note => {
+                const nameMatch = note.name?.toLowerCase().includes(query)
+                const commentMatch = note.comment?.toLowerCase().includes(query)
+                const tagMatch = note.tags.some(tag => tag.toLowerCase().includes(query))
+                return nameMatch || commentMatch || tagMatch
+            })
+        }
+        
         if (selectedTags.length > 0) {
-            filtered = notes.filter(note =>
+            filtered = filtered.filter(note =>
                 selectedTags.every(tag => note.tags.includes(tag))
             )
         }
@@ -139,7 +151,7 @@ const HomeScreen: React.FC = () => {
                 }
             }
         })
-    }, [notes, selectedTags, sortBy, sortOrder])
+    }, [notes, selectedTags, searchQuery, sortBy, sortOrder])
 
     const handleDelete = async (noteId: string) => {
         const note = notes.find(n => n.id === noteId)
@@ -166,6 +178,11 @@ const HomeScreen: React.FC = () => {
                 edited: note.edited?.toISOString(),
             }
         })
+
+    const handleFilterApply = (tags: string[], searchText?: string) => {
+        setSelectedTags(tags)
+        setSearchQuery(searchText || '')
+    }
 
     const handleTagAction = async (action: 'rename' | 'delete', tagName: string, newName?: string) => {
         if (action === 'rename' && newName) {
@@ -246,8 +263,10 @@ const HomeScreen: React.FC = () => {
                         <CategoryFilter
                             categories={allCats}
                             selectedTags={selectedTags}
-                            onApplyFilter={setSelectedTags}
+                            onApplyFilter={handleFilterApply}
                             onTagAction={handleTagAction}
+                            notes={notes}
+                            currentSearchQuery={searchQuery}
                         />
                     </View>
 

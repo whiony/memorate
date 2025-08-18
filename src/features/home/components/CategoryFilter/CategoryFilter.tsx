@@ -15,14 +15,17 @@ import { useCategories } from '@/hooks/useCategories'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons } from '@expo/vector-icons'
+import { styles as additionalStyles } from './CategoryFilter.styles'
 
 const AnimatedBlur = Animated.createAnimatedComponent(BlurView)
 
 interface Props {
     categories: Category[]
     selectedTags: string[]
-    onApplyFilter: (tags: string[]) => void
+    onApplyFilter: (tags: string[], searchQuery?: string) => void
     onTagAction: (action: 'rename' | 'delete', tagName: string, newName?: string) => void
+    notes?: any[]
+    currentSearchQuery?: string
 }
 
 const CategoryFilter: React.FC<Props> = ({
@@ -30,6 +33,8 @@ const CategoryFilter: React.FC<Props> = ({
     selectedTags,
     onApplyFilter,
     onTagAction,
+    notes = [],
+    currentSearchQuery = '',
 }) => {
     const { addCategory, renameCategory, deleteCategory } = useCategories()
 
@@ -99,7 +104,7 @@ const CategoryFilter: React.FC<Props> = ({
     const openSearch = () => {
         setTempSelectedTags(selectedTags)
         setSearchVisible(true)
-        setSearchQuery('')
+        setSearchQuery(currentSearchQuery)
     }
 
     const closeSearch = () => {
@@ -144,7 +149,7 @@ const CategoryFilter: React.FC<Props> = ({
     }
 
     const applyFilter = () => {
-        onApplyFilter(tempSelectedTags)
+        onApplyFilter(tempSelectedTags, searchQuery)
         closeSearch()
     }
 
@@ -152,6 +157,16 @@ const CategoryFilter: React.FC<Props> = ({
         cat.name !== 'All' &&
         cat.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
+
+    const matchingNotes = notes.filter(note => {
+        const query = searchQuery.toLowerCase()
+        return (
+            note.name?.toLowerCase().includes(query) ||
+            note.comment?.toLowerCase().includes(query)
+        )
+    })
+
+    const hasContentMatches = searchQuery.trim() && matchingNotes.length > 0
 
     useEffect(() => {
         Animated.timing(selectedSectionHeight, {
@@ -177,7 +192,7 @@ const CategoryFilter: React.FC<Props> = ({
                         />
                         <Ionicons name="search" size={18} color="#000" />
                         <Text style={styles.searchButtonText}>
-                            {selectedTags.length > 0 ? `Filtered by ${selectedTags.length} tags` : 'Search tags...'}
+                            {currentSearchQuery ? `"${currentSearchQuery}"` : selectedTags.length > 0 ? `${selectedTags.length} tags selected` : 'Search reviews...'}
                         </Text>
                     </AnimatedBlur>
                 </TouchableOpacity>
@@ -213,7 +228,7 @@ const CategoryFilter: React.FC<Props> = ({
                         <TouchableOpacity onPress={closeSearch}>
                             <Ionicons name="close" size={24} color="#000" />
                         </TouchableOpacity>
-                        <Text style={styles.modalTitle}>Filter by Tags</Text>
+                        <Text style={styles.modalTitle}>Search & Filter</Text>
                         <TouchableOpacity onPress={applyFilter} style={styles.applyButton}>
                             <Text style={styles.applyButtonText}>Filter</Text>
                         </TouchableOpacity>
@@ -223,11 +238,20 @@ const CategoryFilter: React.FC<Props> = ({
                         <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
                         <TextInput
                             style={styles.searchInput}
-                            placeholder="Search tags..."
+                            placeholder="Search reviews & tags..."
                             value={searchQuery}
                             onChangeText={setSearchQuery}
                             autoFocus
                         />
+                        {searchQuery.length > 0 && (
+                            <TouchableOpacity 
+                                onPress={() => setSearchQuery('')} 
+                                style={styles.clearSearchButton}
+                                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                            >
+                                <Ionicons name="close-circle" size={20} color="#999" />
+                            </TouchableOpacity>
+                        )}
                     </View>
 
                     <View style={styles.addTagContainer}>
@@ -282,8 +306,19 @@ const CategoryFilter: React.FC<Props> = ({
                         </ScrollView>
                     </Animated.View>
 
+                    {hasContentMatches && (
+                        <View style={additionalStyles.contentMatchesSection}>
+                            <Text style={styles.sectionTitle}>
+                                Found in {matchingNotes.length} review{matchingNotes.length !== 1 ? 's' : ''}
+                            </Text>
+                            <Text style={additionalStyles.contentMatchHint}>
+                                Content matches will be included in results
+                            </Text>
+                        </View>
+                    )}
+
                     <View style={styles.allTagsSection}>
-                        <Text style={styles.sectionTitle}>All Tags</Text>
+                        <Text style={styles.sectionTitle}>Tags</Text>
                         <FlatList
                             data={filteredCategories}
                             keyExtractor={(item) => item.name}
@@ -511,6 +546,10 @@ const styles = StyleSheet.create({
     },
     addTagButtonDisabled: {
         opacity: 0.5,
+    },
+    clearSearchButton: {
+        padding: 4,
+        marginLeft: 8,
     },
     selectedSection: {
         marginTop: 16,
