@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { collection, addDoc, getDocs, deleteDoc, updateDoc, query, where } from 'firebase/firestore';
 import { firestore } from '@/services/firebaseConfig';
+import { useAuth } from '@/contexts/AuthContext';
 
 export interface Category {
     name: string;
@@ -20,11 +21,31 @@ const CategoriesContext = createContext<CategoriesContextProps | undefined>(unde
 export const CategoriesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(false);
+    const { user } = useAuth();
     const colRef = collection(firestore, 'categories');
 
+    const DEFAULT_CATEGORIES = ['Food', 'Drink', 'Event'];
+
+    const initializeDefaultCategories = async (userId: string) => {
+        const q = query(colRef, where('userId', '==', userId));
+        const snap = await getDocs(q);
+        
+        if (snap.empty) {
+            for (const categoryName of DEFAULT_CATEGORIES) {
+                await addDoc(colRef, { 
+                    name: categoryName,
+                    userId: userId 
+                });
+            }
+        }
+    };
+
     const refreshCategories = async () => {
+        if (!user) return;
+        
         setLoading(true);
-        const snap = await getDocs(colRef);
+        const q = query(colRef, where('userId', '==', user.uid));
+        const snap = await getDocs(q);
         const data = snap.docs.map(d => ({
             name: (d.data() as any).name as string,
         }))
@@ -33,12 +54,20 @@ export const CategoriesProvider: React.FC<{ children: ReactNode }> = ({ children
     };
 
     const addCategory = async (newCategory: string) => {
-        await addDoc(colRef, { name: newCategory });
+        if (!user) return;
+        await addDoc(colRef, { 
+            name: newCategory,
+            userId: user.uid 
+        });
         await refreshCategories();
     };
 
     const deleteCategory = async (categoryName: string) => {
-        const q = query(colRef, where('name', '==', categoryName));
+        if (!user) return;
+        const q = query(colRef, 
+            where('name', '==', categoryName),
+            where('userId', '==', user.uid)
+        );
         const snap = await getDocs(q);
         for (const docSnap of snap.docs) {
             await deleteDoc(docSnap.ref);
@@ -47,7 +76,11 @@ export const CategoriesProvider: React.FC<{ children: ReactNode }> = ({ children
     };
 
     const renameCategory = async (oldName: string, newName: string) => {
-        const q = query(colRef, where('name', '==', oldName));
+        if (!user) return;
+        const q = query(colRef, 
+            where('name', '==', oldName),
+            where('userId', '==', user.uid)
+        );
         const snap = await getDocs(q);
         for (const docSnap of snap.docs) {
             await updateDoc(docSnap.ref, { name: newName });
@@ -55,7 +88,13 @@ export const CategoriesProvider: React.FC<{ children: ReactNode }> = ({ children
         await refreshCategories();
     };
 
-    useEffect(() => { refreshCategories(); }, []);
+    useEffect(() => {
+        if (user) {
+            initializeDefaultCategories(user.uid).then(() => {
+                refreshCategories();
+            });
+        }
+    }, [user]);
 
     return (
         <CategoriesContext.Provider value={{ categories, loading, addCategory, refreshCategories, deleteCategory, renameCategory }}>
