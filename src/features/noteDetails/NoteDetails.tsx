@@ -45,7 +45,9 @@ const NoteDetails: FC = () => {
     const [menuVisible, setMenuVisible] = useState(false)
     const [imageExpanded, setImageExpanded] = useState(false)
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
+    const [imageLoadingStates, setImageLoadingStates] = useState<boolean[]>([])
     const indicatorAnimations = useRef<Animated.Value[]>([]).current
+    const loaderAnimation = useRef(new Animated.Value(0)).current
 
     const expandAnimation = useRef(new Animated.Value(0)).current
     const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
@@ -61,6 +63,7 @@ const NoteDetails: FC = () => {
 
     useEffect(() => {
         indicatorAnimations.length = allImages.length
+        setImageLoadingStates(new Array(allImages.length).fill(true))
         for (let i = 0; i < allImages.length; i++) {
             if (!indicatorAnimations[i]) {
                 indicatorAnimations[i] = new Animated.Value(i === currentImageIndex ? 1 : 0)
@@ -77,6 +80,19 @@ const NoteDetails: FC = () => {
             }).start()
         })
     }, [currentImageIndex, indicatorAnimations])
+
+    useEffect(() => {
+        const spinAnimation = () => {
+            Animated.loop(
+                Animated.timing(loaderAnimation, {
+                    toValue: 1,
+                    duration: 1000,
+                    useNativeDriver: true,
+                })
+            ).start()
+        }
+        spinAnimation()
+    }, [])
 
     useEffect(() => {
         const ref = firestoreDoc(firestore, 'reviews', navNote.id)
@@ -180,6 +196,22 @@ const NoteDetails: FC = () => {
         toggleImageExpansion()
     }, [toggleImageExpansion])
 
+    const handleImageLoad = useCallback((index: number) => {
+        setImageLoadingStates(prev => {
+            const newStates = [...prev]
+            newStates[index] = false
+            return newStates
+        })
+    }, [])
+
+    const handleImageError = useCallback((index: number) => {
+        setImageLoadingStates(prev => {
+            const newStates = [...prev]
+            newStates[index] = false
+            return newStates
+        })
+    }, [])
+
     return (
         <LinearGradient
             colors={['#E0E7FF', '#C7D2FE', '#A5B4FC', '#818CF8']}
@@ -274,10 +306,29 @@ const NoteDetails: FC = () => {
                                             activeOpacity={0.9}
                                             style={styles.imageContainer}
                                         >
+                                            {imageLoadingStates[index] && (
+                                                <View style={styles.imageLoader}>
+                                                    <Animated.View 
+                                                        style={[
+                                                            styles.loaderSpinner,
+                                                            {
+                                                                transform: [{
+                                                                    rotate: loaderAnimation.interpolate({
+                                                                        inputRange: [0, 1],
+                                                                        outputRange: ['0deg', '360deg'],
+                                                                    })
+                                                                }]
+                                                            }
+                                                        ]}
+                                                    />
+                                                </View>
+                                            )}
                                             <Image
                                                 source={{ uri: imageUri }}
-                                                style={styles.image}
+                                                style={[styles.image, imageLoadingStates[index] && { opacity: 0 }]}
                                                 resizeMode="cover"
+                                                onLoad={() => handleImageLoad(index)}
+                                                onError={() => handleImageError(index)}
                                             />
                                         </TouchableOpacity>
                                     ))}
@@ -411,10 +462,29 @@ const NoteDetails: FC = () => {
                                 >
                                     {allImages.map((imageUri, index) => (
                                         <View key={index} style={styles.expandedImageSlide}>
+                                            {imageLoadingStates[index] && (
+                                                <View style={styles.expandedImageLoader}>
+                                                    <Animated.View 
+                                                        style={[
+                                                            styles.expandedLoaderSpinner,
+                                                            {
+                                                                transform: [{
+                                                                    rotate: loaderAnimation.interpolate({
+                                                                        inputRange: [0, 1],
+                                                                        outputRange: ['0deg', '360deg'],
+                                                                    })
+                                                                }]
+                                                            }
+                                                        ]}
+                                                    />
+                                                </View>
+                                            )}
                                             <Image
                                                 source={{ uri: imageUri }}
-                                                style={styles.expandedImage}
+                                                style={[styles.expandedImage, imageLoadingStates[index] && { opacity: 0 }]}
                                                 resizeMode="contain"
+                                                onLoad={() => handleImageLoad(index)}
+                                                onError={() => handleImageError(index)}
                                             />
                                         </View>
                                     ))}

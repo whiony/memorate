@@ -393,4 +393,48 @@ export const styles = StyleSheet.create({
         color: '#6366F1',
         letterSpacing: 0.3,
     },
+
+    imageLoader: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        zIndex: 2,
+    },
+
+    loaderSpinner: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        borderWidth: 3,
+        borderColor: 'rgba(255,255,255,0.3)',
+        borderTopColor: 'rgba(99, 102, 241, 0.8)',
+    },
+
+    expandedImageLoader: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        zIndex: 2,
+    },
+
+    expandedLoaderSpinner: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        borderWidth: 4,
+        borderColor: 'rgba(255,255,255,0.2)',
+        borderTopColor: '#fff',
+    },
 })
