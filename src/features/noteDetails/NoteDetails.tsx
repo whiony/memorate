@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useCallback, useMemo } from 'react'
+import React, { FC, useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import {
     View,
     Text,
@@ -8,6 +8,8 @@ import {
     SafeAreaView,
     Modal,
     Pressable,
+    Animated,
+    Dimensions,
 } from 'react-native'
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack'
@@ -40,8 +42,11 @@ const NoteDetails: FC = () => {
         edited: navNote.edited ? new Date(navNote.edited) : undefined,
     })
     const [delVisible, setDelVisible] = useState(false)
-
     const [menuVisible, setMenuVisible] = useState(false)
+    const [imageExpanded, setImageExpanded] = useState(false)
+    
+    const expandAnimation = useRef(new Animated.Value(0)).current
+    const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
 
     useEffect(() => {
         const ref = firestoreDoc(firestore, 'reviews', navNote.id)
@@ -109,6 +114,25 @@ const NoteDetails: FC = () => {
         navigation.goBack()
     }, [note, navigation])
     const openDeleteModal = useCallback(() => setDelVisible(true), [])
+
+    const toggleImageExpansion = useCallback(() => {
+        if (imageExpanded) {
+            // Collapse animation
+            Animated.timing(expandAnimation, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: false,
+            }).start(() => setImageExpanded(false))
+        } else {
+            // Expand animation
+            setImageExpanded(true)
+            Animated.timing(expandAnimation, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: false,
+            }).start()
+        }
+    }, [imageExpanded, expandAnimation])
 
     return (
         <LinearGradient
@@ -182,9 +206,19 @@ const NoteDetails: FC = () => {
                 <ScrollView contentContainerStyle={styles.scrollContent}>
                     <View style={styles.noteCard}>
                         {note.image && (
-                            <View style={styles.imageWrapper}>
-                                <Image source={{ uri: note.image }} style={styles.image} />
-                            </View>
+                            <TouchableOpacity 
+                                onPress={toggleImageExpansion}
+                                activeOpacity={0.9}
+                                style={styles.imageWrapper}
+                            >
+                                <View style={styles.imageContainer}>
+                                    <Image 
+                                        source={{ uri: note.image }} 
+                                        style={styles.image} 
+                                        resizeMode="cover"
+                                    />
+                                </View>
+                            </TouchableOpacity>
                         )}
 
                         <BlurView intensity={120} tint="light" style={styles.noteBody}>
@@ -245,6 +279,50 @@ const NoteDetails: FC = () => {
                     onCancel={() => setDelVisible(false)}
                     onConfirm={handleDelete}
                 />
+
+                {/* Image Expansion Modal */}
+                <Modal
+                    visible={imageExpanded}
+                    transparent
+                    animationType="fade"
+                    statusBarTranslucent
+                    onRequestClose={toggleImageExpansion}
+                >
+                    <View style={styles.imageModalContainer}>
+                        <TouchableOpacity 
+                            style={styles.imageModalBackground}
+                            onPress={toggleImageExpansion}
+                            activeOpacity={1}
+                        >
+                            <Animated.View style={[
+                                styles.expandedImageContainer,
+                                {
+                                    transform: [{
+                                        scale: expandAnimation.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [0.8, 1],
+                                        })
+                                    }],
+                                    opacity: expandAnimation,
+                                }
+                            ]}>
+                                <Image 
+                                    source={{ uri: note.image }} 
+                                    style={styles.expandedImage} 
+                                    resizeMode="contain"
+                                />
+                                <TouchableOpacity 
+                                    style={styles.closeButton}
+                                    onPress={toggleImageExpansion}
+                                >
+                                    <BlurView intensity={100} tint="light" style={styles.closeButtonBlur}>
+                                        <Ionicons name="close" size={24} color="#fff" />
+                                    </BlurView>
+                                </TouchableOpacity>
+                            </Animated.View>
+                        </TouchableOpacity>
+                    </View>
+                </Modal>
             </SafeAreaView>
         </LinearGradient>
     )

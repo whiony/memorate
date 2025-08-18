@@ -49,7 +49,6 @@ export const styles = StyleSheet.create({
     imageWrapper: {
         position: 'relative',
         width: width - 32,
-        height: (width - 32) * 0.75,
         alignSelf: 'center',
         borderTopLeftRadius: 32,
         borderTopRightRadius: 32,
@@ -60,11 +59,70 @@ export const styles = StyleSheet.create({
         borderColor: 'rgba(255,255,255,0.2)',
     },
 
+    imageContainer: {
+        width: '100%',
+        height: (width - 32) * 0.75,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        overflow: 'hidden',
+        position: 'relative',
+    },
+
     image: {
         width: '100%',
         height: '100%',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
+    },
+
+    closeButton: {
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        overflow: 'hidden',
+        zIndex: 10,
+    },
+
+    closeButtonBlur: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.3)',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)',
+    },
+
+    imageModalContainer: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.95)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    imageModalBackground: {
+        flex: 1,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+
+    expandedImageContainer: {
+        width: '100%',
+        height: '80%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+    },
+
+    expandedImage: {
+        width: '100%',
+        height: '100%',
     },
 
     noteCard: {
