@@ -241,10 +241,11 @@ const NoteDetails: FC = () => {
                                     snapToInterval={screenWidth - 32}
                                     decelerationRate="fast"
                                     snapToAlignment="center"
-                                    onMomentumScrollEnd={(event) => {
+                                    onScroll={(event) => {
                                         const newIndex = Math.round(event.nativeEvent.contentOffset.x / (screenWidth - 32))
                                         setCurrentImageIndex(newIndex)
                                     }}
+                                    scrollEventThrottle={16}
                                 >
                                     {allImages.map((imageUri, index) => (
                                         <TouchableOpacity
