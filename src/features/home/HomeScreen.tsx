@@ -178,25 +178,8 @@ const HomeScreen: React.FC = () => {
         setSelectedTags(updatedTags)
     }
 
-    const handleLogout = async () => {
-        Alert.alert(
-            'Sign Out',
-            'Are you sure you want to sign out?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Sign Out',
-                    style: 'destructive',
-                    onPress: async () => {
-                        try {
-                            await logout()
-                        } catch (error) {
-                            Alert.alert('Error', 'Failed to sign out')
-                        }
-                    }
-                }
-            ]
-        )
+    const handleProfile = () => {
+        navigation.navigate('Profile')
     }
 
     return (
@@ -281,8 +264,8 @@ const HomeScreen: React.FC = () => {
                             </BlurView>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.iconButton, styles.rightIcon]} onPress={handleLogout}>
-                            <Ionicons name="log-out-outline" size={24} color="#fff" />
+                        <TouchableOpacity style={[styles.iconButton, styles.rightIcon]} onPress={handleProfile}>
+                            <Ionicons name="person-outline" size={24} color="#fff" />
                         </TouchableOpacity>
                     </View>
 

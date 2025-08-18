@@ -8,6 +8,8 @@ import AddNoteScreen from '@/features/addNote/AddNoteScreen'
 import NoteDetails from '@/features/noteDetails/NoteDetails'
 import FilterModal from '@/modals/FilterModal'
 import AuthScreen from '@/features/auth/AuthScreen'
+import ProfileScreen from '@/features/profile/ProfileScreen'
+import SettingsScreen from '@/features/settings/SettingsScreen'
 
 import { CategoriesProvider } from '@/hooks/useCategories'
 import { SortProvider, SortKey } from '@/contexts/SortContext'
@@ -36,6 +38,8 @@ export type RootStackParamList = {
     AddNote: { note?: NavNote }
     NoteDetails: { note: NavNote }
     FilterModal: { current: SortKey }
+    Profile: undefined
+    Settings: undefined
 }
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -134,6 +138,8 @@ const AppContent: FC = () => {
                             component={NoteDetails}
                             options={noteDetailsOptions}
                         />
+                        <Stack.Screen name="Profile" component={ProfileScreen} />
+                        <Stack.Screen name="Settings" component={SettingsScreen} />
                         <Stack.Screen
                             name="FilterModal"
                             component={FilterModal}
