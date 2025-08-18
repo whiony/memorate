@@ -134,19 +134,6 @@ export const styles = StyleSheet.create({
         paddingVertical: 8,
     },
 
-    ratingContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-    },
-
-    ratingText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#333',
-        letterSpacing: 0.3,
-    },
-
     price: {
         fontSize: 18,
         fontWeight: '700',

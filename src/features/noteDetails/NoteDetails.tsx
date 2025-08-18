@@ -212,10 +212,7 @@ const NoteDetails: FC = () => {
                                 <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">{note.name}</Text>
 
                                 <View style={styles.inlineRow}>
-                                    <View style={styles.ratingContainer}>
-                                        <StarRating rating={note.rating} disabled cardList />
-                                        <Text style={styles.ratingText}>{note.rating.toFixed(1)}</Text>
-                                    </View>
+                                    <StarRating rating={note.rating} disabled />
                                     {!!note.price && <Text style={styles.price}>{priceDisplay}</Text>}
                                 </View>
 
