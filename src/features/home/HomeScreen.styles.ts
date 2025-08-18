@@ -1,11 +1,72 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-    header: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        marginTop: 70,
+    headerContainer: {
+        marginTop: 60,
         marginBottom: 20,
+        paddingHorizontal: 8,
+    },
+
+    headerContent: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+
+    headerLeft: {
+        flex: 1,
+    },
+
+    greeting: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: 'rgba(0,0,0,0.7)',
+        letterSpacing: 0.3,
+        marginBottom: 4,
+    },
+
+    userEmail: {
+        fontSize: 28,
+        fontWeight: '800',
+        color: '#111',
+        letterSpacing: 0.5,
+        textTransform: 'capitalize',
+    },
+
+    headerRight: {
+        alignItems: 'flex-end',
+    },
+
+    statsContainer: {
+        backgroundColor: 'rgba(255,255,255,0.25)',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderRadius: 20,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.4)',
+        shadowColor: 'rgba(99, 102, 241, 0.3)',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+
+    statsNumber: {
+        fontSize: 20,
+        fontWeight: '800',
+        color: '#111',
+        letterSpacing: 0.3,
+        lineHeight: 22,
+    },
+
+    statsLabel: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: 'rgba(0,0,0,0.6)',
+        letterSpacing: 0.5,
+        textTransform: 'uppercase',
+        marginTop: 2,
     },
 
     categoryContainer: {

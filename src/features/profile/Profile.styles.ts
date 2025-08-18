@@ -105,12 +105,74 @@ export const styles = StyleSheet.create({
         flex: 1,
     },
 
-    email: {
-        fontSize: 20,
-        fontWeight: '700',
+    nameContainer: {
+        marginBottom: 8,
+    },
+
+    nameDisplayContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+
+    displayName: {
+        fontSize: 24,
+        fontWeight: '800',
         color: '#111',
+        letterSpacing: 0.5,
+        textTransform: 'capitalize',
+    },
+
+    editButton: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: 'rgba(99, 102, 241, 0.15)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(99, 102, 241, 0.3)',
+    },
+
+    nameEditContainer: {
+        gap: 8,
+    },
+
+    nameInput: {
+        fontSize: 24,
+        fontWeight: '800',
+        color: '#111',
+        letterSpacing: 0.5,
+        backgroundColor: 'rgba(255,255,255,0.6)',
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderWidth: 2,
+        borderColor: '#6366F1',
+    },
+
+    nameEditActions: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+
+    nameActionButton: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: 'rgba(255,255,255,0.8)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1.5,
+        borderColor: 'rgba(255,255,255,0.4)',
+    },
+
+    email: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#666',
         marginBottom: 4,
-        letterSpacing: 0.3,
+        letterSpacing: 0.2,
     },
 
     joinDate: {

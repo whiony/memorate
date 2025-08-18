@@ -19,6 +19,7 @@ import {
     onSnapshot,
     deleteDoc,
     doc,
+    getDoc,
 } from 'firebase/firestore'
 import { firestore } from '@/services/firebaseConfig'
 import { deleteFromCloudinary } from '@/utils/deleteFromCloudinary'
@@ -45,7 +46,8 @@ const HomeScreen: React.FC = () => {
     const { sortBy, sortOrder } = useSort()
     const { categories: loadedCats, renameCategory, deleteCategory } = useCategories()
     const swipeableRefs = useRef<Swipeable[]>([])
-    const { logout, user } = useAuth()
+    const { user } = useAuth()
+    const [displayName, setDisplayName] = useState('')
 
     const [renameVisible, setRenameVisible] = useState(false)
     const [deleteVisible, setDeleteVisible] = useState(false)
@@ -90,6 +92,28 @@ const HomeScreen: React.FC = () => {
         })
 
         return unsub
+    }, [user])
+
+    useEffect(() => {
+        const fetchDisplayName = async () => {
+            if (!user) return
+
+            try {
+                const userDocRef = doc(firestore, 'users', user.uid)
+                const userDoc = await getDoc(userDocRef)
+
+                if (userDoc.exists() && userDoc.data().displayName) {
+                    setDisplayName(userDoc.data().displayName)
+                } else {
+                    setDisplayName(user.email?.split('@')[0] || 'User')
+                }
+            } catch (error) {
+                console.error('Error fetching display name:', error)
+                setDisplayName(user.email?.split('@')[0] || 'User')
+            }
+        }
+
+        fetchDisplayName()
     }, [user])
 
     const closeAll = () => swipeableRefs.current.forEach(r => r?.close())
@@ -195,7 +219,28 @@ const HomeScreen: React.FC = () => {
                         { flex: 1, paddingHorizontal: 16 },
                     ]}
                 >
-                    <Text style={styles.header}>Memorate</Text>
+                    <View style={styles.headerContainer}>
+                        <View style={styles.headerContent}>
+                            <View style={styles.headerLeft}>
+                                <Text style={styles.greeting}>
+                                    {new Date().getHours() < 12
+                                        ? 'Good morning'
+                                        : new Date().getHours() < 18
+                                            ? 'Good afternoon'
+                                            : 'Good evening'}
+                                </Text>
+                                <Text style={styles.userEmail}>{displayName || 'User'}</Text>
+                            </View>
+                            <View style={styles.headerRight}>
+                                <View style={styles.statsContainer}>
+                                    <Text style={styles.statsNumber}>{filteredAndSortedNotes.length}</Text>
+                                    <Text style={styles.statsLabel}>
+                                        {filteredAndSortedNotes.length === 1 ? 'Review' : 'Reviews'}
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
 
                     <View style={styles.categoryContainer}>
                         <CategoryFilter
