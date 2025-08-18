@@ -26,6 +26,7 @@ import { Category, useCategories } from '@/hooks/useCategories'
 import type { Note, RootStackParamList } from '@/navigation/AppNavigator'
 import NoteCard from './components/NoteCard/NoteCard'
 import CategoryFilter from './components/CategoryFilter/CategoryFilter'
+import EmptyState from './components/EmptyState/EmptyState'
 import { styles } from './HomeScreen.styles'
 import { useSort } from '@/contexts/SortContext'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -222,29 +223,33 @@ const HomeScreen: React.FC = () => {
                         />
                     </View>
 
-                    <FlatList
-                        data={filteredAndSortedNotes}
-                        keyExtractor={item => item.id}
-                        onScroll={closeAll}
-                        onTouchStart={closeAll}
-                        showsVerticalScrollIndicator={false}
-                        renderItem={({ item, index }) => (
-                            <TouchableWithoutFeedback onPress={() => openDetail(item)}>
-                                <View>
-                                    <NoteCard
-                                        ref={ref => {
-                                            swipeableRefs.current[index] = ref!
-                                        }}
-                                        note={item}
-                                        onEdit={openEdit}
-                                        onDelete={handleDelete}
-                                        onPress={openDetail}
-                                    />
-                                </View>
-                            </TouchableWithoutFeedback>
-                        )}
-                        contentContainerStyle={styles.listContent}
-                    />
+                    {filteredAndSortedNotes.length === 0 ? (
+                        <EmptyState onAddNote={() => navigation.navigate('AddNote', {})} />
+                    ) : (
+                        <FlatList
+                            data={filteredAndSortedNotes}
+                            keyExtractor={item => item.id}
+                            onScroll={closeAll}
+                            onTouchStart={closeAll}
+                            showsVerticalScrollIndicator={false}
+                            renderItem={({ item, index }) => (
+                                <TouchableWithoutFeedback onPress={() => openDetail(item)}>
+                                    <View>
+                                        <NoteCard
+                                            ref={ref => {
+                                                swipeableRefs.current[index] = ref!
+                                            }}
+                                            note={item}
+                                            onEdit={openEdit}
+                                            onDelete={handleDelete}
+                                            onPress={openDetail}
+                                        />
+                                    </View>
+                                </TouchableWithoutFeedback>
+                            )}
+                            contentContainerStyle={styles.listContent}
+                        />
+                    )}
 
 
                     <View style={styles.tabBarContainer}>
