@@ -116,6 +116,7 @@ const NoteDetails: FC = () => {
                     edited: data.edited?.toDate(),
                     price: data.price,
                     currency: data.currency,
+                    userId: data.userId,
                 })
             }
         })

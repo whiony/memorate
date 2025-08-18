@@ -1,28 +1,28 @@
 export const lightTheme = {
-    background: ['#E0E7FF', '#C7D2FE', '#A5B4FC', '#818CF8'],
+    background: ['#E0E7FF', '#C7D2FE', '#A5B4FC', '#818CF8'] as const,
     cardBackground: 'rgba(255,255,255,0.4)',
     cardGradient: [
         'rgba(255,255,255,0.4)',
         'rgba(255,255,255,0.2)',
         'rgba(99, 102, 241, 0.1)'
-    ],
-    cardMainGradient: ['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)'],
+    ] as const,
+    cardMainGradient: ['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)'] as const,
     cardBodyGradient: [
         'rgba(255,255,255,0.35)',
         'rgba(255,255,255,0.15)',
         'rgba(99, 102, 241, 0.08)'
-    ],
-    searchButtonGradient: ['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.1)'],
+    ] as const,
+    searchButtonGradient: ['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.1)'] as const,
     noteDetailsGradient: [
         'rgba(255,255,255,0.6)',
         'rgba(255,255,255,0.4)',
         'rgba(99, 102, 241, 0.1)'
-    ],
+    ] as const,
     popupMenuGradient: [
         'rgba(255,255,255,0.4)',
         'rgba(255,255,255,0.25)',
         'rgba(99, 102, 241, 0.08)'
-    ],
+    ] as const,
     text: '#111',
     textSecondary: '#666',
     textMuted: '#999',
@@ -40,30 +40,30 @@ export const lightTheme = {
 }
 
 export const darkTheme = {
-    background: ['#1a1a2e', '#16213e', '#0f3460', '#533483'],
+    background: ['#1a1a2e', '#16213e', '#0f3460', '#533483'] as const,
     cardBackground: 'rgba(40,40,60,0.8)',
     cardGradient: [
         'rgba(40,40,60,0.8)',
         'rgba(30,30,50,0.6)',
         'rgba(99, 102, 241, 0.2)'
-    ],
-    cardMainGradient: ['rgba(40,40,60,0.8)', 'rgba(30,30,50,0)'],
+    ] as const,
+    cardMainGradient: ['rgba(40,40,60,0.8)', 'rgba(30,30,50,0)'] as const,
     cardBodyGradient: [
         'rgba(40,40,60,0.8)',
         'rgba(30,30,50,0.6)',
         'rgba(139, 92, 246, 0.2)'
-    ],
-    searchButtonGradient: ['rgba(40,40,60,0.6)', 'rgba(30,30,50,0.4)'],
+    ] as const,
+    searchButtonGradient: ['rgba(40,40,60,0.6)', 'rgba(30,30,50,0.4)'] as const,
     noteDetailsGradient: [
         'rgba(40,40,60,0.9)',
         'rgba(30,30,50,0.7)',
         'rgba(139, 92, 246, 0.2)'
-    ],
+    ] as const,
     popupMenuGradient: [
         'rgba(40,40,60,0.9)',
         'rgba(30,30,50,0.7)',
         'rgba(139, 92, 246, 0.15)'
-    ],
+    ] as const,
     text: '#fff',
     textSecondary: '#bbb',
     textMuted: '#888',
@@ -80,4 +80,4 @@ export const darkTheme = {
     tabBarIcon: '#fff',
 }
 
-export type Theme = typeof lightTheme
+export type Theme = typeof lightTheme | typeof darkTheme
