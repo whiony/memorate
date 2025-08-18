@@ -8,6 +8,8 @@ import {
     Animated,
     Dimensions,
 } from 'react-native'
+import { BlurView } from 'expo-blur'
+import { LinearGradient } from 'expo-linear-gradient'
 
 interface DeleteNoteProps {
     visible: boolean
@@ -59,29 +61,46 @@ const DeleteNoteModal: FC<DeleteNoteProps> = ({
                         { opacity, transform: [{ scale }] },
                     ]}
                 >
-                    <Text style={styles.message}>
-                        Are you sure you want to delete "{noteName}"?
-                    </Text>
+                    <BlurView intensity={120} tint="light" style={styles.modalBlur}>
+                        <LinearGradient
+                            colors={[
+                                'rgba(255,255,255,0.7)', 
+                                'rgba(255,255,255,0.5)', 
+                                'rgba(99, 102, 241, 0.12)'
+                            ]}
+                            style={StyleSheet.absoluteFill}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                        />
+                        
+                        <View style={styles.messageContainer}>
+                            <Text style={styles.message}>
+                                Are you sure you want to delete "{noteName}"?
+                            </Text>
+                        </View>
 
-                    <View style={styles.buttonRow}>
-                        <TouchableOpacity
-                            onPress={onCancel}
-                            style={[styles.button, styles.cancelButton]}
-                        >
-                            <Text style={[styles.buttonText, styles.cancelText]}>
-                                Cancel
-                            </Text>
-                        </TouchableOpacity>
-                        <View style={styles.separator} />
-                        <TouchableOpacity
-                            onPress={onConfirm}
-                            style={[styles.button, styles.deleteButton]}
-                        >
-                            <Text style={[styles.buttonText, styles.deleteText]}>
-                                Delete
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
+                        <View style={styles.buttonRow}>
+                            <TouchableOpacity
+                                onPress={onCancel}
+                                style={[styles.button, styles.cancelButton]}
+                            >
+                                <Text style={[styles.buttonText, styles.cancelText]}>
+                                    Cancel
+                                </Text>
+                            </TouchableOpacity>
+                            
+                            <View style={styles.separator} />
+                            
+                            <TouchableOpacity
+                                onPress={onConfirm}
+                                style={[styles.button, styles.deleteButton]}
+                            >
+                                <Text style={[styles.buttonText, styles.deleteText]}>
+                                    Delete
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </BlurView>
                 </Animated.View>
             </View>
         </Modal>
@@ -91,32 +110,43 @@ const DeleteNoteModal: FC<DeleteNoteProps> = ({
 const styles = StyleSheet.create({
     backdrop: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.35)',
+        backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'center',
         alignItems: 'center',
     },
     modal: {
-        width: SCREEN_WIDTH * 0.6,
-        backgroundColor: '#FFF',
-        borderRadius: 14,
+        width: SCREEN_WIDTH * 0.75,
+        borderRadius: 24,
         overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        shadowOffset: { width: 0, height: 4 },
-        elevation: 6,
+        shadowColor: 'rgba(99, 102, 241, 0.4)',
+        shadowOpacity: 0.3,
+        shadowRadius: 20,
+        shadowOffset: { width: 0, height: 12 },
+        elevation: 15,
+        borderWidth: 1.5,
+        borderColor: 'rgba(255,255,255,0.3)',
+    },
+    modalBlur: {
+        borderRadius: 24,
+        overflow: 'hidden',
+    },
+    messageContainer: {
+        paddingVertical: 28,
+        paddingHorizontal: 24,
     },
     message: {
-        fontSize: 17,
+        fontSize: 18,
         textAlign: 'center',
-        paddingVertical: 20,
-        paddingHorizontal: 16,
-        color: '#000',
-        lineHeight: 22,
+        color: '#111',
+        lineHeight: 26,
+        fontWeight: '600',
+        letterSpacing: 0.3,
     },
     buttonRow: {
         flexDirection: 'row',
-        height: 50,
+        height: 60,
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(255,255,255,0.3)',
     },
     button: {
         flex: 1,
@@ -124,23 +154,25 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     separator: {
-        width: StyleSheet.hairlineWidth,
-        backgroundColor: '#CCC',
+        width: 1,
+        backgroundColor: 'rgba(255,255,255,0.3)',
     },
     cancelButton: {
-        backgroundColor: '#FFF',
+        borderBottomLeftRadius: 24,
     },
     deleteButton: {
-        backgroundColor: '#FFF',
+        borderBottomRightRadius: 24,
     },
     buttonText: {
         fontSize: 17,
+        fontWeight: '600',
+        letterSpacing: 0.3,
     },
     cancelText: {
-        color: '#007AFF',
+        color: '#6366F1',
     },
     deleteText: {
-        color: '#FF3B30',
+        color: '#E53935',
     },
 })
 

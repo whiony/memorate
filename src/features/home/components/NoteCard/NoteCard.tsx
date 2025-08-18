@@ -56,16 +56,19 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                 }}
                 style={styles.actionButton}
             >
-                <View style={styles.absoluteFill}>
-                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
-                        <LinearGradient
-                            colors={['rgba(250,198,99,0.12)', 'rgba(250,198,99,0.05)']}
-                            style={styles.gradientOverlay}
-                        />
-                        <View style={styles.glassBorder} />
-                        <Ionicons name="create-outline" size={25} color="#fff" style={styles.editIcon} />
-                    </BlurView>
-                </View>
+                <BlurView intensity={100} tint="light" style={styles.editButton}>
+                    <LinearGradient
+                        colors={[
+                            'rgba(99, 102, 241, 0.3)', 
+                            'rgba(129, 140, 248, 0.2)',
+                            'rgba(165, 180, 252, 0.15)'
+                        ]}
+                        style={styles.gradientOverlay}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                    />
+                    <Ionicons name="create-outline" size={26} color="#fff" style={styles.editIcon} />
+                </BlurView>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -75,16 +78,19 @@ const NoteCard = forwardRef<SwipeableType, Props>(function NoteCard(
                 }}
                 style={styles.actionButton}
             >
-                <View style={styles.absoluteFill}>
-                    <BlurView intensity={70} tint="light" style={styles.glassButton}>
-                        <LinearGradient
-                            colors={['rgba(239,83,80,0.12)', 'rgba(239,83,80,0.05)']}
-                            style={styles.gradientOverlay}
-                        />
-                        <View style={styles.glassBorder} />
-                        <Ionicons name="trash-outline" size={25} color="#fff" />
-                    </BlurView>
-                </View>
+                <BlurView intensity={100} tint="light" style={styles.deleteButton}>
+                    <LinearGradient
+                        colors={[
+                            'rgba(248, 113, 113, 0.35)', 
+                            'rgba(239, 68, 68, 0.25)',
+                            'rgba(220, 38, 38, 0.15)'
+                        ]}
+                        style={styles.gradientOverlay}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                    />
+                    <Ionicons name="trash-outline" size={26} color="#fff" />
+                </BlurView>
             </TouchableOpacity>
 
         </View>

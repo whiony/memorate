@@ -181,24 +181,33 @@ export const styles = StyleSheet.create({
     },
 
     popupMenu: {
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-        elevation: 5,
-        minWidth: 120,
+        borderRadius: 16,
+        paddingVertical: 12,
+        paddingHorizontal: 0,
+        shadowColor: 'rgba(99, 102, 241, 0.4)',
+        shadowOpacity: 0.3,
+        shadowRadius: 20,
+        shadowOffset: { width: 0, height: 8 },
+        elevation: 12,
+        minWidth: 140,
+        overflow: 'hidden',
+        borderWidth: 1.5,
+        borderColor: 'rgba(255,255,255,0.3)',
     },
 
     menuItem: {
-        paddingVertical: 10,
+        paddingVertical: 14,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgba(255,255,255,0.2)',
     },
 
     menuText: {
         fontSize: 16,
         color: '#111',
+        fontWeight: '600',
+        letterSpacing: 0.3,
     },
 
     menuButton: {

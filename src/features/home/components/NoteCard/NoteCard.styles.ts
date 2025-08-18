@@ -157,56 +157,51 @@ export const styles = StyleSheet.create({
     },
 
     actionButton: {
-        width: 66,
-        height: 66,
-        borderRadius: 50,
+        width: 70,
+        height: 70,
+        borderRadius: 35,
         justifyContent: 'center',
         alignItems: 'center',
-        marginHorizontal: 4,
+        marginHorizontal: 6,
+        shadowColor: 'rgba(0,0,0,0.3)',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 6,
     },
 
-    editAction: {
-        backgroundColor: '#fac663',
-    },
-
-    editIcon: {
-        paddingLeft: 3,
-    },
-
-    deleteAction: {
-        backgroundColor: '#EF5350',
-    },
-
-    glassButton: {
+    editButton: {
         width: '100%',
         height: '100%',
-        borderRadius: 50,
+        borderRadius: 35,
         overflow: 'hidden',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        borderColor: 'rgba(255, 255, 255, 0.2)',
+        borderWidth: 1.5,
+        borderColor: 'rgba(255,255,255,0.4)',
     },
 
-    absoluteFill: {
-        ...StyleSheet.absoluteFillObject,
+    deleteButton: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 35,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1.5,
+        borderColor: 'rgba(255,255,255,0.4)',
+    },
+
+    editIcon: {
+        paddingLeft: 2,
+        textShadowColor: 'rgba(0,0,0,0.3)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 2,
     },
 
     gradientOverlay: {
         ...StyleSheet.absoluteFillObject,
-        borderRadius: 50,
+        borderRadius: 35,
         zIndex: -1,
-    },
-
-    glassBorder: {
-        ...StyleSheet.absoluteFillObject,
-        borderRadius: 9999,
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.4)',
-
-        shadowColor: '#fff',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.08,
-        shadowRadius: 10,
     },
 });

@@ -150,20 +150,30 @@ const NoteDetails: FC = () => {
                             onPress={() => setMenuVisible(false)}
                         >
                             <View style={styles.popupWrapper}>
-                                <View style={styles.popupMenu}>
+                                <BlurView intensity={120} tint="light" style={styles.popupMenu}>
+                                    <LinearGradient
+                                        colors={[
+                                            'rgba(255,255,255,0.4)', 
+                                            'rgba(255,255,255,0.25)',
+                                            'rgba(99, 102, 241, 0.08)'
+                                        ]}
+                                        style={StyleSheet.absoluteFill}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 1 }}
+                                    />
                                     <TouchableOpacity style={styles.menuItem} onPress={() => {
                                         setMenuVisible(false)
                                         handleEdit()
                                     }}>
                                         <Text style={styles.menuText}>Edit</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.menuItem} onPress={() => {
+                                    <TouchableOpacity style={[styles.menuItem, { borderBottomWidth: 0 }]} onPress={() => {
                                         setMenuVisible(false)
                                         openDeleteModal()
                                     }}>
                                         <Text style={[styles.menuText, { color: '#E53935' }]}>Delete</Text>
                                     </TouchableOpacity>
-                                </View>
+                                </BlurView>
                             </View>
                         </Pressable>
                     </Modal>
@@ -232,7 +242,7 @@ const NoteDetails: FC = () => {
                 <DeleteNoteModal
                     visible={delVisible}
                     noteName={note.name}
-                    onCancel={handleGoBack}
+                    onCancel={() => setDelVisible(false)}
                     onConfirm={handleDelete}
                 />
             </SafeAreaView>
