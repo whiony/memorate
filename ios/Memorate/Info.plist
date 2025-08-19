@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- App Bundle Information -->
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>Memorate</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	
+	<!-- App Category -->
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.lifestyle</string>
+	
+	<!-- Minimum iOS Version -->
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+	
+	<!-- Device Requirements -->
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	
+	<!-- Supported Interface Orientations -->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+	</array>
+	
+	<!-- iPad Interface Orientations (if supporting iPad) -->
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	
+	<!-- Status Bar Configuration -->
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleDefault</string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+	
+	<!-- Launch Screen -->
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	
+	<!-- Main Interface -->
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	
+	<!-- Privacy Permissions -->
+	
+	<!-- Camera Access -->
+	<key>NSCameraUsageDescription</key>
+	<string>Memorate needs access to your camera to take photos of your purchases and experiences for your personal reviews.</string>
+	
+	<!-- Photo Library Access -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Memorate needs access to your photo library to select images for your purchase reviews and experiences.</string>
+	
+	<!-- Photo Library Add Usage -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Memorate can save photos to your photo library when you choose to export your memories.</string>
+	
+	<!-- Location Access (if needed for purchase location tracking) -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Memorate can optionally use your location to tag where you made purchases for better organization of your memories.</string>
+	
+	<!-- Network Usage (for Firebase and Cloudinary) -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>cloudinary.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.0</string>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>res.cloudinary.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.0</string>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	
+	<!-- Firebase Configuration -->
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	
+	<!-- URL Schemes (for deep linking) -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>memorate.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>memorate</string>
+			</array>
+		</dict>
+	</array>
+	
+	<!-- Document Types (if supporting file sharing) -->
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.image</string>
+				<string>public.jpeg</string>
+				<string>public.png</string>
+			</array>
+		</dict>
+	</array>
+	
+	<!-- Exported Type Declarations -->
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Memorate Review Data</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.memorate.review</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>memorate</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+	
+	<!-- Background App Refresh -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>background-processing</string>
+		<string>background-fetch</string>
+	</array>
+	
+	<!-- Scene Configuration (iOS 13+) -->
+	<key>UISceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	
+	<!-- App Capabilities -->
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+		<string>camera-flash</string>
+		<string>still-camera</string>
+	</array>
+	
+	<!-- Fonts (if using custom fonts) -->
+	<key>UIAppFonts</key>
+	<array>
+		<string>Inter-Regular.ttf</string>
+		<string>Inter-Medium.ttf</string>
+		<string>Inter-SemiBold.ttf</string>
+		<string>Inter-Bold.ttf</string>
+	</array>
+	
+	<!-- Application Queries Schemes -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mailto</string>
+		<string>tel</string>
+		<string>sms</string>
+	</array>
+	
+	<!-- File Sharing -->
+	<key>UIFileSharingEnabled</key>
+	<false/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<false/>
+	
+	<!-- iTunes File Sharing -->
+	<key>UISupportsDocumentBrowser</key>
+	<false/>
+	
+	<!-- Keyboard Extensions -->
+	<key>UIKeyboardExtensionPointIdentifier</key>
+	<string>com.apple.keyboard-service</string>
+	
+	<!-- Privacy Tracking (iOS 14.5+) -->
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to deliver personalized ads to you.</string>
+	
+	<!-- Face ID / Touch ID (if implementing biometric authentication) -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>Use Face ID to securely access your personal reviews and memories.</string>
+	
+	<!-- Contacts (if implementing contact sharing features) -->
+	<key>NSContactsUsageDescription</key>
+	<string>Memorate can access your contacts to share reviews with friends and family.</string>
+	
+	<!-- Calendar (if implementing event creation) -->
+	<key>NSCalendarsUsageDescription</key>
+	<string>Memorate can add purchase dates to your calendar to help track important buying decisions.</string>
+	
+	<!-- Notifications -->
+	<key>UIUserNotificationSettings</key>
+	<dict>
+		<key>UIUserNotificationTypeBadge</key>
+		<true/>
+		<key>UIUserNotificationTypeSound</key>
+		<true/>
+		<key>UIUserNotificationTypeAlert</key>
+		<true/>
+	</dict>
+	
+	<!-- App Icon Configuration -->
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>AppIcon20x20</string>
+				<string>AppIcon29x29</string>
+				<string>AppIcon40x40</string>
+				<string>AppIcon60x60</string>
+			</array>
+			<key>CFBundleIconName</key>
+			<string>AppIcon</string>
+		</dict>
+	</dict>
+	
+	<!-- iPad Icons (if supporting iPad) -->
+	<key>CFBundleIcons~ipad</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>AppIcon20x20</string>
+				<string>AppIcon29x29</string>
+				<string>AppIcon40x40</string>
+				<string>AppIcon76x76</string>
+				<string>AppIcon83.5x83.5</string>
+			</array>
+			<key>CFBundleIconName</key>
+			<string>AppIcon</string>
+		</dict>
+	</dict>
+	
+	<!-- Prevents backup of sensitive data -->
+	<key>NSDocumentDirectory</key>
+	<dict>
+		<key>NSDocumentDirectoryIsWritable</key>
+		<true/>
+	</dict>
+	
+	<!-- Expo Configuration (if still using Expo) -->
+	<key>EXShellManifestURL</key>
+	<string>https://memorate.app/manifest</string>
+	
+	<!-- Build Information -->
+	<key>DTCompiler</key>
+	<string>com.apple.compilers.llvm.clang.1_0</string>
+	<key>DTPlatformName</key>
+	<string>iphoneos</string>
+	<key>DTSDKName</key>
+	<string>iphoneos</string>
+	<key>DTXcode</key>
+	<string>1500</string>
+	<key>DTXcodeBuild</key>
+	<string>15A240d</string>
+	
+</dict>
+</plist>
