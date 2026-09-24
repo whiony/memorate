@@ -1,3 +1,6 @@
+> Archived prototype of the original React Native / iOS version of Memorate.
+>
+>  Active development continues in [memorate-pwa](https://github.com/whiony/memorate-pwa).
 
 # Memorate
 
